@@ -291,8 +291,8 @@ def nozstop(path, tags, args, source):
         print "Still",Mser.in_waiting,"In_Waiting garbage msg after 0xFF sent"
 	Mser.read()
 
-    sendosc("/nozoid/X", 0x00)
-    sendosc("/nozoid/Y", 0x00)
+    gstt.X=0
+    gstt.Y=0
     
 # /name 
 def nozname(path, tags, args, source):
