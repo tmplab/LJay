@@ -1,3 +1,4 @@
+#!/usr/bin/python2.7
 # coding=UTF-8
 import pysimpledmx
 import sys
@@ -5,7 +6,7 @@ from serial.tools import list_ports
 import serial,time
 from threading import Thread
 import gstt
-
+from sys import platform
 
 
 gstt.serdmx =""
@@ -16,7 +17,12 @@ for p in ports:
     print(p)
 
 try:
-    gstt.serdmx = next(list_ports.grep("DMX USB PRO"))
+
+    # Find serial port
+    if  platform == 'darwin':
+        gstt.serdmx = next(list_ports.grep("DMX USB PRO"))
+    if  platform == 'linux2':
+        gstt.serdmx = next(list_ports.grep("/dev/ttyUSB0"))
     print ("Serial Picked for DMX : ",gstt.serdmx[0])
 
     if gstt.serdmx != "":
@@ -45,7 +51,7 @@ def send(channel, value):
         mydmx.render()
         print "Sending DMX Channel : ", str(channel), " value : ", str(value)
 
+send(8,180)#change tilt to 180° (see http://static.boomtonedj.com/pdf/manual/43/43105_manuelfroggyledrgbw.pdf)
 
 
-
-send(8,180)
+#send(3,[0,255] vary red from 0 to 255

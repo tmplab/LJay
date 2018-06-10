@@ -17,10 +17,12 @@ Laser = 4
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
 Set = 0
+Set = 2 #nozoid loloster.py
 
 # gstt.Curve select what to display. Can be changed with /noteon 16-21
 
-Curve = 8 
+Curve = 2
+Curve = 0 #nozmod
 
 # gstt.Mode select what to display. Can be changed with /noteon 16-21
 
@@ -69,6 +71,14 @@ oscx = 0
 oscy = 0
 oscz = 0
 
+iport = 8001
+oport = 8002
+X = 0
+Y = 0
+colorX = [255,255,255]
+colorY = [255,255,255]
+
+
 # No rotation X (cc 29) Y (cc 30) Z (cc 31)  at first
 cc[29] = cc[30] = cc[31] =  0
 
@@ -86,7 +96,7 @@ tosynth = False
 sernozoid = ""
 nozoid = ""
 serdmx = ""
-newnumber =""
+newnumber = ""
 oldnumber = ""
 
 centerx = LASER_CENTER_X

@@ -21,6 +21,7 @@ from globalVars import *
 import gstt
 import midi
 import socket
+import colorify
 
 
 if gstt.SLAVERY == False:
@@ -31,11 +32,13 @@ if gstt.SLAVERY == False:
 
 oscIPin = socket.gethostbyname(socket.gethostname())
 #oscIPin = "192.168.1.10"
-oscPORTin = 8001
+#oscPORTin = 8001
+oscPORTin = gstt.iport
 oscpathin = ""
 
 oscIPout = ""
-oscPORTout = 8002
+#oscPORTout = 8002
+oscPORTout = gstt.oport
 
 if gstt.SLAVERY != False:
 	oscPORTin = 8000 + gstt.SLAVERY
@@ -396,6 +399,109 @@ def point(path, tags, args, source):
     
     
 
+# /nozoid/X value = numéro d'oscillateur
+def nozX(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    #print "X"
+    #print user,path,args
+    print path,args
+    value = int(args[0])
+    #print number,value
+    #print value
+    gstt.X = value
+    if value == 0:
+	gstt.colorX[0]=0
+	gstt.colorX[1]=0
+	gstt.colorX[2]=0
+    if value == 1:
+	gstt.colorX[0]=255
+	gstt.colorX[1]=0
+	gstt.colorX[2]=0
+    if value == 2:
+	gstt.colorX[0]=0
+	gstt.colorX[1]=255
+	gstt.colorX[2]=0
+    if value == 3:
+	gstt.colorX[0]=255
+	gstt.colorX[1]=255
+	gstt.colorX[2]=0
+    if value == 4:
+	gstt.colorX[0]=0
+	gstt.colorX[1]=0
+	gstt.colorX[2]=255
+    if value == 5:
+	gstt.colorX[0]=255
+	gstt.colorX[1]=0
+	gstt.colorX[2]=255
+    if value == 6:
+	gstt.colorX[0]=0
+	gstt.colorX[1]=255
+	gstt.colorX[2]=255
+    if value >= 7:
+	gstt.colorX[0]=255
+	gstt.colorX[1]=255
+	gstt.colorX[2]=255
+
+    colorify.XY()
+
+    #gstt.OscXY[1] = gstt.X
+	
+def nozY(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    #print "Y"
+    #print user,path,args
+    print path,args
+    value = int(args[0])
+    #print number,value
+    #print value
+    gstt.Y = value
+
+    if value == 0:
+	gstt.colorY[0]=0
+	gstt.colorY[1]=0
+	gstt.colorY[2]=0
+    if value == 1:
+	gstt.colorY[0]=255
+	gstt.colorY[1]=0
+	gstt.colorY[2]=0
+    if value == 2:
+	gstt.colorY[0]=0
+	gstt.colorY[1]=255
+	gstt.colorY[2]=0
+    if value == 3:
+	gstt.colorY[0]=255
+	gstt.colorY[1]=255
+	gstt.colorY[2]=0
+    if value == 4:
+	gstt.colorY[0]=0
+	gstt.colorY[1]=0
+	gstt.colorY[2]=255
+    if value == 5:
+	gstt.colorY[0]=255
+	gstt.colorY[1]=0
+	gstt.colorY[2]=255
+    if value == 6:
+	gstt.colorY[0]=0
+	gstt.colorY[1]=255
+	gstt.colorY[2]=255
+    if value >= 7:
+	gstt.colorY[0]=255
+	gstt.colorY[1]=255
+	gstt.colorY[2]=255
+
+    colorify.XY()
+    #gstt.OscXY[2] = gstt.Y
+
+def nozcolor(path, tags, args, source):
+	print "here we are in nozcolor!"
+	if len(args) > 0:
+		print "Changing color to R:%d G:%d B:%d" % (args[0], args[1], args[2])
+		gstt.color[0]=int(args[0])
+		gstt.color[1]=int(args[1])
+		gstt.color[2]=int(args[2])
+	else:
+		print "Here are color R:%d G:%d B:%d" % (gstt.color[0],gstt.color[1],gstt.color[2])
+
     
 # default handler 
 def handler(path, tags, args, source):
@@ -567,27 +673,43 @@ def handler(path, tags, args, source):
 	# Nozoids
 	# 
 	
+	# /nozoid/mix/number value	
+	if oscpath[1] == "nozoid" and oscpath[2] == "mix":
+		number = int(oscpath[3])
+		value = int(args[0])
+		print "mix",number,value
+		#gstt.OscXY[0] = gstt.mix
+		gstt.mix[number] = value
+	
+	# /nozoid/vco/number value	
+	if oscpath[1] == "nozoid" and oscpath[2] == "vco":
+		number = int(oscpath[3])
+		value = int(args[0])
+		print "vco",number,value
+		#gstt.OscXY[0] = gstt.vco
+		gstt.vco[number] = value
+	
 	# /nozoid/lfo/number value	
 	if oscpath[1] == "nozoid" and oscpath[2] == "lfo":
 		number = int(oscpath[3])
 		value = int(args[0])
-		#print number,value
+		print "lfo",number,value
+		#gstt.OscXY[0] = gstt.lfo
 		gstt.lfo[number] = value
 	
 	# /nozoid/osc/number value	
 	if oscpath[1] == "nozoid" and oscpath[2] == "osc":
 		number = int(oscpath[3])
 		value = int(args[0])
-		#print number,value
+		#print "osc",number,value
+		#gstt.OscXY[0] = gstt.osc
 		gstt.osc[number] = value
 	
-	
-	
-	# /nozoid/osc/number value	
+	# /nozoid/knob/number value	
 	if oscpath[1] == "nozoid" and oscpath[2] == "knob":
 		number = int(oscpath[3])
 		value = int(args[0])
-		#print number,value
+		print "knob",number,value
 		gstt.knob[number] = value
 	
 	
@@ -787,6 +909,16 @@ def pad(path, tags, args, source):
 	midi.NoteOnXY(args[0],args[1],args[2])
 
 
+def stoprot(path, tags, args, source):
+	gstt.cc[29]=0
+	gstt.cc[30]=0
+	gstt.cc[31]=0
+	gstt.cc[22]=50
+
+	gstt.angleX=0
+	gstt.angleY=0
+	gstt.angleZ=0
+
 
 
 
@@ -804,6 +936,11 @@ oscserver.addMsgHandler( "/gyrosc/gyro", gyro )
 oscserver.addMsgHandler( "/point", point )
 oscserver.addMsgHandler( "/accxyz", accxyztouchosc )
 accxyztouchosc
+oscserver.addMsgHandler( "/nozoid/X", nozX )
+oscserver.addMsgHandler( "/nozoid/Y", nozY )
+oscserver.addMsgHandler( "/nozoid/color", nozcolor )
+oscserver.addMsgHandler( "/stop/rotation", stoprot )
+
 
 
 # Led Handlers

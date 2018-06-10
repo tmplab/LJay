@@ -7,6 +7,7 @@ from rtmidi.midiutil import open_midiinput
 from threading import Thread
 from rtmidi.midiconstants import (CHANNEL_PRESSURE, CONTROLLER_CHANGE, NOTE_ON, NOTE_OFF,
                                   PITCH_BEND, POLY_PRESSURE, PROGRAM_CHANGE)
+import mido
 from mido import MidiFile
 #import mido
 import sys
@@ -15,7 +16,7 @@ import serial
 
 from sys import platform
 import sv
-import midi
+
 import bhorosc
 import bhoreal
 import launchpad
