@@ -285,7 +285,7 @@ keystates = pygame.key.get_pressed()
 (SCREEN_W, SCREEN_H) = screen_size
 
 
-gstt.jumptable =  settables[gstt.Set]
+gstt.jumptable = settables[gstt.Set]
 
 
 print ""
