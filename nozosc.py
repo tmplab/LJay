@@ -177,33 +177,12 @@ def sendosc(oscaddress,oscargs):
 	if len(oscargs) > 0:
 		oscmsg.append(oscargs)
 
-
-    #print "here we are sendosc function"
-    #print "path:",oscaddress,"pathlength:", pathlength,"oscpath:", oscpath,"args:", oscargs
-
-
-    #oscmsg.setAddress(''.join((oscaddress,"/",oscargs)))
-
-    #oscmsg.append(oscargs[0])
-
-    #oscmsg.append(oscargs)
-    
-
-    #print "oscmsg length:",len(oscmsg)
-    #print "sending:",oscmsg
-
-    #if len(oscmsg) > 0:
     try:
 	osclient.sendto(oscmsg, (oscIPout, oscPORTout))
 	oscmsg.clearData()
     except:
 	print ('Connection refused at ',oscIPout)
         pass
-    #else:
-#	print "Hum here in nozosc.py something went wrong with your %r msg" %oscpath[2]
-    #time.sleep(0.001)
-
-
 
 # sendme(oscaddress, [arg1, arg2,...])
 osclientme.connect((oscIPin, oscPORTin)) 
@@ -300,16 +279,6 @@ def nozname(path, tags, args, source):
     print ("asking for my nozoid name...")
     Mser.write([0xF0])
 
-#    time.sleep(1)
-#    print "In_Waiting garbage msg # after 0xF0 sent:",Mser.in_waiting
-#    time.sleep(1)
-#    for i in range(2):
-#        print "!!"
-#        print twoDigitHex(ord(Mser.read()[0])), twoDigitHex(ord(Mser.read()[0])), twoDigitHex(ord(Mser.read()[0])), twoDigitHex(ord(Mser.read()[0]))
-#    print "In_Waiting garbage msg # after cleaning up try:",Mser.in_waiting
-#    time.sleep(1)
-
-#    print ''.join((NozMsg[2],NozMsg[3]))
     
 # /lfo
 def nozlfo(path, tags, args, source):
@@ -348,8 +317,6 @@ def nozdown(path, tags, args, source):
 
 # /up
 def nozup(path, tags, args, source):
-	#print ("UP ", args[0], "asked")
-	#print "Path:",path,",Tags:",tags,",Args:",args,",Source:",source
 	if args:
 		Mser.write([0xF2,int(args[0])]) # 0xF2 speeding up with argument
 	else:
@@ -358,9 +325,11 @@ def nozup(path, tags, args, source):
 # /knob
 def nozknob(path, tags, args, source):
 	print ("KNOB", args[0], "asked")
-	Mser.write([0 + int(args[0])]) # 0xA0 : OSC 1 / 0xA1 : OSC 2  / 0xA2 : OSC 3 
+	Mser.write([0 + int(args[0])]) # 0xA0 : OSC 1l / 0xA1 : OSC 2  / 0xA2 : OSC 3 
+
 
 # /X
+# /X change sound curve to draw on X axis and tell nozoids to send this sound curve
 def nozX(path, tags, args, source):
 	print args
 	if 0 == len(args):
@@ -386,6 +355,8 @@ def nozX(path, tags, args, source):
 		gstt.X=int(args[0])
 
 # /Y
+# change sound curve to draw on Y axis and tell nozoids to send this sound curve
+
 def nozY(path, tags, args, source):
 	print args
 	if 0 == len(args):
@@ -416,12 +387,6 @@ def nozcolor(path, tags, args, source):
 	if 0 == len(args):
 		sendosc("/nozoid/color",[])
 		print "Hum maybe you should see now what bhorosc.py has answered about colorZ"
-		#gstt.color[0]=(gstt.colorX[0] or gstt.colorY[0])
-		#print "RX:%d RY:%d R:%d"%(gstt.colorX[0],gstt.colorY[0],gstt.color[0])
-		#gstt.color[1]=(gstt.colorX[1] or gstt.colorY[1])
-		#print "GX:%d GY:%d G:%d"%(gstt.colorX[1],gstt.colorY[1],gstt.color[1])
-		#gstt.color[2]=(gstt.colorX[2] or gstt.colorY[2])
-		#print "BX:%d BY:%d B:%d"%(gstt.colorX[2],gstt.colorY[2],gstt.color[2])
 
 	else:
 		print "Changing color to R:%d G:%d B:%d" % (args[0], args[1], args[2])
@@ -623,8 +588,6 @@ if Mser != False:
 
          if ord(NozMsg[1]) < 160:
             (val,) = struct.unpack_from('>H', NozMsg, 2)
-            #print '/nozoid//knob'.join((str(ord(NozMsg[1]))," ",NozMsg[0:2].encode('hex'),":",str(val)))
-            #sendosc("/nozoid/knob",''.join((str(ord(NozMsg[1])),NozMsg[0:2].encode('hex'),":",str(val))))
             sendosc("/nozoid/knob",''.join((twoDigit(ord(NozMsg[1])),str(val))))
         
          if ord(NozMsg[1]) >= 0xA0 and ord(NozMsg[1]) < 0xF0:
@@ -634,10 +597,6 @@ if Mser != False:
 	    tLfoVal0[OrdNozMsg]=tLfoVal1[OrdNozMsg]
 
             (val,) = struct.unpack_from('>h', NozMsg, 2)
-	    #print NozMsg
-            #print type(NozMsg[0:2].encode('hex'))
-            #print type(ord(val))
-            #print '/nozoid/oscitruc'.join((str(ord(NozMsg[1])-0x9F)," ",NozMsg[0:2].encode('hex'),":",str(val)))
 
 	    tLfoVal1[OrdNozMsg]=val
 	    tLfoDelta[OrdNozMsg]=abs(tLfoVal1[OrdNozMsg]-tLfoVal0[OrdNozMsg])
@@ -651,23 +610,13 @@ if Mser != False:
 	    sendosc("/nozoid/name",''.join((NozMsg[2],NozMsg[3])))
 
          if ord(NozMsg[1]) >= 0xF3 and ord(NozMsg[1]) <= 0xF5:
-	    #NozMsgL=NozMsg+Mser.read(2)
             (val,) = struct.unpack_from('>H', NozMsg, 2)
-            #(val,) = struct.unpack_from('>L', NozMsgL, 2)
-            #print ''.join((str(ord(NozMsg[1])-0x9F)," ",NozMsg[0:2].encode('hex')," ",NozMsg[2:4].encode('hex'),":",str(val)))
-            #print ''.join((str(ord(NozMsg[1])-0xF2)," ",NozMsg[0:2].encode('hex')," ",NozMsg[2:4].encode('hex'),":",str(val)))
-            #print ''.join((str(ord(NozMsg[1])-0xF2)," ",NozMsg[0:2].encode('hex')," ",NozMsgL[2:6].encode('hex'),":",str(val)))
-            #sendosc("/nozoid/osc",''.join((twoDigit(ord(NozMsg[1])-0x9F),str(val))))
+
             sendosc("/nozoid/osc",''.join((twoDigit(ord(NozMsg[1])-0x9F),str(val-32767))))
-            #sendosc("/nozoid/vco",''.join((twoDigit(ord(NozMsg[1])-0xF2),str(val-32767))))
 
          if ord(NozMsg[1]) >= 0xF6 and ord(NozMsg[1]) <= 0xF8:
 	    #NozMsgL=NozMsg+Mser.read(2)
             (val,) = struct.unpack_from('>h', NozMsg, 2)
-            #(val,) = struct.unpack_from('>l', NozMsgL, 2)
-            #print ''.join((str(ord(NozMsg[1])-0x9F)," ",NozMsg[0:2].encode('hex')," ",NozMsg[2:4].encode('hex'),":",str(val)))
-            #print ''.join((str(ord(NozMsg[1])-0xF5)," ",NozMsg[0:2].encode('hex')," ",NozMsg[2:4].encode('hex'),":",str(val)))
-            #print ''.join((str(ord(NozMsg[1])-0xF5)," ",NozMsg[0:2].encode('hex')," ",NozMsgL[2:6].encode('hex'),":",str(val)))
             sendosc("/nozoid/osc",''.join((twoDigit(ord(NozMsg[1])-0x9F),str(val))))
             #sendosc("/nozoid/mix",''.join((twoDigit(ord(NozMsg[1])-0xF5),str(val))))
 
