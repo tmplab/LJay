@@ -280,6 +280,8 @@ def nozon(path, tags, args, source):
 def nozstop(path, tags, args, source):
 
     print ("Stop Com from Nozoid")
+    sendosc("/nozoid/X", 0x00)
+    sendosc("/nozoid/Y", 0x00)
     Mser.write([0xFF]) 
 #    time.sleep(1)
     print "In_Waiting garbage msg # after 0xFF sent:",Mser.in_waiting
@@ -288,6 +290,9 @@ def nozstop(path, tags, args, source):
     while Mser.in_waiting != 0:
         print "Still",Mser.in_waiting,"In_Waiting garbage msg after 0xFF sent"
 	Mser.read()
+
+    sendosc("/nozoid/X", 0x00)
+    sendosc("/nozoid/Y", 0x00)
     
 # /name 
 def nozname(path, tags, args, source):
@@ -476,7 +481,7 @@ ports = list(list_ports.comports())
 for p in ports:
     print(p)
 
-raw_input("Will try to select Last Serial Port\nPress Enter to continue...")
+#raw_input("Will try to select Last Serial Port\nPress Enter to continue...")
 
 try:
 

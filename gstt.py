@@ -42,7 +42,7 @@ surprisex = -10
 
 cc = [0] * 256
 lfo = [0] * 10
-osc = [0] * 10
+osc = [0] * 255
 knob = [0] * 33
 
 # Viewer distance (cc 21) 
