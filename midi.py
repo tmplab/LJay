@@ -294,9 +294,16 @@ def InConfig():
             print "Attaching MIDI in callback handler to Launchpad : ", name
             launchin.set_callback(launchpad.LaunchAddQueue(name))
             print "Launch",port,port_name
-
-
+        
         # all other devices
+
+        '''
+        
+
+        port = mido.open_ioport(name,callback=AddQueue(name))
+        
+        This doesn't work on OS X on French system "Réseau Session" has a bug with accent.
+        Todo : stop using different midi framework.
         
         if name.find(BhorealMidiName) != 0 and name.find(LaunchMidiName) != 0:
             thread = Thread(target=midinProcess, args=(midinputsqueue[port],))
@@ -312,6 +319,25 @@ def InConfig():
             print "Attaching MIDI in callback handler to : ", name
             #midinputs[port].set_callback(AddQueue(name))
             #MIDInport = mido.open_ioport("Laser",virtual=True,callback=MIDIn)
+            
+        '''
+   
+        if name.find(BhorealMidiName) != 0 and name.find(LaunchMidiName) != 0:
+            thread = Thread(target=midinProcess, args=(midinputsqueue[port],))
+            thread.setDaemon(True)
+            thread.start()    
+                     
+ 
+            try:
+                port_port, port_name = open_midiinput(port)
+            except (EOFError, KeyboardInterrupt):
+                sys.exit()
+
+            midinputs.append(port_port)
+            print "Attaching MIDI in callback handler to : ", name
+            midinputs[port].set_callback(AddQueue(name))
+            #MIDInport = mido.open_ioport("Laser",virtual=True,callback=MIDIn)
+            
 
 def End():
     global midiout
