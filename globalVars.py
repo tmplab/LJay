@@ -15,7 +15,7 @@ etherIP="192.168.1.4"
 
 
 # screen_size = [850,600]
-screen_size = [600,600]
+screen_size = [800,600]
 # screen_size = [100,100]
 space = 200
 strings = 9

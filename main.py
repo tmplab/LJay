@@ -69,7 +69,6 @@ import bhorosc
 import set0
 import set1
 import setllstr
-import modes
 import orbits
 
 if not gstt.SLAVERY :
