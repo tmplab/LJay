@@ -32,39 +32,14 @@ def NozMode(fwork):
     global dotsosc1
     global dotsoscT
     global currentdotsosc
-    #global dots
-    #dots = []
+
         
     amp = 200
     nb_point = 40
     nbplow=10
     nbphigh=100
-    '''
-    for t in range(0, nb_point+1):
-    
-        #y = cc2scrX((66000 + gstt.osc[4])%127)
-        #x = cc2scrX((66000 + gstt.osc[5])%127)
-        #rint x,y
-        x = 3.5 *(extracc2scrX(gstt.osc[gstt.X]) - 400)
-        y = 3.5 *(extracc2scrY(gstt.osc[gstt.Y]) - 300)
-        #print proj(int(x),int(y),0)
-        dots.append(proj(int(x),int(y),0))
-        
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color)  )
-    '''
-    #x = cc2scrX((66000 + gstt.osc[4])%127)
-    #x += 1
-    #if x >= 840:
-    #    x = -840
 
-    #read lfo # or osc #
-    #x = 1.8 *(extracc2scrX(gstt.osc[1]) - 300)
-
-    #x = 1.8 *(extracc2scrX(gstt.osc[gstt.X]) - 400) 
-    #print gstt.OscXY[0]
-    #print gstt.OscXY[1]
-    #print gstt.OscXY[2]
-
+    # There is a sound curve to draw on X axis
     if gstt.X != 0:
     #print "gstt.X != 0 (== %d)" % gstt.X
         if (dotsosc.maxlen == nbphigh and gstt.Y != 0):
@@ -74,7 +49,10 @@ def NozMode(fwork):
             dotsosc = collections.deque(maxlen=nbplow)
         xT = gstt.osc[gstt.X]
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
+    
     else:
+
+    # Else use time for X axis
     #print "gstt.X == 0"
         if (gstt.Y != 0 and dotsosc.maxlen == nbplow):
             print "X changing size of dotsocs (%d) to %d"%(dotsosc.maxlen,nbphigh)
@@ -83,13 +61,8 @@ def NozMode(fwork):
             dotsosc = collections.deque(maxlen=nbphigh)
         xT = (((time.time()*50000) % 65536) - 32768)
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
-    #print "x:%r,xT:%r" % (x,xT)
 
-    #x = 3.5 * (extracc2scrX(xT) - 400)
-    #x = 3.5 *(extracc2scrX(gstt.osc[gstt.X]) - 400)
-    #y = cc2scrX((32000 + gstt.osc[4])%127)
-    #y = 3 *(extracc2scrY(gstt.osc[2]) - 300)
-
+    # There is a sound curve to draw on Y axis
     if gstt.Y != 0:
     #print "gstt.Y != 0 (== %d)" % gstt.Y
         if (dotsosc.maxlen == nbphigh and gstt.X != 0):
@@ -100,6 +73,8 @@ def NozMode(fwork):
         yT = gstt.osc[gstt.Y]
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
     else:
+
+    # Use time for X axis    
     #print "gstt.Y == 0"
         if (gstt.X != 0 and dotsosc.maxlen == nbplow):
             print "Y changing size of dotsocs (%d) to %d"%(dotsosc.maxlen,nbphigh)
@@ -114,24 +89,8 @@ def NozMode(fwork):
         x = 0
         y = 0
 
-    #y = 3.5 * (extracc2scrY(yT) - 300)
-    #y = 3.5 *(extracc2scrY(gstt.osc[gstt.Y]) - 300)
-    #print x,y
-    #gstt.cc[22]=extracc2range(gstt.osc[6],0,127)
     newx,newy =  proj(int(x),int(y),0)
-    #print "NX: %r, NY: %r" % (newx,newy)
-    #dots.append(proj(int(x),int(y),0))    
-    #if len(dots) >= 5:
-    #   dots = []
-    #newxR=newx+random.randint(-200,200)
-    #newyR=newy+random.randint(-100,100)
-    #dots.append((newx+random.randint(-200,200),newy+random.randint(-100,100)))
-    #dotsosc.append((newx+random.randint(-200,200),newy+random.randint(-100,100)))
-    #dots.append((newxR,newyR))
-    #dotsosc.append((newxR,newyR))
 
-    #print dotsosc
-    #print len(dotsosc)
 
     if gstt.X != 0 and gstt.Y == 0:
         if 1 < len(dotsoscT[currentdotsosc]) and newy > dotsoscT[currentdotsosc][-1][1]:
@@ -155,53 +114,15 @@ def NozMode(fwork):
         dotsoscT[0].append((newx,newy))
         dotsoscT[1].append((newx,newy))
 
-#       fwork.PolyLineOneColor( dotsosc, c=colorify.rgb2hex(gstt.color)  )
-#    if currentdotosc == 0:
-#   if newx >= dotosc0
-
-#    dotsosc0.append((newx,newy))
-#    dotsosc1.append((newx,newy))
-
-    #print dots
-
-    #print dotsosc
-
-    #print "LastP X",type(dotsosc[-1][0])
-    #print "LastP X",type(dotsosc[-1][0])
-    #print "LastP Y",dotsosc[-1][1]
-    
-    #fwork.Line((newx,newy),(newx+ 5,newy+5), colorify.rgb2hex(gstt.color) )
-
-
-
-    #fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color)  )
-
-    #fwork.PolyLineOneColor( dotsosc, c=colorify.rgb2hex(gstt.color)  )
     fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
     fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
-
-    #print "dotsoscT[0]",dotsoscT[0]
-    #print "dotsoscT[1]",dotsoscT[1]
-
-#    fwork.PolyLineOneColor( dotsosc0, c=colorify.rgb2hex(gstt.color)  )
-#    fwork.PolyLineOneColor( dotsosc1, c=colorify.rgb2hex(gstt.color)  )
-
-    #fwork.PolyLineOneColor( reversed(dotsosc), c=colorify.rgb2hex(gstt.color)  )
-    #fwork.Line((newx,newy),(newx+ 1,newy+1), colorify.rgb2hex(gstt.color) )
-#    fwork.Line((newx,10),(newx+ 1,10+1), colorify.rgb2hex(gstt.color) )
-#    fwork.Line((10,newy),(10,newy+1), colorify.rgb2hex(gstt.color) )
-    #time.sleep(0.0005)
 
 # Curve 1
 def NozMode2(fwork):
     import mikuscope as mk
     dots = []
     nb_point=100
-    #print mk.x
-    #print mk.y
-    #print "Hey! Hey!"
-    #print "x:",type(x),x.shape,x.dtype
-    #print "y:",type(y),y.shape,y.dtype
+
 
     for idx, valx in enumerate(mk.x):
             if not np.isnan(valx):

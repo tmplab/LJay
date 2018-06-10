@@ -446,6 +446,7 @@ def nozX(path, tags, args, source):
 
     #gstt.OscXY[1] = gstt.X
 	
+# Get wich Nozoid sound curve to draw on Y axis 
 def nozY(path, tags, args, source):
     user = ''.join(path.split("/"))
     #print "Y"
