@@ -387,9 +387,11 @@ def nozY(path, tags, args, source):
 	if 0 == len(args):
 		print "Current active Y trace set to %d" % gstt.Y
 	else:
+		print "Args len %d" % len(args)
 		print "Setting active Y trace to %d" % args[0]
 		#print type(args[0])
-	#deactivate currently active osc used
+		#deactivate currently active osc sent by nozoid saved into gstt.Y at previous call
+		#even if it's the same which will be asked again…
 		if gstt.Y <= 16:
 			Mser.write([0x9F + gstt.Y])
 		else:
