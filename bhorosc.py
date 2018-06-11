@@ -704,6 +704,7 @@ def handler(path, tags, args, source):
 		value = int(args[0])
 		#print "osc",number,value
 		#gstt.OscXY[0] = gstt.osc
+		#this is where we save the value of the current oscillation value of the osc/lfo/cv etc (aka number)
 		gstt.osc[number] = value
 	
 	# /nozoid/knob/number value	
