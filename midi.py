@@ -15,7 +15,6 @@ from serial.tools import list_ports
 import serial
 
 from sys import platform
-import sv
 
 import bhorosc
 import bhoreal
@@ -74,10 +73,10 @@ def send(device,msg):
 
     if device == "Launchpad":
         #print LaunchHere
-        midiport[sv.LaunchHere].send_message(msg)
+        midiport[gstt.LaunchHere].send_message(msg)
 
     if device == "Bhoreal":
-        midiport[sv.BhorealHere].send_message(msg)
+        midiport[gstt.BhorealHere].send_message(msg)
 
 def NoteOn(note,color):
     global MidInsNumber
@@ -91,7 +90,7 @@ def NoteOn(note,color):
             launchpad.PadNoteOn(note%64,color)
 
         if midiname[port].find(BhorealMidiName) == 0:
-            sv.BhorLeds[note%64]=color
+            gstt.BhorLeds[note%64]=color
             midiport[port].send_message([NOTE_ON, note%64, color])
             #bhorosc.sendosc("/bhoreal", [note%64 , color])
 
@@ -113,7 +112,7 @@ def NoteOff(note):
 
         if midiname[port].find(BhorealMidiName) == 0:
             midiport[port].send_message([NOTE_OFF, note%64, 0])
-            sv.BhorLeds[note%64]=0
+            gstt.BhorLeds[note%64]=0
             #bhorosc.sendosc("/bhoreal", [note%64 , 0])
 
         if midiname[port].find(BhorealMidiName) != 0 and midiname[port].find(LaunchMidiName) != 0:
@@ -220,23 +219,23 @@ def OutConfig():
         # Search for a Bhoreal
         if name.find(BhorealMidiName) == 0:
             print("Bhoreal start animation")
-            sv.BhorealHere = port
+            gstt.BhorealHere = port
             bhoreal.StartBhoreal(port)
             time.sleep(0.2)
 
         # Search for a LaunchPad
         if name.find(LaunchMidiName) == 0:
             print("Launchpad mini start animation")
-            sv.LaunchHere = port
-            print sv.LaunchHere
+            gstt.LaunchHere = port
+            print gstt.LaunchHere
             launchpad.StartLaunchPad(port)
             time.sleep(0.2)
 
         # Search for a Guitar Wing
         if name.find("Livid") == 0:
                 print("Livid Guitar Wing start animation")
-                sv.WingHere = port
-                print sv.WingHere
+                gstt.WingHere = port
+                print gstt.WingHere
                 #guitarwing.StartWing(port)
                 time.sleep(0.2)        
 
@@ -346,10 +345,10 @@ def End():
     midiout.close_port()
   
     #del virtual
-    if sv.LaunchHere != -1:
-        del sv.LaunchHere
-    if sv.BhorealHere  != -1:
-        del sv.BhorealHere
+    if gstt.LaunchHere != -1:
+        del gstt.LaunchHere
+    if gstt.BhorealHere  != -1:
+        del gstt.BhorealHere
 
 
 def listdevice(number):

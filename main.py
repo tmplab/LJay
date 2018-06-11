@@ -23,7 +23,6 @@ import dac
 from globalVars import *
 
 import gstt
-import sv
 import colorify
 
 import argparse
