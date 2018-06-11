@@ -27,6 +27,7 @@ import struct
 from OSC import OSCServer, OSCClient, OSCMessage
 import types
 from sys import platform
+import argparse
 
 tLfoVal0 =  [0] * 256
 tLfoVal1 =  [0] * 256
@@ -34,6 +35,27 @@ tLfoDelta = [0] * 256
 
 lfoval0=0
 lfoval1=0
+
+argsparser = argparse.ArgumentParser(description="nozosc.py is an OSC Server between nozoïd devices and LJay.py/bhorosc.py server")
+argsparser.add_argument("-i","--iport",help="Port number receiving OSC commands (8003 by default)",type=int)
+argsparser.add_argument("-o","--oport",help="Port number sending OSC commands to LJay (bhorosc.py) (8001 by default)",type=int)
+argsparser.add_argument("-n","--nozport",help="Serial port number connected to Nozoïd USB ((ACM)0 by default)",type=int)
+args = argsparser.parse_args()
+
+if args.iport:
+        iport=args.iport
+else:
+        iport=gstt.noziport
+
+if args.oport:
+        oport=args.oport
+else:
+        oport=gstt.nozoport
+
+if args.nozport:
+        nozport=args.nozport
+else:
+        nozport=gstt.nozuport
 
 #DMX
 def senddmx0():
@@ -56,14 +78,16 @@ def senddmx(channel, value):
 #oscIPin = "192.168.42.194"
 #oscIPin = "127.0.0.1"
 oscIPin = socket.gethostbyname(socket.gethostname())
-oscPORTin = 8003
+#oscPORTin = 8003
+oscPORTin = iport
 oscpathin = ""
 
 #oscIPout = ""
 #oscIPout = "10.255.255.194"
 oscIPout = socket.gethostbyname(socket.gethostname())
 #bhorosc.py
-oscPORTout = 8001
+#oscPORTout = 8001
+oscPORTout = oport
 #oscPORTout = 8002
 
 oscdevice = 0
@@ -136,7 +160,7 @@ def sendosc(oscaddress,oscargs):
 	oscmsg.append(oscargs)
 
     if oscpath[2] == "knob":
-	print "we are asked to send a knob value"
+	print "we are asked to send knob %d's value" % int(oscargs[0:2])
 	oscmsg.setAddress(''.join((oscaddress,"/",str(int(oscargs[0:2])))))
 	oscmsg.append(int(oscargs[2:100]))
 	
@@ -216,6 +240,7 @@ def osc_frame():
     while not oscserver.timed_out:
         oscserver.handle_request()
 
+    #time.sleep(0.0001)
 
     
 #
@@ -454,7 +479,9 @@ try:
     if  platform == 'darwin':
         sernozoid = next(list_ports.grep("Arduino Due"))
     if  platform == 'linux2':
-        sernozoid = next(list_ports.grep("ACM"))
+        #print "ACM"+str(nozport)
+        sernozoid = next(list_ports.grep("ACM"+str(nozport)))
+
 
 
     print "Serial Picked for Nozoid :",sernozoid[0]

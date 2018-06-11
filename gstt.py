@@ -71,8 +71,13 @@ oscx = 0
 oscy = 0
 oscz = 0
 
-iport = 8001
-oport = 8002
+#temporaray fix hack : iport=nozoport
+iport = 8001 #LJay (bhorosc) input port
+oport = 8002 #LJay (bhoros) output port
+noziport=8003 #nozosc.py receiving commands port
+nozoport=8001 #nozosc.py sending port to LJay(main.py)
+nozuport=0 #linux serial usb port connecting nozoid devices ACM0 by default
+
 X = 0
 Y = 0
 colorX = [255,255,255]

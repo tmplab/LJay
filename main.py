@@ -32,7 +32,6 @@ print ""
 print "Arguments parsing if needed..."
 #have to be done before importing bhorosc.py to get correct port assignment
 argsparser = argparse.ArgumentParser(description="A Scanner Interface Darkly")
-#argsparser.add_argument("interface",help="interface to scan")
 argsparser.add_argument("-i","--iport",help="port number to listen to (8001 by default)",type=int)
 argsparser.add_argument("-o","--oport",help="port number to send to (8002 by default)",type=int)
 argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default)",type=int)
