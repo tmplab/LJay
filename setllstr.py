@@ -13,7 +13,7 @@ import collections
 import time
 
 
-dotsosc = collections.deque(maxlen=10)
+#dotsosc = collections.deque(maxlen=10)
 dotsosc0 = collections.deque(maxlen=10)
 dotsosc1 = collections.deque(maxlen=10)
 dotsoscT = [dotsosc0,dotsosc1]
@@ -42,45 +42,51 @@ def NozMode(fwork):
     # There is a sound curve to draw on X axis
     if gstt.X != 0:
     #print "gstt.X != 0 (== %d)" % gstt.X
-        if (dotsosc.maxlen == nbphigh and gstt.Y != 0):
-            print "X changing size of dotsocs (%d) to %d"%(dotsosc.maxlen,nbplow)
-            dotsoscT[0] = collections.deque(maxlen=nbplow)
-            dotsoscT[1] = collections.deque(maxlen=nbplow)
-            dotsosc = collections.deque(maxlen=nbplow)
+        #if (dotsosc.maxlen == nbphigh and gstt.Y != 0):
+        if (dotsoscT[currentdotsosc].maxlen == nbphigh and gstt.Y != 0):
+	    #shrink points list (it's a lissajou curve)
+            print "X changing size of dotsocs (%d) to %d"%(dotsoscT[currentdotsosc].maxlen,nbplow)
+            dotsoscT[currentdotsosc] = collections.deque(maxlen=nbplow)
+            #dotsoscT[0] = collections.deque(maxlen=nbplow)
+            #dotsoscT[1] = collections.deque(maxlen=nbplow)
+            #dotsosc = collections.deque(maxlen=nbplow)
         xT = gstt.osc[gstt.X]
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
     
     else:
 
-    # Else use time for X axis
+    # Else (i.e. gstt.X == 0) use time for X axis and expand points list
     #print "gstt.X == 0"
-        if (gstt.Y != 0 and dotsosc.maxlen == nbplow):
-            print "X changing size of dotsocs (%d) to %d"%(dotsosc.maxlen,nbphigh)
-            dotsoscT[0] = collections.deque(maxlen=nbphigh)
-            dotsoscT[1] = collections.deque(maxlen=nbphigh)
-            dotsosc = collections.deque(maxlen=nbphigh)
+        if (gstt.Y != 0 and dotsoscT[currentdotsosc].maxlen == nbplow):
+            print "X changing size of dotsocs (%d) to %d"%(dotsoscT[currentdotsosc].maxlen,nbphigh)
+            dotsoscT[currentdotsosc] = collections.deque(maxlen=nbphigh)
+            #dotsoscT[0] = collections.deque(maxlen=nbphigh)
+            #dotsoscT[1] = collections.deque(maxlen=nbphigh)
+            #dotsosc = collections.deque(maxlen=nbphigh)
         xT = (((time.time()*50000) % 65536) - 32768)
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
 
     # There is a sound curve to draw on Y axis
     if gstt.Y != 0:
     #print "gstt.Y != 0 (== %d)" % gstt.Y
-        if (dotsosc.maxlen == nbphigh and gstt.X != 0):
-            print "Y changing size of dotsocs (%d) to %d"%(dotsosc.maxlen,nbplow)
-            dotsoscT[0] = collections.deque(maxlen=nbplow)
-            dotsoscT[1] = collections.deque(maxlen=nbplow)
-            dotsosc = collections.deque(maxlen=nbplow)
+        if (dotsoscT[currentdotsosc].maxlen == nbphigh and gstt.X != 0):
+            print "Y changing size of dotsocs (%d) to %d"%(dotsoscT[currentdotsosc].maxlen,nbplow)
+            dotsoscT[currentdotsosc] = collections.deque(maxlen=nbplow)
+            #dotsoscT[0] = collections.deque(maxlen=nbplow)
+            #dotsoscT[1] = collections.deque(maxlen=nbplow)
+            #dotsosc = collections.deque(maxlen=nbplow)
         yT = gstt.osc[gstt.Y]
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
     else:
 
     # Use time for X axis    
     #print "gstt.Y == 0"
-        if (gstt.X != 0 and dotsosc.maxlen == nbplow):
-            print "Y changing size of dotsocs (%d) to %d"%(dotsosc.maxlen,nbphigh)
-            dotsoscT[0] = collections.deque(maxlen=nbphigh)
-            dotsoscT[1] = collections.deque(maxlen=nbphigh)
-            dotsosc = collections.deque(maxlen=nbphigh)
+        if (gstt.X != 0 and dotsoscT[currentdotsosc].maxlen == nbplow):
+            print "Y changing size of dotsocs (%d) to %d"%(dotsoscT[currentdotsosc].maxlen,nbphigh)
+            dotsoscT[currentdotsosc] = collections.deque(maxlen=nbphigh)
+            #dotsoscT[0] = collections.deque(maxlen=nbphigh)
+            #dotsoscT[1] = collections.deque(maxlen=nbphigh)
+            #dotsosc = collections.deque(maxlen=nbphigh)
         yT = (((time.time()*50000) % 65536) - 32768)
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
     #print "y:%r,yT:%r" % (y,yT)
@@ -94,28 +100,45 @@ def NozMode(fwork):
 
     if gstt.X != 0 and gstt.Y == 0:
         if 1 < len(dotsoscT[currentdotsosc]) and newy > dotsoscT[currentdotsosc][-1][1]:
-            dotsoscT[currentdotsosc]=collections.deque(maxlen=nbphigh)
+	    #switching to the other points list queue in order to not trace the "return" laser line
+	    #as we don't know how to trace that particular segment formed by that new "return" point in black
+	    #destroy current queue
+            #dotsoscT[currentdotsosc]=collections.deque(maxlen=nbphigh)
             currentdotsosc=(currentdotsosc+1)%2
             #print "Switching dotosc to #%d"%currentdotsosc
+	    #creating a new one
             dotsoscT[currentdotsosc]=collections.deque(maxlen=nbphigh)
+
+	#we could try to let the previous queue disappear slowly…
+	#instead of destroying it as stated above
+	if len(dotsoscT[(currentdotsosc+1)%2]):
+	        dotsoscT[(currentdotsosc+1)%2].popleft()
         dotsoscT[currentdotsosc].append((newx,newy))
+    	fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
+        fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
 
     if gstt.X == 0 and gstt.Y != 0:
         if 1 < len(dotsoscT[currentdotsosc]) and newx < dotsoscT[currentdotsosc][-1][0]:
-            dotsoscT[currentdotsosc]=collections.deque(maxlen=nbphigh)
+            #dotsoscT[currentdotsosc]=collections.deque(maxlen=nbphigh)
             currentdotsosc=(currentdotsosc+1)%2
             #print "Switching dotosc to #%d"%currentdotsosc
             dotsoscT[currentdotsosc]=collections.deque(maxlen=nbphigh)
 
+	if len(dotsoscT[(currentdotsosc+1)%2]):
+	        dotsoscT[(currentdotsosc+1)%2].popleft()
         dotsoscT[currentdotsosc].append((newx,newy))
+    	fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
+        fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
 
     if (gstt.X == 0 and gstt.Y == 0) or (gstt.X != 0 and gstt.Y != 0):
         #dotsosc.append((newx,newy))
-        dotsoscT[0].append((newx,newy))
-        dotsoscT[1].append((newx,newy))
+        dotsoscT[currentdotsosc].append((newx,newy))
+        #dotsoscT[0].append((newx,newy))
+        #dotsoscT[1].append((newx,newy))
+    	fwork.PolyLineOneColor( dotsoscT[currentdotsosc], c=colorify.rgb2hex(gstt.color)  )
 
-    fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
-    fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
+    #fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
+    #fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
 
 # Curve 1
 def NozMode2(fwork):
