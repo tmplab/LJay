@@ -16,12 +16,10 @@ Laser = 4
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
-Set = 0
 Set = 2 #nozoid loloster.py
 
 # gstt.Curve select what to display. Can be changed with /noteon 16-21
 
-Curve = 2
 Curve = 0 #nozmod
 
 # gstt.Mode select what to display. Can be changed with /noteon 16-21
@@ -66,6 +64,11 @@ cc[1] = cc[2] = 63
 
 note = 0
 velocity = 0
+
+WingHere = -1
+BhorealHere = -1
+LaunchHere = -1
+BhorLeds = [0] * 64
 
 oscx = 0
 oscy = 0

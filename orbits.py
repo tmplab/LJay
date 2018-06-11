@@ -5,6 +5,8 @@ Orbits generators
 by Sam Neurohack 
 from /team/laser
 
+Kept here as example : how to adapt previous code
+
 """
 
 from globalVars import *
