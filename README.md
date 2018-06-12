@@ -253,7 +253,7 @@ pip uninstall rtmidi
 # Ether dream configuration
 #
 
-![Etherdream Laser DAC](htthttps://www.ether-dream.com/ed2-external.jpg
+![Etherdream Laser DAC](https://www.ether-dream.com/ed2-external.jpg)
 
 This program suppose that the ether dream is configured in a certain way especially for its IP address. Write an autoplay.txt file inside an SD Card within the ether dream DAC, with the following lines you can adjust i.e for pps or fps. Yes, there is a builtin DHCP client in the ether dream DAC but if you run multiple lasers, having a fixed dedicated network makes you focus on laser stuff.
 
