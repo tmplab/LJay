@@ -85,6 +85,7 @@ Modify in gstt set and curve to run your curve at startup.
 
 /noteon number velocity   
 					Note on sent to laser (see below for notes effects). Noteon can also be send to midi targets if gstt.tomidi is True.
+
 /noteoff number 	Note off is sent only to midi targets.
 
 
@@ -142,7 +143,11 @@ In RGB Color mode (see note effects to switch Color mode)
 
 
  
-# Nozoids synthetizers functions originated by nozosc.py and executed in llstr.py (See Nozosc readme for complete OSC implementation and how to control Nozosc)
+# Nozoids synthetizers 
+
+![Nozoid synthetizer](http://nozoid.com/wp-content/uploads/2017/05/OCS_previus-600x330.png)
+
+Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme for complete OSC implementation and how to control Nozosc)
 	
 
 /nozoid/osc/number value : Store a new value for given oscillator/LFO/VCO
@@ -217,7 +222,7 @@ CC channel effects (0-127):
 #
 
 
-Doc in progress
+(Doc in progress)
 
 apt install git python-pip libasound2-dev python-dev libpython-dev libjack-dev
 
