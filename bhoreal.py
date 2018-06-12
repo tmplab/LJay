@@ -3,9 +3,9 @@ import time
 from rtmidi.midiconstants import (CHANNEL_PRESSURE, CONTROLLER_CHANGE, NOTE_ON, NOTE_OFF,
                                   PITCH_BEND, POLY_PRESSURE, PROGRAM_CHANGE)
 
-import sv
+import gstt
 import midi
-import bhorosc
+#import bhorosc
 #import launchpad
 
 import sys
@@ -23,12 +23,12 @@ def NoteOnXY(x,y,color):
     #print x,y
     msg = [NOTE_ON, NoteXY(x,y), color]
     midi.send("Bhoreal",msg)
-    sv.BhorLeds[NoteXY(x,y)]=color
+    gstt.BhorLeds[NoteXY(x,y)]=color
     
 def NoteOffXY(x,y):
     msg = [NOTE_OFF, NoteXY(x,y), 0]
     midi.send("Bhoreal",msg)
-    sv.BhorLeds[NoteXY(x,y)]=0
+    gstt.BhorLeds[NoteXY(x,y)]=0
 
 # Leds position are humans numbers 1-8. So -1 for pythonic array position 0-7
 def NoteXY(x,y):
@@ -83,12 +83,12 @@ def MidinProcess(bhorqueue):
         # Note On
         print msg
         if msg[0]==NOTE_ON:
-            if sv.BhorLeds[msg[1]] < 115:
-                 sv.BhorLeds[msg[1]] += 10
+            if gstt.BhorLeds[msg[1]] < 115:
+                 gstt.BhorLeds[msg[1]] += 10
                  
             #Bhoreal send back note on and off to light up the led.
-            midi.NoteOn(msg[1],sv.BhorLeds[msg[1]])
-            print "Bhoreal Matrix : ", str(msg[1]), str(sv.BhorLeds[msg[1]])
+            midi.NoteOn(msg[1],gstt.BhorLeds[msg[1]])
+            print "Bhoreal Matrix : ", str(msg[1]), str(gstt.BhorLeds[msg[1]])
             time.sleep(0.1)
             midi.NoteOff(msg[1])
 

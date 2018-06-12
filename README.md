@@ -1,30 +1,70 @@
-LJay
-By Sam Neurohack, loloster,
+LJay v0.5
+By Sam Neurohack, Loloster,
 LICENCE : CC BY
 
 
-A software for Live : choose what to display, modify parameters with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
+A software for Live laser actions : choose what to display, modify parameters with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
 
 Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network
 
-Iteracctions with anything MIDI / OSC. See OSC commands
-GUIs : TouchOSC, Pure Date patch. You can build your own GUI and send command to LJay through OSC.
-Devices supported : Launchpad mini, LP8, bhoreal, gamepad, smartphone & tablet (TouchOSC needed) and any MIDI controller that is recognised by your OS.
+GUIs : TouchOSC, Pure Date patch. You can build your own GUI and send commands to LJay through OSC.
+Devices supported : Launchpad mini, LP8, bhoreal, gamepad, smartphone & tablet (OSC gyroscopes, GUI : TouchOSC needed) and any MIDI controller that is recognised by your OS.
 Nozosc : Semi modular synthetizers from Nozoids can send 3 of their inner sound curves and be displayed in many ways, i.e VCO 1 on X axis and LFO 2 on Y axis.
 
 
 To run : 
 
-python main.py
+python main.py 
 
+-i or --iport : port number to listen to (8001 by default)
+-o or --oport : port number to send to (8002 by default)
+-l or --laser : Last digit of etherdream ip address 192.168.1.0/24 (4 by default)
 
 
 #
 # Features
 # 
 
-- OSC to midi bridge
+(Doc in progress)
+
+- "plugins" curve generators support. 
+
+- Automatic Midi devices IN & OUT detection (must be seen by OS)
+- Automatic USB enttec PRO DMX interface detection
+
+
+- OSC to midi bridge (see /note and /cc/number)
+- OSC to DMX bridge (see /cc/number)
 - Bhoreal and Launchpad device start animation
+- Control all leds of Bhoreal and Launchpad
+
+
+#
+# External devices 
+#
+
+(Doc in Progress)
+
+
+
+#
+# Make your own curve generator
+#
+
+(Doc in progress)
+
+Duplicate and rename a set file like set0.py (import it in main.py)
+Program your own curve :
+ 
+- Generate a point list array.
+- Use Laser drawing functions : polyline, line, lineto.
+- You can have several drawing functions to draw several objects.
+
+
+If you need to receive data externally : 
+
+use /nozoid/osc/number value : Store a new value in gstt.osc[number] (number : 0-255)
+or program your own OSC commands in bhorosc.py
 
 #
 # LJay OSC commands :
@@ -54,7 +94,6 @@ python main.py
 
 /quit : 			Do nothing yet
 
-/runmode : 			Code not available yet in LJay. Different modes available for Bhoreal and Laucnhpad. "Prompt" = 10 ; "Myxo" = 2 ; "Midifile" = 3
 
 # Colors 
 
@@ -78,6 +117,7 @@ In RGB Color mode (see note effects to switch Color mode)
 /xy x y 
 /allcolorbhor : 	Switch all Bhoreal Leds with given colour (0-127)
 /clsbhor :      	Switch off all bhoreal colors
+/padmode : 			Code not available yet in LJay. Different modes available for Bhoreal and Launchpad. "Prompt" = 10 ; "Myxo" = 2 ; "Midifile" = 3
 
 
  
@@ -97,60 +137,20 @@ In RGB Color mode (see note effects to switch Color mode)
 
 
 
-# Advanced TouchOSC GUI
+# Advanced TouchOSC GUI Handlers
 
 /on : 			Accept an advanced GUI with status widget. Automatically get the IP, send status,...
 /off : 			Disconnect the advanced GUI
 /status text	Display some text on status widget GUI
 
 /control/matrix/Y/X 0 or 1
-
-	if oscpath[1] == "control" and oscpath[2] == "matrix" and  args > 0:
-		controlmatrixhandler(oscpath[4],oscpath[3],args)
-
+				First screen ("Control") buttons toggle state : on or off
 
 /pad/rights/note 0 or 1	
+				"Pad" screen (launchpad mini simulator screen), right column : Send note on and note off
 
-	if oscpath[1] == "pad" and oscpath[2] == "rights":
-		
-		# noteon
-		if args[0] == 1:		
-			note = padrightsnotes[int(oscpath[3])]
-			#print "noteon : ", str(note) 
-			sendme("/noteon",note)
-		
-		# noteoff
-		if args[0] == 0:		
-			note = padrightsnotes[int(oscpath[3])]
-			#print "noteoff : ", str(note) 
-			sendme("/noteoff",note)
-		
-		
 /pad/tops/cc 0 or 1	
-
-	if oscpath[1] == "pad" and oscpath[2] == "tops":
-		
-		# cc 127
-		if args[0] == 1:		
-			print "cc : ", str(int(oscpath[4])+103)
-			sendme(''.join(["/cc/",str(int(oscpath[4])+103)]), 127)
-			status(''.join((oscpath[4]," to 127")))
-			 
-		# cc 0
-		if args[0] == 0:		
-			print "cc : ", str(int(oscpath[4])+103)
-			sendme(''.join(["/cc/",str(int(oscpath[4])+103)]), 0)
-			status(''.join((oscpath[4]," to 0")))
-
-
-	# Not my laser -> forward to slave
-	if oscpath[1] == "cc" and gstt.MyLaser != gstt.Laser:
-		value = int(args[0])
-		doit = jumplaser.get(gstt.Laser)
-		doit(path,value)
-
-
-
+				"Pad" screen top raw : Send CC 0/127
 
 #
 # Laser Effects 
