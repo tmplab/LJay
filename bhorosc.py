@@ -215,10 +215,10 @@ def quit(path, tags, args, source):
 # "Prompt"   = 10
 # "Myxo"     = 2
 # "Midifile" = 3
-def runmode(path, tags, args, source):
+def padmode(path, tags, args, source):
     user = ''.join(path.split("/"))
-    print "/runmode : ",user,args
-    runmode.RunMode(args[0])
+    print "/padmode : ",user,args
+    padmode.PadMode(args[0])
 
 
 # /on
@@ -942,7 +942,7 @@ oscserver.addMsgHandler( "/on", on )
 oscserver.addMsgHandler( "/off", off )
 oscserver.addMsgHandler("default", handler)
 oscserver.addMsgHandler( "/quit", quit )
-oscserver.addMsgHandler( "/runmode", runmode )
+oscserver.addMsgHandler( "/padmode", padmode )
 oscserver.addMsgHandler( "/noteon", noteon )
 oscserver.addMsgHandler( "/noteoff", noteoff )
 oscserver.addMsgHandler( "/gyrosc/gyro", gyro )
