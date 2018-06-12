@@ -4,6 +4,7 @@ By Sam Neurohack, Loloster,
 
 LICENCE : CC BY
 
+![LJay](http://www.teamlaser.fr/thsf/images/fulls/THSF9-33.jpg)
 
 A software for Live laser actions : choose what to display, modify parameters with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
 
@@ -130,6 +131,8 @@ In RGB Color mode (see note effects to switch Color mode)
 
 # Bhoreal and Launchpad devices
 
+![Bhoreal](http://levfestival.com/13/wp-content/uploads/Bhoreal_2.jpg)
+
 /led led number color : Switch on given led with given color. 
 
 /led/xy  x y color	Switch on led wit x y position to given color.
@@ -168,7 +171,9 @@ Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme fo
 
 
 
-# Advanced TouchOSC GUI Handlers
+# Advanced TouchOSC GUI
+
+![Advanced Gui](http://www.teamlaser.fr/mcontroller.png)
 
 /on : 			Accept an advanced GUI with status widget. Automatically get the IP, send status,...
 
@@ -248,7 +253,7 @@ pip uninstall rtmidi
 # Ether dream configuration
 #
 
-
+![Etherdream Laser DAC](htthttps://www.ether-dream.com/ed2-external.jpg
 
 This program suppose that the ether dream is configured in a certain way especially for its IP address. Write an autoplay.txt file inside an SD Card within the ether dream DAC, with the following lines you can adjust i.e for pps or fps. Yes, there is a builtin DHCP client in the ether dream DAC but if you run multiple lasers, having a fixed dedicated network makes you focus on laser stuff.
 
