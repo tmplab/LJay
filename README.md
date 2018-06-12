@@ -1,5 +1,7 @@
 LJay v0.5
+
 By Sam Neurohack, Loloster,
+
 LICENCE : CC BY
 
 
@@ -8,7 +10,9 @@ A software for Live laser actions : choose what to display, modify parameters wi
 Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network
 
 GUIs : TouchOSC, Pure Date patch. You can build your own GUI and send commands to LJay through OSC.
+
 Devices supported : Launchpad mini, LP8, bhoreal, gamepad, smartphone & tablet (OSC gyroscopes, GUI : TouchOSC needed) and any MIDI controller that is recognised by your OS.
+
 Nozosc : Semi modular synthetizers from Nozoids can send 3 of their inner sound curves and be displayed in many ways, i.e VCO 1 on X axis and LFO 2 on Y axis.
 
 
@@ -17,7 +21,9 @@ To run :
 python main.py 
 
 -i or --iport : port number to listen to (8001 by default)
+
 -o or --oport : port number to send to (8002 by default)
+
 -l or --laser : Last digit of etherdream ip address 192.168.1.0/24 (4 by default)
 
 
@@ -53,7 +59,8 @@ python main.py
 
 (Doc in progress)
 
-Duplicate and rename a set file like set0.py (import it in main.py)
+Duplicate and rename a set file like set0.py (import it in main.py).
+
 Program your own curve :
  
 - Generate a point list array.
@@ -65,6 +72,10 @@ If you need to receive data externally :
 
 use /nozoid/osc/number value : Store a new value in gstt.osc[number] (number : 0-255)
 or program your own OSC commands in bhorosc.py
+
+Add your set and curve in settables (main.py)
+
+Modify in gstt set and curve to run your curve at startup.
 
 #
 # LJay OSC commands :
@@ -78,6 +89,7 @@ or program your own OSC commands in bhorosc.py
 
 
 /accxyz x y z 		TouchOSC gyroscope x assigned to cc 1 and y assigned to cc 2. See below for cc effects.
+
 /gyrosc/gyro x y z  Change 3D rotation angles with gyroscope float values. i.e for GyrOSC iOS app. At this time Z is ignored and Z rotation set to 0
 
 /point x y z 		Set point coordinates for "slave" curve. Need to be changed change to collections deque as in llstr.py
@@ -100,39 +112,53 @@ or program your own OSC commands in bhorosc.py
 In RGB Color mode (see note effects to switch Color mode)
 
 /red 0 : 			Switch off blue laser.
+
 /red 255 (or >0)  	Switch on blue laser
 
+
 /green 0 : 			Switch off blue laser
+
 /green 255 (or >0)  Switch on blue laser
 
+
 /blue 0 : 			Switch off blue laser
+
 /blue 255 (or >0)  Switch on blue laser
 
 
 
 # Bhoreal and Launchpad devices
 
-/led lednumber color : Switch on given led with given color. 
+/led led number color : Switch on given led with given color. 
+
 /led/xy  x y color	Switch on led wit x y position to given color.
 /xy x y 
+
 /allcolorbhor : 	Switch all Bhoreal Leds with given colour (0-127)
+
 /clsbhor :      	Switch off all bhoreal colors
+
 /padmode : 			Code not available yet in LJay. Different modes available for Bhoreal and Launchpad. "Prompt" = 10 ; "Myxo" = 2 ; "Midifile" = 3
 
 
  
 # Nozoids synthetizers functions originated by nozosc.py and executed in llstr.py (See Nozosc readme for complete OSC implementation and how to control Nozosc)
 	
+
 /nozoid/osc/number value : Store a new value for given oscillator/LFO/VCO
 
 /nozoid/X value 	use given oscillator/LFO/VCO number for X axis. See llstr.py 
+
 /nozoid/Y value 	use given oscillator/LFO/VCO number for Y axis. See llstr.py 
 
 /nozoid/color r g b set current laser color  	
 
 /nozoid/knob/number value : Not used yet
+
 /nozoid/mix/number value : Not used yet
+
 /nozoid/vco/number value : Not used yet
+
 /nozoid/lfo/number value : Not used yet
 
 
@@ -140,7 +166,9 @@ In RGB Color mode (see note effects to switch Color mode)
 # Advanced TouchOSC GUI Handlers
 
 /on : 			Accept an advanced GUI with status widget. Automatically get the IP, send status,...
+
 /off : 			Disconnect the advanced GUI
+
 /status text	Display some text on status widget GUI
 
 /control/matrix/Y/X 0 or 1
@@ -188,17 +216,26 @@ CC channel effects (0-127):
 # Install 
 #
 
+
 Doc in progress
 
 apt install git python-pip libasound2-dev python-dev libpython-dev libjack-dev
+
 pip install pysimpledmx
+
 pip install Cython
+
 pip install mido
+
 pip install python-rtmidi tokenize
+
 pip install pygame, pyserial, pyosc
 
+
 If you have serial or rtmidi python module, remove them first. 
+
 pip uninstall serial 
+
 pip uninstall rtmidi
 
 
@@ -211,9 +248,13 @@ pip uninstall rtmidi
 This program suppose that the ether dream is configured in a certain way especially for its IP address. Write an autoplay.txt file inside an SD Card within the ether dream DAC, with the following lines you can adjust i.e for pps or fps. Yes, there is a builtin DHCP client in the ether dream DAC but if you run multiple lasers, having a fixed dedicated network makes you focus on laser stuff.
 
 /net/ipaddr 192.168.1.3
+
 /net/netmask 255.255.255.0
+
 /net/gateway 192.168.1.1
+
 /ilda/pps 25000
+
 /ilda/fps 25
 
 About hardware setup, especially if you have several lasers : ILDA cables are insanely expensive. You may consider the Power Over Ethernet 'POE' option. Buy a very small ILDA cable, a POE splitter and connect everything to the ether dream fixed near your laser. You can have then a simple and very long network cable and use a Power Over Ethernet injector or switch closed to the driving computer. Beware some vendors use 24V POE Injector : POE injectors and splitters must match.
