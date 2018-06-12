@@ -43,13 +43,14 @@ class Frame(object):
 			self.LineTo(xy0,c)
 	
 	def RenderScreen(self, surface):
-		xyc_prev = self.point_list[0]
-		#pygame.draw.line(surface,self.black_hole_color,(x_bh_cur, y_bh_cur), (x_bh_next, y_bh_next))
-		#pygame.draw.line(surface,self.spoke_color,(x_bh_cur, y_bh_cur), (x_area_cur, y_area_cur))
-		for xyc in self.point_list:
-			c = int(xyc[2])
-			if c: pygame.draw.line(surface,c,xyc_prev[:2],xyc[:2],3)
-			xyc_prev = xyc
+		if len(self.point_list):
+			xyc_prev = self.point_list[0]
+			#pygame.draw.line(surface,self.black_hole_color,(x_bh_cur, y_bh_cur), (x_bh_next, y_bh_next))
+			#pygame.draw.line(surface,self.spoke_color,(x_bh_cur, y_bh_cur), (x_area_cur, y_area_cur))
+			for xyc in self.point_list:
+				c = int(xyc[2])
+				if c: pygame.draw.line(surface,c,xyc_prev[:2],xyc[:2],3)
+				xyc_prev = xyc
 
 class FrameHolder(object):
 	def __init__(self):

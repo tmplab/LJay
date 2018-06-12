@@ -405,39 +405,45 @@ def nozX(path, tags, args, source):
     #print "X"
     #print user,path,args
     print path,args
-    value = int(args[0])
-    #print number,value
-    #print value
-    gstt.X = value
-    if value == 0:
+    oscillator = int(args[0])
+    CurveNumber = int(args[1])
+    print "Oscillator=%d,CN=%d"%(oscillator,CurveNumber)
+    if CurveNumber == 0:
+      print "Setting gstt.X[%d] to %d" %(CurveNumber,oscillator)
+      gstt.X[CurveNumber] = oscillator
+    elif CurveNumber >= 1:
+       print "Setting gstt.X[%d] to %d" %(CurveNumber,oscillator)
+       gstt.X[CurveNumber] = oscillator
+
+    if oscillator == 0:
 	gstt.colorX[0]=0
 	gstt.colorX[1]=0
 	gstt.colorX[2]=0
-    if value == 1:
+    if oscillator == 1:
 	gstt.colorX[0]=255
 	gstt.colorX[1]=0
 	gstt.colorX[2]=0
-    if value == 2:
+    if oscillator == 2:
 	gstt.colorX[0]=0
 	gstt.colorX[1]=255
 	gstt.colorX[2]=0
-    if value == 3:
+    if oscillator == 3:
 	gstt.colorX[0]=255
 	gstt.colorX[1]=255
 	gstt.colorX[2]=0
-    if value == 4:
+    if oscillator == 4:
 	gstt.colorX[0]=0
 	gstt.colorX[1]=0
 	gstt.colorX[2]=255
-    if value == 5:
+    if oscillator == 5:
 	gstt.colorX[0]=255
 	gstt.colorX[1]=0
 	gstt.colorX[2]=255
-    if value == 6:
+    if oscillator == 6:
 	gstt.colorX[0]=0
 	gstt.colorX[1]=255
 	gstt.colorX[2]=255
-    if value >= 7:
+    if oscillator >= 7:
 	gstt.colorX[0]=255
 	gstt.colorX[1]=255
 	gstt.colorX[2]=255
@@ -449,43 +455,48 @@ def nozX(path, tags, args, source):
 # Get wich Nozoid sound curve to draw on Y axis 
 def nozY(path, tags, args, source):
     user = ''.join(path.split("/"))
-    #print "Y"
+    print "Here nozY in bhorosc"
     #print user,path,args
     print path,args
-    value = int(args[0])
-    #print number,value
-    #print value
-    gstt.Y = value
+    oscillator = int(args[0])
+    CurveNumber = int(args[1])
+    print "Oscillator=%d,CN=%d"%(oscillator,CurveNumber)
+    if CurveNumber == 0:
+      print "Setting gstt.Y[%d] to %d" %(CurveNumber,oscillator)
+      gstt.Y[CurveNumber] = oscillator
+    elif CurveNumber >= 1:
+       print "Setting gstt.Y[%d] to %d" %(CurveNumber,oscillator)
+       gstt.Y[CurveNumber] = oscillator
 
-    if value == 0:
+    if oscillator == 0:
 	gstt.colorY[0]=0
 	gstt.colorY[1]=0
 	gstt.colorY[2]=0
-    if value == 1:
+    if oscillator == 1:
 	gstt.colorY[0]=255
 	gstt.colorY[1]=0
 	gstt.colorY[2]=0
-    if value == 2:
+    if oscillator == 2:
 	gstt.colorY[0]=0
 	gstt.colorY[1]=255
 	gstt.colorY[2]=0
-    if value == 3:
+    if oscillator == 3:
 	gstt.colorY[0]=255
 	gstt.colorY[1]=255
 	gstt.colorY[2]=0
-    if value == 4:
+    if oscillator == 4:
 	gstt.colorY[0]=0
 	gstt.colorY[1]=0
 	gstt.colorY[2]=255
-    if value == 5:
+    if oscillator == 5:
 	gstt.colorY[0]=255
 	gstt.colorY[1]=0
 	gstt.colorY[2]=255
-    if value == 6:
+    if oscillator == 6:
 	gstt.colorY[0]=0
 	gstt.colorY[1]=255
 	gstt.colorY[2]=255
-    if value >= 7:
+    if oscillator >= 7:
 	gstt.colorY[0]=255
 	gstt.colorY[1]=255
 	gstt.colorY[2]=255

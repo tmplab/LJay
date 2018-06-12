@@ -81,11 +81,11 @@ noziport=8003 #nozosc.py receiving commands port
 nozoport=8001 #nozosc.py sending port to LJay(main.py)
 nozuport=0 #linux serial usb port connecting nozoid devices ACM0 by default
 
-X = 0
-Y = 0
+X = [0] * 4 #16 courbes en X par laser ça passe ?
+Y = [0] * 4 #16 courbes en Y par laser ça passe ?
+
 colorX = [255,255,255]
 colorY = [255,255,255]
-
 
 # No rotation X (cc 29) Y (cc 30) Z (cc 31)  at first
 cc[29] = cc[30] = cc[31] =  0
