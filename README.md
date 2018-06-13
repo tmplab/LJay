@@ -102,10 +102,6 @@ Modify in gstt set and curve to run your curve at startup.
 
 /number value : 	switch current displayed curve to value.
 
-/enter : 			should validate previous chosen number 
-
-/clear : 			Clear status widget text.
-
 /quit : 			Do nothing yet
 
 
@@ -136,11 +132,12 @@ In RGB Color mode (see note effects to switch Color mode)
 /led led number color : Switch on given led with given color. 
 
 /led/xy  x y color	Switch on led wit x y position to given color.
+
 /xy x y 
 
 /allcolorbhor : 	Switch all Bhoreal Leds with given colour (0-127)
 
-/clsbhor :      	Switch off all bhoreal colors
+/clsbhor :      	Switch off all bhoreal leds
 
 /padmode : 			Code not available yet in LJay. Different modes available for Bhoreal and Launchpad. "Prompt" = 10 ; "Myxo" = 2 ; "Midifile" = 3
 
@@ -150,7 +147,9 @@ In RGB Color mode (see note effects to switch Color mode)
 
 ![Nozoid synthetizer](http://nozoid.com/wp-content/uploads/2017/05/OCS_previus-600x330.png)
 
-Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme for complete OSC implementation and how to control Nozosc)
+
+
+Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme for complete OSC implementation and how to control Nozosc). A new firmware by loloster is mandatory for OCS 2 (https://github.com/loloster/ocs-2) and MMO3 (https://github.com/loloster/mmo-3)
 	
 
 /nozoid/osc/number value : Store a new value for given oscillator/LFO/VCO
@@ -181,6 +180,11 @@ Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme fo
 
 /status text	Display some text on status widget GUI
 
+/clear : 		Clear status widget text.
+
+/enter : 		should validate previous chosen number 
+
+
 /control/matrix/Y/X 0 or 1
 				First screen ("Control") buttons toggle state : on or off
 
@@ -197,28 +201,37 @@ Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme fo
 Note on effects :
 
 0-7 	Curve choice 
+
 8-15 	Set choice
+
 16-23 	Laser choice 
 		At this time LJay cannot control directly more than one laser. Therefore at least one LJay has to start in master mode : if you issue a noteon in this laser choice range, all future laser osc commands will be forwarded to the correct LJay for execution.
 
+
 57 		Color mode : Rainbow 
+
 58 		Color mode : RGB 
 
 
 CC channel effects (0-127):
 
 1
+
 2
 
 5 
+
 6 
 
 
 21 		3D projection : FOV
+
 22 		3D projection : Distance
 
 29 		3D Rotation speed X
+
 30 		3D Rotation speed Y
+
 31 		3D Rotation speed Z
 
 
@@ -228,6 +241,13 @@ CC channel effects (0-127):
 
 
 (Doc in progress)
+
+If you have serial or rtmidi python module, remove them first. 
+
+pip uninstall serial 
+
+pip uninstall rtmidi
+
 
 apt install git python-pip libasound2-dev python-dev libpython-dev libjack-dev
 
@@ -242,11 +262,7 @@ pip install python-rtmidi tokenize
 pip install pygame, pyserial, pyosc
 
 
-If you have serial or rtmidi python module, remove them first. 
 
-pip uninstall serial 
-
-pip uninstall rtmidi
 
 
 # 
