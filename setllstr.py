@@ -12,11 +12,12 @@ import numpy as np
 import collections
 import time
 
-dotsosc0 = [collections.deque(maxlen=10)] * len(gstt.X)
-dotsosc1 = [collections.deque(maxlen=10)] * len(gstt.X)
-dotsoscT = [dotsosc0,dotsosc1] * len(gstt.X)
-#dotsoscT = [collections.deque(maxlen=10),collections.deque(maxlen=10)] * len(gstt.X)
-currentdotsosc = [0] * len(gstt.X)
+dotsosc0 = [collections.deque(maxlen=10)] * gstt.maxCurvesByLaser
+dotsosc1 = [collections.deque(maxlen=10)] * gstt.maxCurvesByLaser
+#dotsoscT = [dotsosc0,dotsosc1] * gstt.maxCurvesByLaser
+dotsoscT = [dotsosc0,dotsosc1]
+#dotsoscT = [collections.deque(maxlen=10),collections.deque(maxlen=10)] * gstt.maxCurvesByLaser
+currentdotsosc = [0] * gstt.maxCurvesByLaser
 
 #dotsosc0a = collections.deque(maxlen=10)
 #dotsosc1a = collections.deque(maxlen=10)
@@ -48,93 +49,93 @@ def NozMode(fwork):
     nbphigh=100
 
     # There is a sound curve to draw on X axis
-    for CurveNumber in range (0, len(gstt.X)): 
-      if gstt.X[CurveNumber] != 0:
+    for curveNumber in range (0, gstt.maxCurvesByLaser): 
+      if gstt.X[curveNumber] != 0:
     	#print "gstt.X != 0 (== %d)" % gstt.X
        	#if (dotsosc.maxlen == nbphigh and gstt.Y != 0):
-       	if (dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen == nbphigh and gstt.Y[CurveNumber] != 0):
+       	if (dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen == nbphigh and gstt.Y[curveNumber] != 0):
           #shrink points list (it's a lissajou curve)
-          print "X changing size of dotsocsT[%d][%d] (%d) to %d"%(CurveNumber,currentdotsosc[CurveNumber],dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen,nbplow)
-          dotsoscT[CurveNumber][currentdotsosc[CurveNumber]] = collections.deque(maxlen=nbplow)
-        xT = gstt.osc[gstt.X[CurveNumber]]
+          print "X changing size of dotsocsT[%d][%d] (%d) to %d"%(curveNumber,currentdotsosc[curveNumber],dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen,nbplow)
+          dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbplow)
+        xT = gstt.osc[gstt.X[curveNumber]]
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
     
       else:
         # Else (i.e. gstt.X == 0) use time for X axis and expand points list
         #print "gstt.X == 0"
-        if (gstt.Y[CurveNumber] != 0 and dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen == nbplow):
-          print "X changing size of dotsocsT[%d][%d] (%d) to %d"%(CurveNumber,currentdotsosc[CurveNumber],dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen,nbphigh)
-          dotsoscT[CurveNumber][currentdotsosc[CurveNumber]] = collections.deque(maxlen=nbphigh)
+        if (gstt.Y[curveNumber] != 0 and dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen == nbplow):
+          print "X changing size of dotsocsT[%d][%d] (%d) to %d"%(curveNumber,currentdotsosc[curveNumber],dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen,nbphigh)
+          dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbphigh)
         xT = (((time.time()*50000) % 65536) - 32768)
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
 
       # There is a sound curve to draw on Y axis
-      if gstt.Y[CurveNumber] != 0:
+      if gstt.Y[curveNumber] != 0:
         #print "gstt.Y != 0 (== %d)" % gstt.Y
-        if (dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen == nbphigh and gstt.X[CurveNumber] != 0):
-          print "Y changing size of dotsocsT[%d][%d] (%d) to %d"%(CurveNumber,currentdotsosc[CurveNumber],dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen,nbplow)
-          dotsoscT[CurveNumber][currentdotsosc[CurveNumber]] = collections.deque(maxlen=nbplow)
-        yT = gstt.osc[gstt.Y[CurveNumber]]
+        if (dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen == nbphigh and gstt.X[curveNumber] != 0):
+          print "Y changing size of dotsocsT[%d][%d] (%d) to %d"%(curveNumber,currentdotsosc[curveNumber],dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen,nbplow)
+          dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbplow)
+        yT = gstt.osc[gstt.Y[curveNumber]]
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
       else:
         # Use time for X axis    
         #print "gstt.Y == 0"
-        if (gstt.X[CurveNumber] != 0 and dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen == nbplow):
-          print "Y changing size of dotsocsT[%d][%d] (%d) to %d"%(CurveNumber,currentdotsosc[CurveNumber],dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].maxlen,nbphigh)
-          dotsoscT[CurveNumber][currentdotsosc[CurveNumber]] = collections.deque(maxlen=nbphigh)
+        if (gstt.X[curveNumber] != 0 and dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen == nbplow):
+          print "Y changing size of dotsocsT[%d][%d] (%d) to %d"%(curveNumber,currentdotsosc[curveNumber],dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen,nbphigh)
+          dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbphigh)
         yT = (((time.time()*50000) % 65536) - 32768)
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
         #print "y:%r,yT:%r" % (y,yT)
 
-      if gstt.X[CurveNumber] == 0 and gstt.Y[CurveNumber] == 0:
+      if gstt.X[curveNumber] == 0 and gstt.Y[curveNumber] == 0:
         x = 0
         y = 0
 
       newx,newy =  proj(int(x),int(y),0)
 
 
-      if gstt.X[CurveNumber] != 0 and gstt.Y[CurveNumber] == 0:
-        if 1 < len(dotsoscT[CurveNumber][currentdotsosc[CurveNumber]]) and newy > dotsoscT[CurveNumber][currentdotsosc[CurveNumber]][-1][1]:
+      if gstt.X[curveNumber] != 0 and gstt.Y[curveNumber] == 0:
+        if 1 < len(dotsoscT[currentdotsosc[curveNumber]][curveNumber]) and newy > dotsoscT[currentdotsosc[curveNumber]][curveNumber][-1][1]:
 	    #switching to the other points list queue in order to not trace the "return" laser line
 	    #as we don't know how to trace that particular segment formed by that new "return" point in black
 	    #destroy current queue
-            dotsoscT[CurveNumber][currentdotsosc[CurveNumber]]=collections.deque(maxlen=nbphigh)
-            currentdotsosc[CurveNumber]=(currentdotsosc[CurveNumber]+1)%2
+            dotsoscT[currentdotsosc[curveNumber]][curveNumber]=collections.deque(maxlen=nbphigh)
+            currentdotsosc[curveNumber]=(currentdotsosc[curveNumber]+1)%2
             #print "Switching dotosc to #%d"%currentdotsosc
 	    #creating a new one
-            dotsoscT[CurveNumber][currentdotsosc[CurveNumber]]=collections.deque(maxlen=nbphigh)
+            dotsoscT[currentdotsosc[curveNumber]][curveNumber]=collections.deque(maxlen=nbphigh)
 
 	#we could try to let the previous queue disappear slowly…
 	#instead of destroying it as stated above
 	#if len(dotsoscT[(currentdotsosc+1)%2]):
 	#        dotsoscT[(currentdotsosc+1)%2].popleft()
-        dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].append((newx,newy))
-    	fwork.PolyLineOneColor( dotsoscT[CurveNumber][0], c=colorify.rgb2hex(gstt.color)  )
-        fwork.PolyLineOneColor( dotsoscT[CurveNumber][1], c=colorify.rgb2hex(gstt.color)  )
+        dotsoscT[currentdotsosc[curveNumber]][curveNumber].append((newx,newy))
+    	fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber])  )
+        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber])  )
 
-      if gstt.X[CurveNumber] == 0 and gstt.Y[CurveNumber] != 0:
-        if 1 < len(dotsoscT[CurveNumber][currentdotsosc[CurveNumber]]) and newx < dotsoscT[CurveNumber][currentdotsosc[CurveNumber]][-1][0]:
-            dotsoscT[CurveNumber][currentdotsosc[CurveNumber]]=collections.deque(maxlen=nbphigh)
-            currentdotsosc[CurveNumber]=(currentdotsosc[CurveNumber]+1)%2
+      if gstt.X[curveNumber] == 0 and gstt.Y[curveNumber] != 0:
+        if 1 < len(dotsoscT[currentdotsosc[curveNumber]][curveNumber]) and newx < dotsoscT[currentdotsosc[curveNumber]][curveNumber][-1][0]:
+            dotsoscT[currentdotsosc[curveNumber]][curveNumber]=collections.deque(maxlen=nbphigh)
+            currentdotsosc[curveNumber]=(currentdotsosc[curveNumber]+1)%2
             #print "Switching dotosc to #%d"%currentdotsosc
-            dotsoscT[CurveNumber][currentdotsosc[CurveNumber]]=collections.deque(maxlen=nbphigh)
+            dotsoscT[currentdotsosc[curveNumber]][curveNumber]=collections.deque(maxlen=nbphigh)
 
 	#if len(dotsoscT[(currentdotsosc+1)%2]):
 	#        dotsoscT[(currentdotsosc+1)%2].popleft()
-        dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].append((newx,newy))
-    	fwork.PolyLineOneColor( dotsoscT[CurveNumber][0], c=colorify.rgb2hex(gstt.color)  )
-        fwork.PolyLineOneColor( dotsoscT[CurveNumber][1], c=colorify.rgb2hex(gstt.color)  )
+        dotsoscT[currentdotsosc[curveNumber]][curveNumber].append((newx,newy))
+    	fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber])  )
+        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber])  )
 
       #if (gstt.X == 0 and gstt.Y == 0) or (gstt.X != 0 and gstt.Y != 0):
-      if (gstt.X[CurveNumber] != 0 and gstt.Y[CurveNumber] != 0):
+      if (gstt.X[curveNumber] != 0 and gstt.Y[curveNumber] != 0):
         #dotsosc.append((newx,newy))
-        dotsoscT[CurveNumber][currentdotsosc[CurveNumber]].append((newx,newy))
+        dotsoscT[currentdotsosc[curveNumber]][curveNumber].append((newx,newy))
         #dotsoscT[0].append((newx,newy))
         #dotsoscT[1].append((newx,newy))
 	#print "Plotting first lissajou curve"
 	#print "gstt.X[0]=%d" % gstt.X[0]
 	#print "gstt.Y[0]=%d" % gstt.Y[0]
-    	fwork.PolyLineOneColor( dotsoscT[CurveNumber][currentdotsosc[CurveNumber]], c=colorify.rgb2hex(gstt.color)  )
+    	fwork.PolyLineOneColor( dotsoscT[currentdotsosc[curveNumber]][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber])  )
 
       #fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
       #fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )

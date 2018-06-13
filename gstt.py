@@ -17,6 +17,15 @@ Laser = 4
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
 Set = 2 #nozoid loloster.py
+maxCurvesByLaser = 4
+#curveColor = [255,0,0] * maxCurvesByLaser
+curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+colorX = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+colorY = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+
+#curveX = [255,255,255] * maxCurvesByLaser
+#curveY = [255,255,255] * maxCurvesByLaser
+
 
 # gstt.Curve select what to display. Can be changed with /noteon 16-21
 
@@ -81,11 +90,9 @@ noziport=8003 #nozosc.py receiving commands port
 nozoport=8001 #nozosc.py sending port to LJay(main.py)
 nozuport=0 #linux serial usb port connecting nozoid devices ACM0 by default
 
-X = [0] * 4 #16 courbes en X par laser ça passe ?
-Y = [0] * 4 #16 courbes en Y par laser ça passe ?
 
-colorX = [255,255,255]
-colorY = [255,255,255]
+X = [0] * maxCurvesByLaser
+Y = [0] * maxCurvesByLaser
 
 # No rotation X (cc 29) Y (cc 30) Z (cc 31)  at first
 cc[29] = cc[30] = cc[31] =  0

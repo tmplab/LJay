@@ -402,53 +402,53 @@ def point(path, tags, args, source):
 # /nozoid/X value = numéro d'oscillateur
 def nozX(path, tags, args, source):
     user = ''.join(path.split("/"))
-    #print "X"
+    print "Here nozX in bhorosc"
     #print user,path,args
     print path,args
     oscillator = int(args[0])
-    CurveNumber = int(args[1])
-    print "Oscillator=%d,CN=%d"%(oscillator,CurveNumber)
-    if CurveNumber == 0:
-      print "Setting gstt.X[%d] to %d" %(CurveNumber,oscillator)
-      gstt.X[CurveNumber] = oscillator
-    elif CurveNumber >= 1:
-       print "Setting gstt.X[%d] to %d" %(CurveNumber,oscillator)
-       gstt.X[CurveNumber] = oscillator
+    curveNumber = int(args[1])
+    print "Oscillator=%d,CurveNumber=%d"%(oscillator,curveNumber)
+    if curveNumber == 0:
+      print "Setting gstt.X[%d] to %d" %(curveNumber,oscillator)
+      gstt.X[curveNumber] = oscillator
+    elif curveNumber >= 1:
+       print "Setting gstt.X[%d] to %d" %(curveNumber,oscillator)
+       gstt.X[curveNumber] = oscillator
 
     if oscillator == 0:
-	gstt.colorX[0]=0
-	gstt.colorX[1]=0
-	gstt.colorX[2]=0
+	gstt.colorX[curveNumber][0]=0
+	gstt.colorX[curveNumber][1]=0
+	gstt.colorX[curveNumber][2]=0
     if oscillator == 1:
-	gstt.colorX[0]=255
-	gstt.colorX[1]=0
-	gstt.colorX[2]=0
+	gstt.colorX[curveNumber][0]=255
+	gstt.colorX[curveNumber][1]=0
+	gstt.colorX[curveNumber][2]=0
     if oscillator == 2:
-	gstt.colorX[0]=0
-	gstt.colorX[1]=255
-	gstt.colorX[2]=0
+	gstt.colorX[curveNumber][0]=0
+	gstt.colorX[curveNumber][1]=255
+	gstt.colorX[curveNumber][2]=0
     if oscillator == 3:
-	gstt.colorX[0]=255
-	gstt.colorX[1]=255
-	gstt.colorX[2]=0
+	gstt.colorX[curveNumber][0]=255
+	gstt.colorX[curveNumber][1]=255
+	gstt.colorX[curveNumber][2]=0
     if oscillator == 4:
-	gstt.colorX[0]=0
-	gstt.colorX[1]=0
-	gstt.colorX[2]=255
+	gstt.colorX[curveNumber][0]=0
+	gstt.colorX[curveNumber][1]=0
+	gstt.colorX[curveNumber][2]=255
     if oscillator == 5:
-	gstt.colorX[0]=255
-	gstt.colorX[1]=0
-	gstt.colorX[2]=255
+	gstt.colorX[curveNumber][0]=255
+	gstt.colorX[curveNumber][1]=0
+	gstt.colorX[curveNumber][2]=255
     if oscillator == 6:
-	gstt.colorX[0]=0
-	gstt.colorX[1]=255
-	gstt.colorX[2]=255
+	gstt.colorX[curveNumber][0]=0
+	gstt.colorX[curveNumber][1]=255
+	gstt.colorX[curveNumber][2]=255
     if oscillator >= 7:
-	gstt.colorX[0]=255
-	gstt.colorX[1]=255
-	gstt.colorX[2]=255
+	gstt.colorX[curveNumber][0]=255
+	gstt.colorX[curveNumber][1]=255
+	gstt.colorX[curveNumber][2]=255
 
-    colorify.XY()
+    colorify.XY(curveNumber)
 
     #gstt.OscXY[1] = gstt.X
 	
@@ -459,60 +459,70 @@ def nozY(path, tags, args, source):
     #print user,path,args
     print path,args
     oscillator = int(args[0])
-    CurveNumber = int(args[1])
-    print "Oscillator=%d,CN=%d"%(oscillator,CurveNumber)
-    if CurveNumber == 0:
-      print "Setting gstt.Y[%d] to %d" %(CurveNumber,oscillator)
-      gstt.Y[CurveNumber] = oscillator
-    elif CurveNumber >= 1:
-       print "Setting gstt.Y[%d] to %d" %(CurveNumber,oscillator)
-       gstt.Y[CurveNumber] = oscillator
+    curveNumber = int(args[1])
+    print "Oscillator=%d,CurveNumber=%d"%(oscillator,curveNumber)
+    if curveNumber == 0:
+      print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
+      gstt.Y[curveNumber] = oscillator
+    elif curveNumber >= 1:
+       print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
+       gstt.Y[curveNumber] = oscillator
 
     if oscillator == 0:
-	gstt.colorY[0]=0
-	gstt.colorY[1]=0
-	gstt.colorY[2]=0
+	gstt.colorY[curveNumber][0]=0
+	gstt.colorY[curveNumber][1]=0
+	gstt.colorY[curveNumber][2]=0
     if oscillator == 1:
-	gstt.colorY[0]=255
-	gstt.colorY[1]=0
-	gstt.colorY[2]=0
+	gstt.colorY[curveNumber][0]=255
+	gstt.colorY[curveNumber][1]=0
+	gstt.colorY[curveNumber][2]=0
     if oscillator == 2:
-	gstt.colorY[0]=0
-	gstt.colorY[1]=255
-	gstt.colorY[2]=0
+	gstt.colorY[curveNumber][0]=0
+	gstt.colorY[curveNumber][1]=255
+	gstt.colorY[curveNumber][2]=0
     if oscillator == 3:
-	gstt.colorY[0]=255
-	gstt.colorY[1]=255
-	gstt.colorY[2]=0
+	gstt.colorY[curveNumber][0]=255
+	gstt.colorY[curveNumber][1]=255
+	gstt.colorY[curveNumber][2]=0
     if oscillator == 4:
-	gstt.colorY[0]=0
-	gstt.colorY[1]=0
-	gstt.colorY[2]=255
+	gstt.colorY[curveNumber][0]=0
+	gstt.colorY[curveNumber][1]=0
+	gstt.colorY[curveNumber][2]=255
     if oscillator == 5:
-	gstt.colorY[0]=255
-	gstt.colorY[1]=0
-	gstt.colorY[2]=255
+	gstt.colorY[curveNumber][0]=255
+	gstt.colorY[curveNumber][1]=0
+	gstt.colorY[curveNumber][2]=255
     if oscillator == 6:
-	gstt.colorY[0]=0
-	gstt.colorY[1]=255
-	gstt.colorY[2]=255
+	gstt.colorY[curveNumber][0]=0
+	gstt.colorY[curveNumber][1]=255
+	gstt.colorY[curveNumber][2]=255
     if oscillator >= 7:
-	gstt.colorY[0]=255
-	gstt.colorY[1]=255
-	gstt.colorY[2]=255
+	gstt.colorY[curveNumber][0]=255
+	gstt.colorY[curveNumber][1]=255
+	gstt.colorY[curveNumber][2]=255
 
-    colorify.XY()
+    colorify.XY(curveNumber)
     #gstt.OscXY[2] = gstt.Y
 
 def nozcolor(path, tags, args, source):
-	print "here we are in nozcolor!"
-	if len(args) > 0:
-		print "Changing color to R:%d G:%d B:%d" % (args[0], args[1], args[2])
-		gstt.color[0]=int(args[0])
-		gstt.color[1]=int(args[1])
-		gstt.color[2]=int(args[2])
+	#print "here we are in nozcolor!"
+	#print "args",args
+	if len(args) <= 1:
+	  if len(args) == 0:
+	    curveNumber = 0
+	  if len(args) == 1:
+	    curveNumber = int(args[0])
+	  print "Here is Curve[%d]'s color R:%d G:%d B:%d" % (curveNumber,gstt.curveColor[curveNumber][0],gstt.curveColor[curveNumber][1],gstt.curveColor[curveNumber][2])
+
 	else:
-		print "Here are color R:%d G:%d B:%d" % (gstt.color[0],gstt.color[1],gstt.color[2])
+	  if len(args) > 3:
+	    curveNumber = int(args[3])
+	  else:
+	    curveNumber = 0
+	  print "Changing Curve[%d]'s color to R:%d G:%d B:%d" % (curveNumber,args[0], args[1], args[2])
+	  gstt.curveColor[curveNumber][0]=int(args[0])
+	  gstt.curveColor[curveNumber][1]=int(args[1])
+	  gstt.curveColor[curveNumber][2]=int(args[2])
 
     
 # default handler 

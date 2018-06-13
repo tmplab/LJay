@@ -196,7 +196,7 @@ def sendosc(oscaddress,oscargs):
 	oscmsg.append(oscargs)
 
     if oscpath[2] == "color":
-	print "we are asked to change lazer color"
+	#print "we are asked to change lazer color"
 	oscmsg.setAddress(oscaddress)
 	if len(oscargs) > 0:
 		oscmsg.append(oscargs)
@@ -284,7 +284,8 @@ def nozon(path, tags, args, source):
 def nozstop(path, tags, args, source):
 
     print ("Stop Com from Nozoid")
-    for curve in range(0, len(gstt.X)):
+    for curve in range(0, gstt.maxCurvesByLaser):
+	print "Resetting Curve[%d]"%curve
     	sendosc("/nozoid/X", [0x00,curve])
 	sendosc("/nozoid/Y", [0x00,curve])
 	gstt.X[curve]=0
@@ -359,8 +360,8 @@ def nozknob(path, tags, args, source):
 def nozX(path, tags, args, source):
 	#print args
 	if 0 == len(args):
-		for CurveNumber in range(0, len(gstt.X)):
-			print "Current active X[%d] trace set to %d" %(CurveNumber,gstt.X[CurveNumber])
+		for CurveNumber in range(0, gstt.maxCurvesByLaser):
+			print "CurveNumber %d X is tracing osc %d" %(CurveNumber,gstt.X[CurveNumber])
 	if 2 == len (args):
 		print "Oh! You are setting a curve number as second argument?! It's so cute!"
 		CurveNumber = args[1]
@@ -368,24 +369,25 @@ def nozX(path, tags, args, source):
 	else:
 		CurveNumber = 0
 
-	print "Setting active X[%d] trace to %d" %(CurveNumber,args[0])
-	#print type(args[0])
-	#deactivate currently active osc used
-	if gstt.X[CurveNumber] <= 16:
+	if 0 < len(args):
+	  print "Setting active X[%d] trace to %d" %(CurveNumber,args[0])
+	  #print type(args[0])
+	  #deactivate currently active osc used
+	  if gstt.X[CurveNumber] <= 16:
 		Mser.write([0x9F + gstt.X[CurveNumber]])
-	else:
+	  else:
 		Mser.write([0xE2 + gstt.X[CurveNumber]])
 
-	if args[0] <= 16:
+	  if args[0] <= 16:
 		Mser.write([0x9F + int(args[0])])
 		print("/nozoid/X/%d") % (0x00 + int(args[0]))
 		sendosc("/nozoid/X",[(0x00 + int(args[0])),CurveNumber])
-	else:
+	  else:
 		Mser.write([0xE2 + int(args[0])])
 		print("/nozoid/X/%d") % (0x43 + int(args[0]))
 		sendosc("/nozoid/X",[(0x43 + int(args[0])),CurveNumber])
 
-	gstt.X[CurveNumber]=int(args[0])
+	  gstt.X[CurveNumber]=int(args[0])
 
 # /Y
 # change sound curve to draw on Y axis and tell nozoids to send this sound curve
@@ -393,48 +395,60 @@ def nozX(path, tags, args, source):
 def nozY(path, tags, args, source):
 	#print args
 	if 0 == len(args):
-		for CurveNumber in range(0, len(gstt.Y)):
-			print "Current active Y[%d] trace set to %d" %(CurveNumber,gstt.Y[CurveNumber])
+		for CurveNumber in range(0, gstt.maxCurvesByLaser):
+			print "CurveNumber %d Y is tracing osc %d" %(CurveNumber,gstt.Y[CurveNumber])
 	if 2 == len (args):
 		print "Oh! You are setting a curve number as second argument?! It's so fine!"
 		CurveNumber = args[1]
 		print "CurveNumber",CurveNumber
 	else:
 		CurveNumber = 0
-	#print "Args len %d" % len(args)
-	print "Setting active Y[%d] trace to %d" %(CurveNumber,args[0])
-	#print type(args[0])
-	#deactivate currently active osc sent by nozoid saved into gstt.Y at previous call
-	#even if it's the same which will be asked again…
-	if gstt.Y[CurveNumber] <= 16:
+
+	if 0 < len(args):
+	  #print "Args len %d" % len(args)
+	  print "Setting active Y[%d] trace to %d" %(CurveNumber,args[0])
+	  #print type(args[0])
+	  #deactivate currently active osc sent by nozoid saved into gstt.Y at previous call
+	  #even if it's the same which will be asked again…
+	  if gstt.Y[CurveNumber] <= 16:
 		Mser.write([0x9F + gstt.Y[CurveNumber]])
-	else:
+	  else:
 		Mser.write([0xE2 + gstt.Y[CurveNumber]])
 
-	if args[0] <= 16:
+	  if args[0] <= 16:
 		Mser.write([0x9F + int(args[0])])
 		print("/nozoid/Y/%d") % (0x00 + int(args[0]))
 		sendosc("/nozoid/Y",[(0x00 + int(args[0])),CurveNumber])
-	else:
+	  else:
 		Mser.write([0xE2 + int(args[0])])
         	print("/nozoid/Y/%d") % (0x43 + int(args[0]))
 		sendosc("/nozoid/Y",[(0x43 + int(args[0])),CurveNumber])
 
-	gstt.Y[CurveNumber]=int(args[0])
+	  gstt.Y[CurveNumber]=int(args[0])
 
 def nozcolor(path, tags, args, source):
-	print "Quelqu'un (je ne sais pas qui) m'a demandé de la couleur…"
-	print args
-	if 0 == len(args):
-		sendosc("/nozoid/color",[])
-		print "Hum maybe you should see now what bhorosc.py has answered about colorZ"
+	#print "Quelqu'un (je ne sais pas qui) m'a demandé de la couleur…"
+        #print "args",args
+        if len(args) <= 1:
+          if len(args) == 0:
+            curveNumber = 0
+          if len(args) == 1:
+            curveNumber = int(args[0])
+	  sendosc("/nozoid/color",args)
+	  print "Hum maybe you should see now what bhorosc.py has answered about colorZ"
 
-	else:
-		print "Changing color to R:%d G:%d B:%d" % (args[0], args[1], args[2])
-		gstt.color[0]=int(args[0])
-		gstt.color[1]=int(args[1])
-		gstt.color[2]=int(args[2])
-		sendosc("/nozoid/color",[gstt.color[0],gstt.color[1],gstt.color[2]])
+
+        else:
+          if len(args) > 3:
+            curveNumber = int(args[3])
+          else:
+            curveNumber = 0
+          print "Changing Curve[%d]'s color to R:%d G:%d B:%d" % (curveNumber,args[0], args[1], args[2])
+          gstt.curveColor[curveNumber][0]=int(args[0])
+          gstt.curveColor[curveNumber][1]=int(args[1])
+          gstt.curveColor[curveNumber][2]=int(args[2])
+	  sendosc("/nozoid/color",[int(args[0]),int(args[1]),int(args[2]),int(args[3])])
+
 
 def flashdmx(path, tags, args, source):
 

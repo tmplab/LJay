@@ -4,13 +4,14 @@
 
 import gstt
 
-def XY():
-    gstt.color[0]=(gstt.colorX[0] or gstt.colorY[0])
-    print "RX:%d RY:%d R:%d"%(gstt.colorX[0],gstt.colorY[0],gstt.color[0])
-    gstt.color[1]=(gstt.colorX[1] or gstt.colorY[1])
-    print "GX:%d GY:%d G:%d"%(gstt.colorX[1],gstt.colorY[1],gstt.color[1])
-    gstt.color[2]=(gstt.colorX[2] or gstt.colorY[2])
-    print "BX:%d BY:%d B:%d"%(gstt.colorX[2],gstt.colorY[2],gstt.color[2])
+def XY(curveNumber):
+    print "here XY"
+    gstt.curveColor[curveNumber][0]=(gstt.colorX[curveNumber][0] or gstt.colorY[curveNumber][0])
+    print "RX:%d RY:%d R:%d"%(gstt.colorX[curveNumber][0],gstt.colorY[curveNumber][0],gstt.curveColor[curveNumber][0])
+    gstt.curveColor[curveNumber][1]=(gstt.colorX[curveNumber][1] or gstt.colorY[curveNumber][1])
+    print "GX:%d GY:%d G:%d"%(gstt.colorX[curveNumber][1],gstt.colorY[curveNumber][1],gstt.curveColor[curveNumber][1])
+    gstt.curveColor[curveNumber][2]=(gstt.colorX[curveNumber][2] or gstt.colorY[curveNumber][2])
+    print "BX:%d BY:%d B:%d"%(gstt.colorX[curveNumber][2],gstt.colorY[curveNumber][2],gstt.curveColor[curveNumber][2])
     
 def hex2rgb(hexcode):
     return tuple(map(ord,hexcode[1:].decode('hex')))
@@ -63,7 +64,7 @@ def rainbow():
         else:
             gstt.color[0] += 1
         
-        if gstt.color[0] > 254 and gstt.color[1] > 2544  and gstt.color[2] > 254 :
+        if gstt.color[0] > 254 and gstt.color[1] > 254  and gstt.color[2] > 254 :
             
             gstt.color[0] = 0
             gstt.color[1] = 0
