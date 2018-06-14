@@ -91,7 +91,7 @@ def NozMode(fwork):
         x = 0
         y = 0
 
-      newx,newy =  proj(int(x),int(y),0)
+      newx,newy =  proj(int(x),int(y),0,curveNumber)
 
 
       if gstt.X[curveNumber] != 0 and gstt.Y[curveNumber] == 0:
@@ -377,7 +377,7 @@ def extracc2range(s,min,max):
 
 
 
-def proj(x,y,z):
+def proj(x,y,z,curveNumber):
 
     gstt.angleX += cc2range(gstt.cc[29],0,0.1)
     gstt.angleY += cc2range(gstt.cc[30],0,0.1)
@@ -406,8 +406,8 @@ def proj(x,y,z):
 
     # 3D to 2D projection
     factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
-    x = x * factor + xy_center [0]
-    y = - y * factor + xy_center [1]
+    x = (x+gstt.offsetX[curveNumber]) * factor + xy_center [0]
+    y = - (y+gstt.offsetY[curveNumber]) * factor + xy_center [1]
 
     return x,y
 

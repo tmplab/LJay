@@ -397,7 +397,14 @@ def point(path, tags, args, source):
     
     #print gstt.point[0],gstt.point[1],gstt.point[2]
     
-    
+# /nozoid/offset value = decalage X, decalage Y, courbe
+def nozoffset(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    print "Here we are in /nozoid/offset in bhorosc"
+    gstt.curveNumber = int(args[2])
+    gstt.offsetX[gstt.curveNumber] = int(args[0])
+    gstt.offsetY[gstt.curveNumber] = int(args[1])
+    print "offsetX=%d,offsetY=%d,curveNumber=%d"%(gstt.offsetX[gstt.curveNumber],gstt.offsetY[gstt.curveNumber],gstt.curveNumber)
 
 # /nozoid/X value = numéro d'oscillateur
 def nozX(path, tags, args, source):
@@ -963,6 +970,7 @@ oscserver.addMsgHandler( "/nozoid/X", nozX )
 oscserver.addMsgHandler( "/nozoid/Y", nozY )
 oscserver.addMsgHandler( "/nozoid/color", nozcolor )
 oscserver.addMsgHandler( "/stop/rotation", stoprot )
+oscserver.addMsgHandler( "/nozoid/offset", nozoffset )
 
 
 

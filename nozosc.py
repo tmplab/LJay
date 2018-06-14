@@ -195,6 +195,11 @@ def sendosc(oscaddress,oscargs):
 	oscmsg.setAddress(oscaddress)
 	oscmsg.append(oscargs)
 
+    if oscpath[2] == "offset":
+	print "we are asked to offset a curve"
+	oscmsg.setAddress(oscaddress)
+	oscmsg.append(oscargs)
+
     if oscpath[2] == "color":
 	#print "we are asked to change lazer color"
 	oscmsg.setAddress(oscaddress)
@@ -354,8 +359,15 @@ def nozknob(path, tags, args, source):
 	print ("KNOB", args[0], "asked")
 	Mser.write([0 + int(args[0])]) # 0xA0 : OSC 1l / 0xA1 : OSC 2  / 0xA2 : OSC 3 
 
+# /nozoid/offset value = decalage X, decalage Y, courbe
+def nozoffset(path, tags, args, source):
+    print "Here we are in /nozoid/offset in nozosc"
+    offsetX = int(args[0])
+    offsetY = int(args[1])
+    curveNumber = int(args[2])
+    print "offsetX=%d,offsetY=%d,curveNumber=%d"%(offsetX,offsetY,curveNumber)
+    sendosc("/nozoid/offset",[offsetX,offsetY,curveNumber])
 
-# /X
 # /X change sound curve to draw on X axis and tell nozoids to send this sound curve
 def nozX(path, tags, args, source):
 	#print args
@@ -486,6 +498,7 @@ oscserver.addMsgHandler( "/nozoid/X", nozX )
 oscserver.addMsgHandler( "/nozoid/Y", nozY )
 oscserver.addMsgHandler( "/nozoid/color", nozcolor )
 oscserver.addMsgHandler( "/nozoid/flashdmx", flashdmx )
+oscserver.addMsgHandler( "/nozoid/offset", nozoffset )
 
 
 #

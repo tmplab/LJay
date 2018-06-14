@@ -20,8 +20,11 @@ Set = 2 #nozoid loloster.py
 maxCurvesByLaser = 4
 #curveColor = [255,0,0] * maxCurvesByLaser
 curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
-colorX = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
-colorY = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+colorX = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+colorY = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+offsetX = [0] * maxCurvesByLaser
+offsetY = [0] * maxCurvesByLaser
+curveNumber = 0
 
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser
