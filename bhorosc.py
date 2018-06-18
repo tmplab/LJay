@@ -415,12 +415,8 @@ def nozX(path, tags, args, source):
     oscillator = int(args[0])
     curveNumber = int(args[1])
     print "Oscillator=%d,CurveNumber=%d"%(oscillator,curveNumber)
-    if curveNumber == 0:
-      print "Setting gstt.X[%d] to %d" %(curveNumber,oscillator)
-      gstt.X[curveNumber] = oscillator
-    elif curveNumber >= 1:
-       print "Setting gstt.X[%d] to %d" %(curveNumber,oscillator)
-       gstt.X[curveNumber] = oscillator
+    print "Setting gstt.X[%d] to %d" %(curveNumber,oscillator)
+    gstt.X[curveNumber] = oscillator
 
     if oscillator == 0:
 	gstt.colorX[curveNumber][0]=0
@@ -468,12 +464,8 @@ def nozY(path, tags, args, source):
     oscillator = int(args[0])
     curveNumber = int(args[1])
     print "Oscillator=%d,CurveNumber=%d"%(oscillator,curveNumber)
-    if curveNumber == 0:
-      print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
-      gstt.Y[curveNumber] = oscillator
-    elif curveNumber >= 1:
-       print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
-       gstt.Y[curveNumber] = oscillator
+    print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
+    gstt.Y[curveNumber] = oscillator
 
     if oscillator == 0:
 	gstt.colorY[curveNumber][0]=0
@@ -728,8 +720,8 @@ def handler(path, tags, args, source):
 	
 	# /nozoid/osc/number value	
 	if oscpath[1] == "nozoid" and oscpath[2] == "osc":
-		number = int(oscpath[3])
-		value = int(args[0])
+		number = int(oscpath[3])#the oscillator/modulator number asked
+		value = int(args[0])#the value of the oscillation/modulation
 		#print "osc",number,value
 		#gstt.OscXY[0] = gstt.osc
 		#this is where we save the value of the current oscillation value of the osc/lfo/cv etc (aka number)
