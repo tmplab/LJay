@@ -295,7 +295,7 @@ def nozstop(path, tags, args, source):
 	sendosc("/nozoid/Y", [0x00,curve])
 	gstt.X[curve]=0
 	gstt.Y[curve]=0
-
+    gstt.oscInUse = [0] *255
     Mser.write([0xFF]) 
 #    time.sleep(1)
     print "In_Waiting garbage msg # after 0xFF sent:",Mser.in_waiting
@@ -434,12 +434,14 @@ def nozY(path, tags, args, source):
 	  #even if it's the same which will be asked again…
 	  #see comment in nozX for the following line…
 	  if gstt.oscInUse[gstt.Y[CurveNumber]] == 1:
+	    print "deactivating osc %d" %gstt.Y[CurveNumber]
 	    if gstt.Y[CurveNumber] <= 16:
 		Mser.write([0x9F + gstt.Y[CurveNumber]])
 	    else:
 		Mser.write([0xE2 + gstt.Y[CurveNumber]])
 	  if 0 < gstt.oscInUse[gstt.Y[CurveNumber]]:
 	    gstt.oscInUse[gstt.Y[CurveNumber]]-=1
+	    print "decreasing osc %d to %d" %(gstt.Y[CurveNumber],gstt.oscInUse[gstt.Y[CurveNumber]])
 
 	  if args[0] <= 16:
 	    if gstt.oscInUse[args[0]] == 0:
@@ -454,6 +456,7 @@ def nozY(path, tags, args, source):
 
 	  gstt.Y[CurveNumber]=int(args[0])
 	  gstt.oscInUse[gstt.Y[CurveNumber]]+=1
+	  print "increasing osc %d to %d" %(gstt.Y[CurveNumber],gstt.oscInUse[gstt.Y[CurveNumber]])
 
 def nozcolor(path, tags, args, source):
 	#print "Quelqu'un (je ne sais pas qui) m'a demandé de la couleur…"
