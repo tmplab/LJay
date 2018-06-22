@@ -116,7 +116,6 @@ print "Starting Laser..."
 def dac_thread():
 	while True:
 		try:
-			#d = dac.DAC(dac.find_first_dac())
 			d = dac.DAC(etherIP)
 			d.play_stream(laser)
 		except Exception as e:
