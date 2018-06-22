@@ -295,7 +295,7 @@ def nozstop(path, tags, args, source):
 	sendosc("/nozoid/Y", [0x00,curve])
 	gstt.X[curve]=0
 	gstt.Y[curve]=0
-
+    gstt.oscInUse = [0] *255
     Mser.write([0xFF]) 
 #    time.sleep(1)
     print "In_Waiting garbage msg # after 0xFF sent:",Mser.in_waiting
@@ -384,22 +384,32 @@ def nozX(path, tags, args, source):
 	if 0 < len(args):
 	  print "Setting active X[%d] trace to %d" %(CurveNumber,args[0])
 	  #print type(args[0])
-	  #deactivate currently active osc used
-	  if gstt.X[CurveNumber] <= 16:
+	  #check if no other curve is tracing that osc
+	  if gstt.oscInUse[gstt.X[CurveNumber]] == 1:
+	    #deactivate currently active osc used that is, the last one used
+	    print "deactivating osc %d" %gstt.X[CurveNumber]
+	    if gstt.X[CurveNumber] <= 16:
 		Mser.write([0x9F + gstt.X[CurveNumber]])
-	  else:
+	    else:
 		Mser.write([0xE2 + gstt.X[CurveNumber]])
+	  if 0 < gstt.oscInUse[gstt.X[CurveNumber]]:
+	    gstt.oscInUse[gstt.X[CurveNumber]]-=1
+	    print "decreasing osc %d to %d" %(gstt.X[CurveNumber],gstt.oscInUse[gstt.X[CurveNumber]])
 
 	  if args[0] <= 16:
-		Mser.write([0x9F + int(args[0])])
-		print("/nozoid/X/%d") % (0x00 + int(args[0]))
-		sendosc("/nozoid/X",[(0x00 + int(args[0])),CurveNumber])
+	    if gstt.oscInUse[args[0]] == 0:
+	      Mser.write([0x9F + int(args[0])])
+	    print("/nozoid/X/%d") % (0x00 + int(args[0]))
+	    sendosc("/nozoid/X",[(0x00 + int(args[0])),CurveNumber])
 	  else:
-		Mser.write([0xE2 + int(args[0])])
-		print("/nozoid/X/%d") % (0x43 + int(args[0]))
-		sendosc("/nozoid/X",[(0x43 + int(args[0])),CurveNumber])
+	    if gstt.oscInUse[args[0]] == 0:
+	      Mser.write([0xE2 + int(args[0])])
+	    print("/nozoid/X/%d") % (0x43 + int(args[0]))
+	    sendosc("/nozoid/X",[(0x43 + int(args[0])),CurveNumber])
 
 	  gstt.X[CurveNumber]=int(args[0])
+	  gstt.oscInUse[gstt.X[CurveNumber]]+=1
+	  print "increasing osc %d to %d" %(gstt.X[CurveNumber],gstt.oscInUse[gstt.X[CurveNumber]])
 
 # /Y
 # change sound curve to draw on Y axis and tell nozoids to send this sound curve
@@ -422,21 +432,31 @@ def nozY(path, tags, args, source):
 	  #print type(args[0])
 	  #deactivate currently active osc sent by nozoid saved into gstt.Y at previous call
 	  #even if it's the same which will be asked again…
-	  if gstt.Y[CurveNumber] <= 16:
+	  #see comment in nozX for the following line…
+	  if gstt.oscInUse[gstt.Y[CurveNumber]] == 1:
+	    print "deactivating osc %d" %gstt.Y[CurveNumber]
+	    if gstt.Y[CurveNumber] <= 16:
 		Mser.write([0x9F + gstt.Y[CurveNumber]])
-	  else:
+	    else:
 		Mser.write([0xE2 + gstt.Y[CurveNumber]])
+	  if 0 < gstt.oscInUse[gstt.Y[CurveNumber]]:
+	    gstt.oscInUse[gstt.Y[CurveNumber]]-=1
+	    print "decreasing osc %d to %d" %(gstt.Y[CurveNumber],gstt.oscInUse[gstt.Y[CurveNumber]])
 
 	  if args[0] <= 16:
-		Mser.write([0x9F + int(args[0])])
-		print("/nozoid/Y/%d") % (0x00 + int(args[0]))
-		sendosc("/nozoid/Y",[(0x00 + int(args[0])),CurveNumber])
+	    if gstt.oscInUse[args[0]] == 0:
+	      Mser.write([0x9F + int(args[0])])
+	    print("/nozoid/Y/%d") % (0x00 + int(args[0]))
+	    sendosc("/nozoid/Y",[(0x00 + int(args[0])),CurveNumber])
 	  else:
-		Mser.write([0xE2 + int(args[0])])
-        	print("/nozoid/Y/%d") % (0x43 + int(args[0]))
-		sendosc("/nozoid/Y",[(0x43 + int(args[0])),CurveNumber])
+	    if gstt.oscInUse[args[0]] == 0:
+	      Mser.write([0xE2 + int(args[0])])
+	      print("/nozoid/Y/%d") % (0x43 + int(args[0]))
+	    sendosc("/nozoid/Y",[(0x43 + int(args[0])),CurveNumber])
 
 	  gstt.Y[CurveNumber]=int(args[0])
+	  gstt.oscInUse[gstt.Y[CurveNumber]]+=1
+	  print "increasing osc %d to %d" %(gstt.Y[CurveNumber],gstt.oscInUse[gstt.Y[CurveNumber]])
 
 def nozcolor(path, tags, args, source):
 	#print "Quelqu'un (je ne sais pas qui) m'a demandé de la couleur…"
