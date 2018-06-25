@@ -16,7 +16,7 @@ Laser = 4
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
-Set = 2 #nozoid loloster.py
+Set = 3
 maxCurvesByLaser = 4
 #curveColor = [255,0,0] * maxCurvesByLaser
 curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
@@ -32,7 +32,7 @@ curveNumber = 0
 
 # gstt.Curve select what to display. Can be changed with /noteon 16-21
 
-Curve = 0 #nozmod
+Curve = 0 
 
 # gstt.Mode select what to display. Can be changed with /noteon 16-21
 
@@ -56,11 +56,11 @@ osc = [0] * 255
 oscInUse = [0] * 255
 knob = [0] * 33
 
-# Viewer distance (cc 21) 
+# Viewer distance (cc 21)
 cc[21]=60
 viewer_distance = cc[21] * 8
 
-# fov (cc 22) 
+# fov (cc 22)
 cc[22]= 60
 fov = 4 * cc[22]
 
@@ -102,7 +102,7 @@ Y = [0] * maxCurvesByLaser
 cc[29] = cc[30] = cc[31] =  0
 
 
-angleX = 0 
+angleX = 0
 angleY = 0
 angleZ = 0
 

@@ -67,6 +67,7 @@ import bhorosc
 import set0
 import set1
 import setllstr
+import setai
 import orbits
 
 if not gstt.SLAVERY :
@@ -105,6 +106,8 @@ settables =  {
         4: setllstr.Circle,
         5: setllstr.CC,
         6: setllstr.Slave
+    }, {
+        0: setai.Circle,
     }
 
 
@@ -481,7 +484,7 @@ while True:
 		pygame.display.flip()
 	else:
 		update_screen = True
-	clock.tick(100)
+	clock.tick(60)
 	time.sleep(0.0001)
 
 pygame.quit()
