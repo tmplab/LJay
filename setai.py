@@ -45,12 +45,14 @@ class Agent :
         'counter' : 0,
         'current_point_velocity' : 0,
         'current_radius' : 0,
+        'current_acceleration' : 0,
         'rotation_angle' : 0,
         'terminal_velocity' : 0,
         'size' : 36,
     }
     worldstate = {}
     noiseTable = []
+    pointsList = {}
     clock = 0
 
     def __init__(self):
@@ -78,6 +80,10 @@ class Agent :
         sett = self.settings
         self.worldstate = {}
         self.worldstate['current'] = {}
+
+        # pointsList needs to be bootstraped
+        bootstrapList = list( {'angle':0,'velocity':0,'coordinates':[0,0],'radius':10} for i in range(self.settings['max_points']) )
+        self.pointsList = {-1 : bootstrapList, 0 : bootstrapList}
         
         # Generate new random source
         seed = int( random.random() * 1024 )
@@ -144,7 +150,7 @@ class Agent :
         stat['counter'] +=  1
         return self.getPoints()
 
-    def getSymmetricPoint(self, Nth, symmetry_probability, points_cardinality ):
+    def getSymmetricPoint(self, Nth):
         """
         Returns symetric point relative to self
         f(Nth,sp,pc)                         = Nth % (pc / (pc*sp + 1) )
@@ -166,82 +172,95 @@ class Agent :
         |axis|  1    2    3    4    5    6    7    8    9    10   11|
         |___________________________________________________________|
         """
+        symmetry_probability = self.composition['symmetry_probability']
+        points_cardinality   = self.composition['points_cardinality']
         axis                         = math.floor(points_cardinality * symmetry_probability) + 1
-        return math.floor(math.fmod(Nth,points_cardinality/axis))
+        return int(math.floor(math.fmod(Nth,points_cardinality/axis)))
     
-    def getPointDynamic(point, composition) :
+    def setNewState( self ):
+
+        comp = self.composition
+        stat = self.state
+
+        stat['min_radius']                                  = comp['default_radius'] - comp['radius_variation']
+        if( stat['min_radius'] < 0 ):
+            stat['min_radius']                              = 0
+
+        if( stat['current_radius'] < stat['min_radius'] ):
+            stat['current_radius']                    = stat['min_radius']
+        stat['current_radius']                    = comp['default_radius']
+
+        stat['max_radius']                                  = comp['default_radius'] + comp['radius_variation']
+        if( stat['current_radius'] > stat['max_radius'] ):
+            stat['current_radius']                    = stat['max_radius']
+
+#        stat['rotation_angle'] += 2 * PI / math.pow( comp['points_cardinality'],2)
+        stat['rotation_angle'] += comp['rotation_speed']
+        if( stat['rotation_angle'] > 2 * PI ):
+            stat['rotation_angle']= stat['rotation_angle'] % ( 2 * PI)
+        stat['current_acceleration']                             = comp['velocity_variation'] if stat['current_point_velocity'] > 0 else  -comp['velocity_variation']
+
+    def getPointDynamic(self, point) :
         '''
         Returns current_radius, velocity given point[angle, velocity] and global[angular_speed,default_radius,radius_variation,velocity_variation]
         '''
         comp = self.composition
         stat = self.state
         sett = self.settings
+        positive = true if point['velocity'] > 0 else false 
 
-        my_acceleration                             = velocity_variation if current_point_velocity > 0 else  -velocity_variation
-        terminal_velocity                           = ( current_point_velocity * friction_coefficient ) + my_acceleration
-        if( terminal_velocity > max_velocity ):
-            terminal_velocity                       = max_velocity
+        absolute_velocity                           = ( point['velocity'] * sett['friction_coefficient'] ) + stat['current_acceleration']
+        if( absolute_velocity > sett['max_velocity'] ):
+            absolute_velocity                       = sett['max_velocity']
+        terminal_velocity      = absolute_velocity if positive else (- absolute_velocity)
+        energy                                      = absolute_velocity
+        terminal_radius                                      = point['radius'] 
+        # while there is energy
+        while ( energy > 0 ):
+            my_radius                                 = point['radius'] + energy
 
-        energy                                      = terminal_velocity
+        """        
         # while there is energy
         while ( math.fabs(energy) > 0 ):
+            my_radius                                 = point['radius'] + energy
+
             # get new radius = radius + velocity
-            my_radius                                 = current_radius + energy
+            print( 'energy', energy)
             # if energy drives point out of bound, clip and reduce enery
-            if( my_radius > max_radius ) :
+            if( my_radius > sett['max_radius'] ) :
               # 40 - 35 - 80 = -75
-              energy                                  = ( max_radius - current_radius) - ( energy * friction_coefficient )
-              my_radius                               = max_radius
+              energy                                  = ( stat['max_radius'] - stat['current_radius']) - ( energy * sett['friction_coefficient'] )
+              my_radius                               = stat['max_radius']
             else :
               # - ( 35 - 20 ) - ( -80 ) = 65
-              energy                                  = - ( current_radius - min_radius ) - ( energy * friction_coefficient )
-              my_radius                               = min_radius
+              my_radius                               = stat['min_radius']
             
             current_radius                            = my_radius
         
-        return [current_radius, terminal_velocity]
-
-    def setNewState( self ):
-
-        comp = self.composition
-        stat = self.state
-
-        min_radius                                  = comp['default_radius'] - comp['radius_variation']
-        if( min_radius < 0 ):
-            min_radius                              = 0
-
-        if( stat['current_radius'] < min_radius ):
-            stat['current_radius']                    = min_radius
-        stat['current_radius']                    = comp['default_radius']
-
-        max_radius                                  = comp['default_radius'] + comp['radius_variation']
-        if( stat['current_radius'] > max_radius ):
-            stat['current_radius']                    = max_radius
-
-#        stat['rotation_angle'] += 2 * PI / math.pow( comp['points_cardinality'],2)
-        stat['rotation_angle'] += comp['rotation_speed']
-        if( stat['rotation_angle'] > 2 * PI ):
-            stat['rotation_angle']= stat['rotation_angle'] % ( 2 * PI)
-
+        """
+        return [terminal_radius, terminal_velocity]
 
     def getPoints(self):
-
-    # Iterate for i in {0 .. points_cardinality }
-      # pointsList[n][i].angle               = pointsList[n-1][0]angle + i*360/composition.points_cardinality + composition.rotation_speed
-      # tmp_radius                           = pointsList[n-1][i].radius
-      # if (ref = getSymmetricPoint(i,sp,pc)()) != i
-        # true=
-          # tmp_velocity                = pointsList[n][ref].velocity
-        # false=
-          # tmp_velocity                = pointsList[n-1][i].velocity
-      # [velocity,radius]               = getPointDynamic( ... )
-      # pointsList[n][i].velocity       = velocity
-      # pointsList[n][i].radius             = radius
-      # pointsList[n][i].[x,y]              = getPointCoordinates( pointsList[n], composition )
-  # Send to lazer or memcache the points list
         comp = self.composition
         stat = self.state
         sett = self.settings
+
+        for i in range( comp['points_cardinality'] ):
+            self.pointsList[0][i]['angle']               = self.pointsList[-1][i]['angle'] + 2 * PI * i / comp['points_cardinality'] + stat['rotation_angle']
+            tmp_radius                           = self.pointsList[-1][i]['radius']
+            ref = self.getSymmetricPoint(i)
+            if (ref != i ):
+                print "ref",ref
+                tmp_velocity                    = self.pointsList[0][ref]['velocity']
+            else:
+                velocity,radius                 = self.getPointDynamic( self.pointsList[-1][i])
+                pointsList[n][i]['velocity']    = velocity
+                pointsList[n][i]['radius']      = radius
+                pointsList[n][i]['coordinates'] = getPointCoordinates( self.pointsList[-1][i] )
+
+
+        self.pointsList[-1] = self.pointsList[0]
+        return self.pointsList
 
         dots = []
         current_radius = stat['current_radius']
