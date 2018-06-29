@@ -3,12 +3,11 @@
 # -*- mode: Python -*-
 
 '''
-Main test (Emvivre)
+Laser Jaying
 
-Inspired from Empty Laser (Sam Neurohack) 
 LICENCE : CC
 '''
-#from __future__ import print_function
+#from __future__ import print_function 
 import pygame
 import math
 import random
@@ -27,16 +26,59 @@ import colorify
 
 import argparse
 
+def ReadSettings(): 
+
+	with open('settings.conf', 'r') as settings_file:
+
+		settings = settings_file.readlines()
+
+		settings[0] =  settings[0].replace('\n','')
+		settings[1] =  settings[1].replace('\n','')
+		settings[2] =  settings[2].replace('\n','')
+		settings[3] =  settings[3].replace('\n','')
+		settings[4] =  settings[4].replace('\n','')
+		settings[5] =  settings[5].replace('\n','')
+		settings[6] =  settings[6].replace('\n','')
+		settings[7] =  settings[7].replace('\n','')
+		settings[8] =  settings[8].replace('\n','')
+
+
+		gstt.centerx = int(settings[0])
+		gstt.centery = int(settings[1])
+		gstt.zoomx = float(settings[2])
+		gstt.zoomy = float(settings[3])
+		gstt.sizex = int(settings[4])
+		gstt.sizey = int(settings[5])
+		gstt.finangle = float(settings[6])
+		gstt.swapx = int(settings[7])
+		gstt.swapy = int(settings[8])
+
+
+	settings_file.close
+
+	print ("Setttings : ")
+	print (str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey) + "," + str(gstt.finangle)  + "," + str(gstt.swapx) + "," + str(gstt.swapy))
+
+
+
+ReadSettings()
+
 print ""
 print "Arguments parsing if needed..."
 #have to be done before importing bhorosc.py to get correct port assignment
 argsparser = argparse.ArgumentParser(description="LJay")
-argsparser.add_argument("-i","--iport",help="port number to listen to (8001 by default)",type=int)
-argsparser.add_argument("-o","--oport",help="port number to send to (8002 by default)",type=int)
-argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default)",type=int)
+argsparser.add_argument("-i","--iport",help="Port number to listen to (8001 by default)",type=int)
+argsparser.add_argument("-o","--oport",help="Port number to send to (8002 by default)",type=int)
+argsparser.add_argument("-x","--invx",help="Invert X axis",action="store_true")
+argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
+argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
+argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
+argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
 
 args = argsparser.parse_args()
 
+
+# Ports arguments
 if args.iport:
 	iport = args.iport
 	gstt.iport = iport
@@ -49,17 +91,53 @@ if args.oport:
 else:
 	oport = gstt.oport
 
-if args.laser:
-	lstdgtlaser = args.laser
-else:
-	lstdgtlaser = 4
-
-#gsst.ports will be set in bhorosc
 print "gstt.oport:",gstt.oport
 print "gstt.iport:",gstt.iport
 
-etherIP = "192.168.1."+str(lstdgtlaser)
-print "etherIP:",etherIP
+
+
+# X Y inversion arguments
+if args.invx:
+	print("X inverted")
+	gstt.swapx = -1
+else:
+	print ("X not Inverted")
+	gstt.swapx = 1
+
+if args.invy:
+	print("Y inverted")
+	gstt.swapy = -1
+else:
+	print ("Y not Inverted")
+	gstt.swapy = 1
+	
+
+
+# Set / Curves arguments
+if args.set:
+	gstt.Set = args.set
+
+if args.curve:
+	gstt.Curve = args.curve
+
+
+# Etherdream target
+if args.laser:
+	lstdgtlaser = args.laser
+	if lstdgtlaser == 0:
+		etherIP = "127.0.0.1"
+	else:
+		etherIP = "192.168.1."+str(lstdgtlaser)
+
+else:
+	etherIP = "192.168.1.4"
+
+print ("Laser 1 etherIP:",etherIP)
+
+
+
+
+
 #raw_input("Hit Enter To Continue!")
 
 import midi
@@ -128,6 +206,26 @@ def dac_thread():
 				traceback.print_tb(sys.exc_info()[2])
 				print "\n"
 			pass
+
+
+def WriteSettings(): 
+	with open("settings.conf", "w") as settings_file:
+          settings_file.write(str(gstt.centerx)+'\n')
+          settings_file.write(str(gstt.centery)+'\n')
+          settings_file.write(str(gstt.zoomx)+'\n')
+          settings_file.write(str(gstt.zoomy)+'\n')
+          settings_file.write(str(gstt.sizex)+'\n')
+          settings_file.write(str(gstt.sizey)+'\n')
+          settings_file.write(str(gstt.finangle)+'\n')
+          settings_file.write(str(gstt.swapx)+'\n')
+          settings_file.write(str(gstt.swapy)+'\n')
+
+
+	settings_file.close     
+
+
+
+
 
 def DrawTestPattern(f):
 	l,h = screen_size
