@@ -28,10 +28,10 @@ class Agent :
         'max_acceleration' : 50,
         'max_points' : 30,
         'max_speed' : PI * 0.125,
-        'max_velocity' : 0,
-        'mean_radius' : 400,
+        'max_velocity' : 10,
         'max_radius' : 800,
-        'friction_coefficient' : 0,
+        'mean_radius' : 400,
+        'friction_coefficient' : 0.5,
     }
     composition = {
         "rotation_speed"              : 10,
@@ -72,7 +72,7 @@ class Agent :
 
         if not(path.isfile( '/tmp/ws.json')):
             handle = open( '/tmp/ws.json','w')
-            handle.write('{"velocity" : 0.50,"expressivity" : 0.0,"sensibility"  : 0.15,"beauty": 0.1}');
+            handle.write('{"velocity" : 0.10,"expressivity" : 0.1,"sensibility"  : 0.15,"beauty": 0.1}');
             handle.close();
 
         self.settings.update( settings )
@@ -82,7 +82,7 @@ class Agent :
         self.worldstate['current'] = {}
 
         # pointsList needs to be bootstraped
-        bootstrapList = list( {'angle':0,'velocity':0,'coordinates':[0,0],'radius':10} for i in range(self.settings['max_points']) )
+        bootstrapList = list( {'angle':0,'velocity':0,'coordinates':[0,0],'radius':self.settings["mean_radius"]} for i in range(self.settings['max_points']) )
         self.pointsList = {-1 : bootstrapList, 0 : bootstrapList}
         
         # Generate new random source
@@ -131,7 +131,7 @@ class Agent :
 
             comp['rotation_speed']              = sett['max_speed'] * world['sensibility']
 
-            n = int( sett['max_points'] * world['beauty'] ) 
+            n = int( sett['max_points'] * world['expressivity'] ) 
             comp['points_cardinality']          = n if n > 2 else 3
 
             # Caution, this is an in/out force, not a radial / centripetal one
@@ -194,7 +194,6 @@ class Agent :
         if( stat['current_radius'] > stat['max_radius'] ):
             stat['current_radius']                    = stat['max_radius']
 
-#        stat['rotation_angle'] += 2 * PI / math.pow( comp['points_cardinality'],2)
         stat['rotation_angle'] += comp['rotation_speed']
         if( stat['rotation_angle'] > 2 * PI ):
             stat['rotation_angle']= stat['rotation_angle'] % ( 2 * PI)
@@ -207,38 +206,57 @@ class Agent :
         comp = self.composition
         stat = self.state
         sett = self.settings
-        positive = true if point['velocity'] > 0 else false 
+        positive = True if point['velocity'] > 0 else False 
 
-        absolute_velocity                           = ( point['velocity'] * sett['friction_coefficient'] ) + stat['current_acceleration']
-        if( absolute_velocity > sett['max_velocity'] ):
-            absolute_velocity                       = sett['max_velocity']
-        terminal_velocity      = absolute_velocity if positive else (- absolute_velocity)
-        energy                                      = absolute_velocity
-        terminal_radius                                      = point['radius'] 
+        radius = point['radius'] 
+        if( point['radius']  > stat['max_radius']):
+            radius = stat['max_radius']
+        elif( point['radius'] < stat['min_radius']):
+            radius = stat['min_radius']
+
+        energy = math.fabs( point['velocity'] * sett['friction_coefficient']  + stat['current_acceleration'])
+        if( energy > sett['max_velocity'] ):
+            energy = sett['max_velocity']
+        original_velocity = energy
+        terminal_velocity = energy if positive else (- energy)
+
         # while there is energy
         while ( energy > 0 ):
-            my_radius                                 = point['radius'] + energy
-
-        """        
-        # while there is energy
-        while ( math.fabs(energy) > 0 ):
-            my_radius                                 = point['radius'] + energy
-
-            # get new radius = radius + velocity
-            print( 'energy', energy)
+            old_radius = radius
+            radius = radius + energy if positive else radius - energy
             # if energy drives point out of bound, clip and reduce enery
-            if( my_radius > sett['max_radius'] ) :
-              # 40 - 35 - 80 = -75
-              energy                                  = ( stat['max_radius'] - stat['current_radius']) - ( energy * sett['friction_coefficient'] )
-              my_radius                               = stat['max_radius']
-            else :
-              # - ( 35 - 20 ) - ( -80 ) = 65
-              my_radius                               = stat['min_radius']
-            
-            current_radius                            = my_radius
-        
-        """
-        return [terminal_radius, terminal_velocity]
+            if( radius > stat['max_radius'] ) :
+                # radius = 160
+                # max = 150
+                # min = 50
+                # energy = 30
+                # new energy = 160 - 150 - 30 = -20
+                energy = math.fabs( ( stat['max_radius'] - radius -  energy ) * sett['friction_coefficient'] )  
+                radius = stat['max_radius']
+                positive = False
+                terminal_velocity = - original_velocity
+            elif( radius < stat['min_radius'] ) :
+                # radius = 40
+                # max = 150
+                # min = 50
+                # energy = 30
+                # new energy = 50 - 40 - 30 = 20
+                energy = math.fabs( ( stat['min_radius'] - radius  -  energy )* sett['friction_coefficient'] ) 
+                radius = stat['min_radius']
+                positive = True
+                terminal_velocity = original_velocity
+            else:
+                energy = 0
+
+        return [terminal_velocity,radius]
+
+    def getPointCoordinates( self, i ,radius ):
+        comp = self.composition
+        stat = self.state
+        x = radius * math.cos(2 * PI  * i /  float(comp['points_cardinality']) + stat['rotation_angle'] )
+        y = radius * math.sin(2 * PI * i / float(comp['points_cardinality']) + stat['rotation_angle'] )
+
+        return [x,y]
 
     def getPoints(self):
         comp = self.composition
@@ -249,18 +267,21 @@ class Agent :
             self.pointsList[0][i]['angle']               = self.pointsList[-1][i]['angle'] + 2 * PI * i / comp['points_cardinality'] + stat['rotation_angle']
             tmp_radius                           = self.pointsList[-1][i]['radius']
             ref = self.getSymmetricPoint(i)
+
             if (ref != i ):
-                print "ref",ref
-                tmp_velocity                    = self.pointsList[0][ref]['velocity']
+                self.pointsList[0][i] = self.pointsList[0][ref]
             else:
                 velocity,radius                 = self.getPointDynamic( self.pointsList[-1][i])
-                pointsList[n][i]['velocity']    = velocity
-                pointsList[n][i]['radius']      = radius
-                pointsList[n][i]['coordinates'] = getPointCoordinates( self.pointsList[-1][i] )
-
+                self.pointsList[0][i]['velocity']    = velocity
+                self.pointsList[0][i]['radius']      = radius
 
         self.pointsList[-1] = self.pointsList[0]
-        return self.pointsList
+        dots = []
+        for i in range(0, comp['points_cardinality'] ) :
+            coordinates = self.getPointCoordinates( i, self.pointsList[0][i]['radius']) 
+            dots.append(coordinates)
+        dots.append( dots[0])
+        return dots
 
         dots = []
         current_radius = stat['current_radius']
@@ -271,7 +292,6 @@ class Agent :
             x = (current_radius+radius_variation*( self.noiseTable[n][point]  )+0.5)*math.cos(2 * PI  * point /  float(comp['points_cardinality']) + stat['rotation_angle'] )
             y = ( current_radius+radius_variation*( self.noiseTable[n][point] )+0.5)*math.sin(2 * PI * point / float(comp['points_cardinality']) + stat['rotation_angle'] )
             dots.append([int(x),int(y)])
-        
         return dots        
 
 
@@ -283,7 +303,7 @@ def Circle(fwork):
     pointsList = agent.run()
     projected = []
     for dots in pointsList : 
-        projected.append( proj(int(dots[0]),int(dots[1]),0 ) )
+        projected.append( proj(dots[0],dots[1],0 ) )
     fwork.PolyLineOneColor( projected, c=colorify.rgb2hex(gstt.color)  )
 
 # Why the heck do we need that ?
