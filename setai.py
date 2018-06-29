@@ -25,8 +25,8 @@ from opensimplex import OpenSimplex
 
 class Agent :
     settings = {
-        'max_acceleration' : 100,
-        'max_points' : 16,
+        'max_acceleration' : 150,
+        'max_points' : 21,
         'max_speed' : PI * 0.125,
         'max_velocity' : 10,
         'max_radius' : 800,
@@ -117,11 +117,17 @@ class Agent :
 
     def run(self):
 
-        # Get worldstate(n)
-        
+        self.setComposition()  
+        self.setState()  
+        return self.getPoints()
+
+    def setComposition( self ):
+
         comp = self.composition
-        sett = self.settings
         stat = self.state
+        sett = self.settings
+
+        stat['counter'] +=  1
 
         if( stat["counter"] % 60 ):
             world = self.getWorldstate()
@@ -142,7 +148,7 @@ class Agent :
                 # Caution, this is an in/out force, not a radial / centripetal one
                 comp['velocity_variation']          = sett['max_acceleration'] * world['sensibility']
 
-                comp['symmetry_probability']        = world['beauty'] 
+                comp['symmetry_probability']        = math.sqrt( world['beauty'] )/2
 
                 # Store worldstate(n)
                 self.storeWorldState()
@@ -150,42 +156,14 @@ class Agent :
                 # Store composition(n)
                 self.storeComposition()
 
-        self.setNewState()  
 
-        stat['counter'] +=  1
-        return self.getPoints()
-
-    def getSymmetricPoint(self, Nth):
-        """
-        Returns symetric point relative to self
-        f(Nth,sp,pc)                         = Nth % (pc / (pc*sp + 1) )
-        pc=10
-        ___________________________sp________________________________
-        |N   |  0   0,1  0,2  0,3  0,4  0,5  0,6  0,7  0,8  0,9   1 |
-        |___________________________________________________________|
-        |0   |  0    0    0    0    0    0    0    0    0    0    0 |
-        |1   |  1    1    1    1    1    1    1    1    1    0    0 |
-        |2   |  2    2    2    2    0    0    0    0    0    0    0 |
-        |3   |  3    3    3    0    1    1    0    0    0    0    0 |
-        |4   |  4    4    0    1    0    0    1    0    0    0    0 |
-        |5   |  5    0    1    0    1    0    0    0    0    0    0 |
-        |6   |  6    1    2    1    0    1    0    1    0    0    0 |
-        |7   |  7    2    0    2    1    0    1    0    0    0    0 |
-        |8   |  8    3    1    0    0    1    0    0    0    0    0 |
-        |9   |  9    4    2    1    1    0    0    0    0    0    0 |
-        |___________________________________________________________|
-        |axis|  1    2    3    4    5    6    7    8    9    10   11|
-        |___________________________________________________________|
-        """
-        symmetry_probability = self.composition['symmetry_probability']
-        points_cardinality   = self.composition['points_cardinality']
-        axis                         = math.floor(points_cardinality * symmetry_probability) + 1
-        return int(math.floor(math.fmod(Nth,points_cardinality/axis)))
-    
-    def setNewState( self ):
+    def setState( self ):
 
         comp = self.composition
         stat = self.state
+        sett = self.settings
+
+        stat['counter'] +=  1
 
         stat['min_radius']                                  = comp['default_radius'] - comp['radius_variation']
         if( stat['min_radius'] < 0 ):
@@ -220,6 +198,7 @@ class Agent :
             radius = stat['min_radius']
 
         energy = math.fabs( point['velocity'] * sett['friction_coefficient']  + stat['current_acceleration'])
+        energy += self.addNoise(energy)
         if( energy > sett['max_velocity'] ):
             energy = sett['max_velocity']
         original_velocity = energy
@@ -255,6 +234,33 @@ class Agent :
 
         return [terminal_velocity,radius]
 
+    def getSymmetricPoint(self, Nth):
+        """
+        Returns symetric point relative to self
+        f(Nth,sp,pc)                         = Nth % (pc / (pc*sp + 1) )
+        pc=10
+        ___________________________sp________________________________
+        |N   |  0   0,1  0,2  0,3  0,4  0,5  0,6  0,7  0,8  0,9   1 |
+        |___________________________________________________________|
+        |0   |  0    0    0    0    0    0    0    0    0    0    0 |
+        |1   |  1    1    1    1    1    1    1    1    1    0    0 |
+        |2   |  2    2    2    2    0    0    0    0    0    0    0 |
+        |3   |  3    3    3    0    1    1    0    0    0    0    0 |
+        |4   |  4    4    0    1    0    0    1    0    0    0    0 |
+        |5   |  5    0    1    0    1    0    0    0    0    0    0 |
+        |6   |  6    1    2    1    0    1    0    1    0    0    0 |
+        |7   |  7    2    0    2    1    0    1    0    0    0    0 |
+        |8   |  8    3    1    0    0    1    0    0    0    0    0 |
+        |9   |  9    4    2    1    1    0    0    0    0    0    0 |
+        |___________________________________________________________|
+        |axis|  1    2    3    4    5    6    7    8    9    10   11|
+        |___________________________________________________________|
+        """
+        symmetry_probability = self.composition['symmetry_probability']
+        points_cardinality   = self.composition['points_cardinality']
+        axis                         = math.floor(points_cardinality * symmetry_probability) + 1
+        return int(math.floor(math.fmod(Nth,points_cardinality/axis)))
+
     def getPointCoordinates( self, i ,radius ):
         comp = self.composition
         stat = self.state
@@ -262,6 +268,14 @@ class Agent :
         y = radius * math.sin(2 * PI * i / float(comp['points_cardinality']) + stat['rotation_angle'] )
 
         return [x,y]
+
+    def addNoise( self, val ):
+        n = int( self.state["counter"] / 60 ) % self.composition["points_cardinality"]
+        p = int( random.random() * self.composition["points_cardinality"] )
+        rand = self.noiseTable[n][p]
+        tmp = val * rand
+        return( tmp if val > (tmp * 0.5) else (tmp + val) )
+
 
     def getPoints(self):
         comp = self.composition
