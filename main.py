@@ -122,7 +122,7 @@ if args.curve:
 
 
 # Etherdream target
-if args.laser:
+if args.laser  != None:
 	lstdgtlaser = args.laser
 	if lstdgtlaser == 0:
 		etherIP = "127.0.0.1"
@@ -206,22 +206,6 @@ def dac_thread():
 				traceback.print_tb(sys.exc_info()[2])
 				print "\n"
 			pass
-
-
-def WriteSettings(): 
-	with open("settings.conf", "w") as settings_file:
-          settings_file.write(str(gstt.centerx)+'\n')
-          settings_file.write(str(gstt.centery)+'\n')
-          settings_file.write(str(gstt.zoomx)+'\n')
-          settings_file.write(str(gstt.zoomy)+'\n')
-          settings_file.write(str(gstt.sizex)+'\n')
-          settings_file.write(str(gstt.sizey)+'\n')
-          settings_file.write(str(gstt.finangle)+'\n')
-          settings_file.write(str(gstt.swapx)+'\n')
-          settings_file.write(str(gstt.swapy)+'\n')
-
-
-	settings_file.close     
 
 
 
