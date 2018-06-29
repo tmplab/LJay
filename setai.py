@@ -25,8 +25,8 @@ from opensimplex import OpenSimplex
 
 class Agent :
     settings = {
-        'max_acceleration' : 50,
-        'max_points' : 30,
+        'max_acceleration' : 100,
+        'max_points' : 16,
         'max_speed' : PI * 0.125,
         'max_velocity' : 10,
         'max_radius' : 800,
@@ -99,12 +99,15 @@ class Agent :
             self.noiseTable.append(tmp) 
 
     def getWorldstate(self):
-        with open( "/tmp/ws.json","r") as file :
-            content = file.read()
-            current = json.loads(content)
-            self.worldstate["old"] = self.worldstate["current"]
-            self.worldstate["current"] = current
-        return current
+        try:
+            with open( "/tmp/ws.json","r") as file :
+                content = file.read()
+                current = json.loads(content)
+                self.worldstate["old"] = self.worldstate["current"]
+                self.worldstate["current"] = current
+                return current
+        except Exception as e:
+            print "Oops, file not available?"
 
     def storeWorldState(self):
         pass
@@ -117,33 +120,35 @@ class Agent :
         # Get worldstate(n)
         
         comp = self.composition
-        world = self.getWorldstate()
         sett = self.settings
         stat = self.state
 
-        # Compare to worldstate(n-1)
-        if( self.worldstate["old"] != world ):
+        if( stat["counter"] % 60 ):
+            world = self.getWorldstate()
 
-            comp['default_radius']              = sett['mean_radius'] * world['velocity']
+            # Compare to worldstate(n-1)
+            if( self.worldstate["old"] != world ):
 
-            amp = sett['max_radius'] - sett['mean_radius'] 
-            comp['radius_variation']            = amp * world['expressivity']
+                comp['default_radius']              = sett['mean_radius'] * world['velocity']
 
-            comp['rotation_speed']              = sett['max_speed'] * world['sensibility']
+                amp = sett['max_radius'] - sett['mean_radius'] 
+                comp['radius_variation']            = amp * world['expressivity']
 
-            n = int( sett['max_points'] * world['expressivity'] ) 
-            comp['points_cardinality']          = n if n > 2 else 3
+                comp['rotation_speed']              = sett['max_speed'] * world['sensibility']
 
-            # Caution, this is an in/out force, not a radial / centripetal one
-            comp['velocity_variation']          = sett['max_acceleration'] * world['sensibility']
+                n = int( sett['max_points'] * world['expressivity'] ) 
+                comp['points_cardinality']          = n if n > 2 else 3
 
-            comp['symmetry_probability']        = world['beauty'] 
+                # Caution, this is an in/out force, not a radial / centripetal one
+                comp['velocity_variation']          = sett['max_acceleration'] * world['sensibility']
 
-            # Store worldstate(n)
-            self.storeWorldState()
+                comp['symmetry_probability']        = world['beauty'] 
 
-            # Store composition(n)
-            self.storeComposition()
+                # Store worldstate(n)
+                self.storeWorldState()
+
+                # Store composition(n)
+                self.storeComposition()
 
         self.setNewState()  
 
