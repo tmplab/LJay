@@ -19,6 +19,7 @@ import time
 import frame
 import renderer
 import dac
+import ConfigParser
 from globalVars import *
 
 import gstt
@@ -26,40 +27,39 @@ import colorify
 
 import argparse
 
+		
+
+def WriteSettings(): 
+
+	config.set('laser1', 'centerx', str(gstt.centerx))
+	config.set('laser1', 'centery', str(gstt.centery))
+	config.set('laser1', 'zoomx', str(gstt.zoomx))
+	config.set('laser1', 'zoomy', str(gstt.zoomy))
+	config.set('laser1', 'sizex', str(gstt.sizex))
+	config.set('laser1', 'sizey', str(gstt.sizey))
+	config.set('laser1', 'finangle', str(gstt.finangle))
+	config.set('laser1', 'swapx', str(gstt.swapx))
+	config.set('laser1', 'swapy', str(gstt.swapy))
+	config.write(open('settings.conf','w'))
+
 def ReadSettings(): 
-
-	with open('settings.conf', 'r') as settings_file:
-
-		settings = settings_file.readlines()
-
-		settings[0] =  settings[0].replace('\n','')
-		settings[1] =  settings[1].replace('\n','')
-		settings[2] =  settings[2].replace('\n','')
-		settings[3] =  settings[3].replace('\n','')
-		settings[4] =  settings[4].replace('\n','')
-		settings[5] =  settings[5].replace('\n','')
-		settings[6] =  settings[6].replace('\n','')
-		settings[7] =  settings[7].replace('\n','')
-		settings[8] =  settings[8].replace('\n','')
+	
+	gstt.centerx = config.getint('laser1', 'centerx')
+	gstt.centery = config.getint('laser1', 'centery')
+	gstt.zoomx = config.getfloat('laser1', 'zoomx')
+	gstt.zoomy = config.getfloat('laser1', 'zoomy')
+	gstt.sizex = config.getint('laser1', 'sizex')
+	gstt.sizey = config.getint('laser1', 'sizey')
+	gstt.finangle = config.getfloat('laser1', 'finangle')
+	gstt.swapx = config.getint('laser1', 'swapx')
+	gstt.swapy = config.getint('laser1', 'swapy')
 
 
-		gstt.centerx = int(settings[0])
-		gstt.centery = int(settings[1])
-		gstt.zoomx = float(settings[2])
-		gstt.zoomy = float(settings[3])
-		gstt.sizex = int(settings[4])
-		gstt.sizey = int(settings[5])
-		gstt.finangle = float(settings[6])
-		gstt.swapx = int(settings[7])
-		gstt.swapy = int(settings[8])
-
-
-	settings_file.close
-
-	print ("Setttings : ")
+	print ("setttings : ")
 	print (str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey) + "," + str(gstt.finangle)  + "," + str(gstt.swapx) + "," + str(gstt.swapy))
 
-
+config = ConfigParser.ConfigParser()
+config.read("settings.conf")
 
 ReadSettings()
 
@@ -256,6 +256,7 @@ def Align(f):
 	f.LineTo((0, 0), 0xFFFFFF)
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
+	WriteSettings()
 	print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
 
 
