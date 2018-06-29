@@ -87,6 +87,16 @@ oscx = 0
 oscy = 0
 oscz = 0
 
+
+# Ai Parameters
+
+aivelocity = 0.5
+aiexpressivity = 0.5
+aisensibility = 0.5
+aibeauty =  0.5
+
+
+
 #temporaray fix hack : iport=nozoport
 iport = 8001 #LJay (bhorosc) input port
 oport = 8002 #LJay (bhoros) output port

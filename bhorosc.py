@@ -942,6 +942,53 @@ def stoprot(path, tags, args, source):
 	gstt.angleZ=0
 
 
+#
+# with AI OSC commands
+#
+
+
+# /ai/velocity 
+def AiVelocity(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    print ""
+    print user,path,args
+    print "Ai Velocity : ", args[0]
+    gstt.aivelocity = args[0]
+    
+    status(''.join(("Ai Velocity : ", str(args[0])," on Laser ",str(gstt.Laser))))
+
+
+# /ai/expressivity
+def AiExpressivity(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    print ""
+    print user,path,args
+    print "Ai Expressivity : ", args[0]
+    gstt.expressiviity = args[0]
+    
+    status(''.join(("Ai Expressivity : ", str(args[0])," on Laser ",str(gstt.Laser))))
+
+# /ai/sensibility 
+def AiSensibility(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    print ""
+    print user,path,args
+    print "Ai Sensibility : ", args[0]
+    gstt.aisensibility = args[0]
+    
+    status(''.join(("Ai Velocity : ", str(args[0])," on Laser ",str(gstt.Laser))))
+
+# /ai/beauty
+def AiBeauty(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    print ""
+    print user,path,args
+    print "Ai Beauty : ", args[0]
+    gstt.aibeauty = args[0]
+    
+    status(''.join(("Ai Beauty : ", str(args[0])," on Laser ",str(gstt.Laser))))
+
+
 
 
 # Setting all handlers
@@ -964,7 +1011,10 @@ oscserver.addMsgHandler( "/nozoid/color", nozcolor )
 oscserver.addMsgHandler( "/stop/rotation", stoprot )
 oscserver.addMsgHandler( "/nozoid/offset", nozoffset )
 
-
+oscserver.addMsgHandler( "/ai/velocity", AiVelocity )
+oscserver.addMsgHandler( "/ai/expressivity", AiExpressivity )
+oscserver.addMsgHandler( "/ai/sensibility", AiSensibility )
+oscserver.addMsgHandler( "/ai/beauty", AiBeauty )
 
 # Led Handlers
 
