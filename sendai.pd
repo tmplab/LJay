@@ -1,0 +1,56 @@
+#N canvas 145 183 376 663 10;
+#X obj 217 506 sendOSC;
+#X floatatom 217 523 5 0 0 0 - - -;
+#X floatatom 258 522 5 0 0 0 - - -;
+#X text 249 540 bundleDepth;
+#X msg 23 52 disconnect;
+#X msg 24 33 send /on;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X coords 0 1 100 -1 100 30 1 0 0;
+#X restore 129 -61 graph;
+#X obj 215 490 r oscout;
+#X obj 22 71 s oscout;
+#X msg 22 16 connect 127.0.0.1 8003;
+#X msg 22 -3 connect 192.168.1.246 8003;
+#X text 154 -55 Ai GUI;
+#X text 22 100 2/ Change Live parameters;
+#X obj 49 227 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+-1 -1 0 256;
+#X obj 47 153 knob 60 60 0 1 0 0 empty empty empty 0 -8 0 8 -262144
+-1 -1 0 0;
+#X text 51 125 Velocity;
+#X msg 17 241 send /ai/velocity \$1;
+#X obj 229 225 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+-1 -1 0 256;
+#X obj 227 155 knob 60 60 0 1 0 0 empty empty empty 0 -8 0 8 -262144
+-1 -1 0 0;
+#X text 222 125 Expresivity;
+#X obj 63 387 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+-1 -1 0 256;
+#X obj 62 311 knob 60 60 0 1 0 0 empty empty empty 0 -8 0 8 -262144
+-1 -1 0 0;
+#X obj 233 383 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+-1 -1 0 256;
+#X obj 227 312 knob 60 60 0 1 0 0 empty empty empty 0 -8 0 8 -262144
+-1 -1 0 0;
+#X msg 182 239 send /ai/expressivity \$1;
+#X text 19 -27 1/ Connect;
+#X text 55 279 Sensibility;
+#X msg 19 402 send /ai/sensibilty \$1;
+#X text 242 280 Beauty;
+#X msg 198 397 send /ai/beauty \$1;
+#X connect 0 0 1 0;
+#X connect 0 1 2 0;
+#X connect 4 0 8 0;
+#X connect 5 0 8 0;
+#X connect 7 0 0 0;
+#X connect 9 0 8 0;
+#X connect 10 0 8 0;
+#X connect 13 0 16 0;
+#X connect 14 0 13 0;
+#X connect 17 0 24 0;
+#X connect 18 0 17 0;
+#X connect 20 0 27 0;
+#X connect 21 0 20 0;
+#X connect 22 0 29 0;
+#X connect 23 0 22 0;
