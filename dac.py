@@ -217,16 +217,4 @@ def find_dac():
 		print "Packet from %s: " % (addr, )
 		bp.dump()
 
-def find_first_dac():
-	'''
-	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	s.bind(("0.0.0.0", 7654))
-	data, addr = s.recvfrom(1024)
-	bp = BroadcastPacket(data)
-	addr[0]="192.168.1.4"
-	print type(addr[0])
-	print addr[0]
-	print "Packet from %s: " % (addr, )
-	'''
-		 
-	return etherIP
+

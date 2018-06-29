@@ -16,7 +16,7 @@ Laser = 4
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
-Set = 3
+Set = 3 # Alban
 maxCurvesByLaser = 4
 #curveColor = [255,0,0] * maxCurvesByLaser
 curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
@@ -24,7 +24,7 @@ colorX = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 colorY = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 offsetX = [0] * maxCurvesByLaser
 offsetY = [0] * maxCurvesByLaser
-curveNumber = 0
+curveNumber = 4
 
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser
@@ -118,6 +118,7 @@ serdmx = ""
 newnumber = ""
 oldnumber = ""
 
+# will be overrided but settings.conf values.
 centerx = LASER_CENTER_X
 centery = LASER_CENTER_Y
 zoomx = LASER_ZOOM_X

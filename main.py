@@ -3,12 +3,11 @@
 # -*- mode: Python -*-
 
 '''
-Main test (Emvivre)
+Laser Jaying
 
-Inspired from Empty Laser (Sam Neurohack) 
 LICENCE : CC
 '''
-#from __future__ import print_function
+#from __future__ import print_function 
 import pygame
 import math
 import random
@@ -20,6 +19,7 @@ import time
 import frame
 import renderer
 import dac
+import ConfigParser
 from globalVars import *
 
 import gstt
@@ -27,16 +27,58 @@ import colorify
 
 import argparse
 
+		
+
+def WriteSettings(): 
+
+	config.set('laser1', 'centerx', str(gstt.centerx))
+	config.set('laser1', 'centery', str(gstt.centery))
+	config.set('laser1', 'zoomx', str(gstt.zoomx))
+	config.set('laser1', 'zoomy', str(gstt.zoomy))
+	config.set('laser1', 'sizex', str(gstt.sizex))
+	config.set('laser1', 'sizey', str(gstt.sizey))
+	config.set('laser1', 'finangle', str(gstt.finangle))
+	config.set('laser1', 'swapx', str(gstt.swapx))
+	config.set('laser1', 'swapy', str(gstt.swapy))
+	config.write(open('settings.conf','w'))
+
+def ReadSettings(): 
+	
+	gstt.centerx = config.getint('laser1', 'centerx')
+	gstt.centery = config.getint('laser1', 'centery')
+	gstt.zoomx = config.getfloat('laser1', 'zoomx')
+	gstt.zoomy = config.getfloat('laser1', 'zoomy')
+	gstt.sizex = config.getint('laser1', 'sizex')
+	gstt.sizey = config.getint('laser1', 'sizey')
+	gstt.finangle = config.getfloat('laser1', 'finangle')
+	gstt.swapx = config.getint('laser1', 'swapx')
+	gstt.swapy = config.getint('laser1', 'swapy')
+
+
+	print ("setttings : ")
+	print (str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey) + "," + str(gstt.finangle)  + "," + str(gstt.swapx) + "," + str(gstt.swapy))
+
+config = ConfigParser.ConfigParser()
+config.read("settings.conf")
+
+ReadSettings()
+
 print ""
 print "Arguments parsing if needed..."
 #have to be done before importing bhorosc.py to get correct port assignment
 argsparser = argparse.ArgumentParser(description="LJay")
-argsparser.add_argument("-i","--iport",help="port number to listen to (8001 by default)",type=int)
-argsparser.add_argument("-o","--oport",help="port number to send to (8002 by default)",type=int)
-argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default)",type=int)
+argsparser.add_argument("-i","--iport",help="Port number to listen to (8001 by default)",type=int)
+argsparser.add_argument("-o","--oport",help="Port number to send to (8002 by default)",type=int)
+argsparser.add_argument("-x","--invx",help="Invert X axis",action="store_true")
+argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
+argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
+argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
+argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
 
 args = argsparser.parse_args()
 
+
+# Ports arguments
 if args.iport:
 	iport = args.iport
 	gstt.iport = iport
@@ -49,17 +91,53 @@ if args.oport:
 else:
 	oport = gstt.oport
 
-if args.laser:
-	lstdgtlaser = args.laser
-else:
-	lstdgtlaser = 4
-
-#gsst.ports will be set in bhorosc
 print "gstt.oport:",gstt.oport
 print "gstt.iport:",gstt.iport
 
-etherIP = "192.168.1."+str(lstdgtlaser)
-print "etherIP:",etherIP
+
+
+# X Y inversion arguments
+if args.invx:
+	print("X inverted")
+	gstt.swapx = -1
+else:
+	print ("X not Inverted")
+	gstt.swapx = 1
+
+if args.invy:
+	print("Y inverted")
+	gstt.swapy = -1
+else:
+	print ("Y not Inverted")
+	gstt.swapy = 1
+	
+
+
+# Set / Curves arguments
+if args.set:
+	gstt.Set = args.set
+
+if args.curve:
+	gstt.Curve = args.curve
+
+
+# Etherdream target
+if args.laser:
+	lstdgtlaser = args.laser
+	if lstdgtlaser == 0:
+		etherIP = "127.0.0.1"
+	else:
+		etherIP = "192.168.1."+str(lstdgtlaser)
+
+else:
+	etherIP = "192.168.1.4"
+
+print ("Laser 1 etherIP:",etherIP)
+
+
+
+
+
 #raw_input("Hit Enter To Continue!")
 
 import midi
@@ -119,7 +197,6 @@ print "Starting Laser..."
 def dac_thread():
 	while True:
 		try:
-			#d = dac.DAC(dac.find_first_dac())
 			d = dac.DAC(etherIP)
 			d.play_stream(laser)
 		except Exception as e:
@@ -132,6 +209,26 @@ def dac_thread():
 				traceback.print_tb(sys.exc_info()[2])
 				print "\n"
 			pass
+
+
+def WriteSettings(): 
+	with open("settings.conf", "w") as settings_file:
+          settings_file.write(str(gstt.centerx)+'\n')
+          settings_file.write(str(gstt.centery)+'\n')
+          settings_file.write(str(gstt.zoomx)+'\n')
+          settings_file.write(str(gstt.zoomy)+'\n')
+          settings_file.write(str(gstt.sizex)+'\n')
+          settings_file.write(str(gstt.sizey)+'\n')
+          settings_file.write(str(gstt.finangle)+'\n')
+          settings_file.write(str(gstt.swapx)+'\n')
+          settings_file.write(str(gstt.swapy)+'\n')
+
+
+	settings_file.close     
+
+
+
+
 
 def DrawTestPattern(f):
 	l,h = screen_size
@@ -162,6 +259,7 @@ def Align(f):
 	f.LineTo((0, 0), 0xFFFFFF)
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
+	WriteSettings()
 	print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
 
 
