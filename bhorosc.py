@@ -65,7 +65,7 @@ line3 = 1
 
 
 print("")
-print("OSCServer")
+print("Starting OSCServer...")
 print ("Receiving on ", oscIPin, ":",str(oscPORTin))
 oscserver = OSCServer( (oscIPin, oscPORTin) )
 oscserver.timeout = 0
@@ -597,6 +597,9 @@ def handler(path, tags, args, source):
 		value = int(args[0])
 		gstt.cc[number] = value
 		
+		print number 
+		print value
+		
 		#print "29: ", str(gstt.cc[29])," 30: ", str(gstt.cc[30])," 31: ", str(gstt.cc[31])
 		
 		# send cc to midi devices
@@ -964,7 +967,7 @@ def AiExpressivity(path, tags, args, source):
     print ""
     print user,path,args
     print "Ai Expressivity : ", args[0]
-    gstt.expressiviity = args[0]
+    gstt.aiexpressiviity = args[0]
     
     status(''.join(("Ai Expressivity : ", str(args[0])," on Laser ",str(gstt.Laser))))
 

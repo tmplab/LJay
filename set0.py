@@ -142,7 +142,7 @@ def ssine(samples,freq,phase):
 	return samparray
 
 
-	
+# Remap values in different scales i.e CC value in screen position.
 def cc2scrX(s):
     a1, a2 = 0,127  
     b1, b2 = -screen_size[0]/2, screen_size[0]/2
@@ -174,7 +174,7 @@ def extracc2range(s,min,max):
     return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
 
 
-
+# 3D rotation and 2D projection for a given 3D point
 def proj(x,y,z):
 
     gstt.angleX += cc2range(gstt.cc[29],0,0.1)

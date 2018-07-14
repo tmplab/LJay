@@ -202,7 +202,7 @@ def OutConfig():
     global midiout, MidInsNumber
 	
     print("")
-    print("MIDIout Configuration...")
+    print("MIDIout...")
     print("List and attach to available devices on host with IN port :")
 
     # Display list of available midi IN devices on the host, create and start an OUT instance to talk to each of these Midi IN devices 
@@ -250,7 +250,8 @@ def OutConfig():
 def InConfig():
 
     print("")
-    print("MIDIin Configuration...")
+    print("")
+    print("MIDIin...")
     print("List and attach to available devices on host with OUT port :")
     if  platform == 'darwin':
         mido.set_backend('mido.backends.rtmidi/MACOSX_CORE')

@@ -27,7 +27,10 @@ import colorify
 
 import argparse
 
-		
+print ""
+print "LJay"
+print ""
+print "Autoconfiguring..."
 
 def WriteSettings(): 
 
@@ -40,6 +43,8 @@ def WriteSettings():
 	config.set('laser1', 'finangle', str(gstt.finangle))
 	config.set('laser1', 'swapx', str(gstt.swapx))
 	config.set('laser1', 'swapy', str(gstt.swapy))
+	config.set('laser1', 'set', str(gstt.Set))
+	config.set('laser1', 'curve', str(gstt.Curve))
 	config.write(open('settings.conf','w'))
 
 def ReadSettings(): 
@@ -53,10 +58,12 @@ def ReadSettings():
 	gstt.finangle = config.getfloat('laser1', 'finangle')
 	gstt.swapx = config.getint('laser1', 'swapx')
 	gstt.swapy = config.getint('laser1', 'swapy')
+	gstt.Set = config.getint('laser1', 'set')
+	gstt.Curve = config.getint('laser1', 'curve')
 
 
-	print ("setttings : ")
-	print (str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey) + "," + str(gstt.finangle)  + "," + str(gstt.swapx) + "," + str(gstt.swapy))
+	print ("Alignement settings loaded for Laser 1 ")
+	print ("Center x : " + str(gstt.centerx) + " Center Y : " + str(gstt.centery) + " Zoom X : " + str(gstt.zoomx) + " Zoom Y : " + str(gstt.zoomy) + " Size X :" + str(gstt.sizex) + " Size Y : " + str(gstt.sizey) + " Rotation Angle : " + str(gstt.finangle)  + "  Swap X : " + str(gstt.swapx) + "  Swap Y : " + str(gstt.swapy)+ " Set : " + str(gstt.Set) + "  Curve : " + str(gstt.Curve))
 
 config = ConfigParser.ConfigParser()
 config.read("settings.conf")
@@ -67,8 +74,8 @@ print ""
 print "Arguments parsing if needed..."
 #have to be done before importing bhorosc.py to get correct port assignment
 argsparser = argparse.ArgumentParser(description="LJay")
-argsparser.add_argument("-i","--iport",help="Port number to listen to (8001 by default)",type=int)
-argsparser.add_argument("-o","--oport",help="Port number to send to (8002 by default)",type=int)
+argsparser.add_argument("-i","--iport",help="OSC port number to listen to (8001 by default)",type=int)
+argsparser.add_argument("-o","--oport",help="OSC port number to send to (8002 by default)",type=int)
 argsparser.add_argument("-x","--invx",help="Invert X axis",action="store_true")
 argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
 argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
@@ -116,9 +123,11 @@ else:
 # Set / Curves arguments
 if args.set:
 	gstt.Set = args.set
+	print "Set : " + str(gstt.Set)
 
 if args.curve:
 	gstt.Curve = args.curve
+	print "Curve : " + str(gstt.Curve)
 
 
 # Etherdream target
@@ -188,8 +197,6 @@ settables =  {
 
 if gstt.debug == 0:
 	print "NO DEBUG"
-
-print "Starting Laser..."
 
 def dac_thread():
 	while True:
@@ -329,24 +336,24 @@ if gstt.SLAVERY == False:
 
 	if Nbpads > 1:
 
-		pad2 = pygame.joystick.Joystick(1)
-		pad2.init()
+		gstt.pad2 = pygame.joystick.Joystick(1)
+		gstt.pad2.init()
 
-		print pad2.get_name()
-		print "Axis : ", str(pad2.get_numaxes())
-		numButtons = pad2.get_numbuttons()
+		print gstt.pad2.get_name()
+		print "Axis : ", str(gstt.pad2.get_numaxes())
+		numButtons = gstt.pad2.get_numbuttons()
 		print "Buttons : " , str(numButtons)
 
 	if Nbpads > 0:
 
-		pad1 = pygame.joystick.Joystick(0)
-		pad1.init()
+		gstt.pad1 = pygame.joystick.Joystick(0)
+		gstt.pad1.init()
 
-		print pad1.get_name()
+		print gstt.pad1.get_name()
 
 
-		print "Axis : ", str(pad1.get_numaxes())
-		numButtons = pad1.get_numbuttons()
+		print "Axis : ", str(gstt.pad1.get_numaxes())
+		numButtons = gstt.pad1.get_numbuttons()
 		print "Buttons : " , str(numButtons)
 
 
@@ -374,7 +381,12 @@ if gstt.SLAVERY != False:
 	print "Node Slavery Mode : ", str(gstt.SLAVERY)
 else: 
 	print "Node Mode : MASTER"
+print "Using Curve : ", str(gstt.Curve), " in Set : ", str(gstt.Set)
 
+WriteSettings()
+
+print ""
+print "Starting Laser..."
 
 # Main loop
 
@@ -396,22 +408,22 @@ while True:
 	
 		# Champi gauche
 		# Move center on X axis according to pad
-		if pad1.get_axis(2)<-0.1 or pad1.get_axis(2)>0.1:
-			gstt.cc[1] += -pad1.get_axis(2) * 2
+		if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
+			gstt.cc[1] += -gstt.pad1.get_axis(2) * 2
 
 		# Move center on Y axis according to pad
-		if pad1.get_axis(3)<-0.1 or pad1.get_axis(3)>0.1:
-			gstt.cc[2] += pad1.get_axis(3) * 2
+		if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
+			gstt.cc[2] += gstt.pad1.get_axis(3) * 2
 
 		# Champi droite
 		'''
 		# Move center on X axis according to pad
-		if pad1.get_axis(0)<-0.1 or pad1.get_axis(0)>0.1:
-			gstt.cc[21] += -pad1.get_axis(0) * 2
+		if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
+			gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
 
 		# Move center on Y axis according to pad
-		if pad1.get_axis(1)<-0.1 or pad1.get_axis(1)>0.1:
-			gstt.cc[22] += pad1.get_axis(1) * 2
+		if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
+			gstt.cc[22] += gstt.pad1.get_axis(1) * 2
 		'''	
 		# "1" pygame 0
 		# "2" pygame 1
@@ -422,16 +434,16 @@ while True:
 		# "R1" pygame 5
 		# "R2" pygame 7
 			
-		# Hat gauche pad1.get_hat(0)[0] = -1
-		# Hat droit  pad1.get_hat(0)[0] = 1
+		# Hat gauche gstt.pad1.get_hat(0)[0] = -1
+		# Hat droit  gstt.pad1.get_hat(0)[0] = 1
 
-		# Hat bas pad1.get_hat(0)[1] = -1
-		# Hat haut  pad1.get_hat(0)[1] = 1
+		# Hat bas gstt.pad1.get_hat(0)[1] = -1
+		# Hat haut  gstt.pad1.get_hat(0)[1] = 1
 		
 				
 		#Bouton "3" 1 : surprise ON
 		
-		if pad1.get_button(2) == 1 and gstt.surprise == 0:
+		if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
 			gstt.surprise = 1
 			gstt.cc[21] = 21 	#FOV
 			gstt.cc[22] = gstt.surpriseon 	#Distance
@@ -441,17 +453,17 @@ while True:
 		
 		#Bouton "3" 0 : surprise OFF
 		
-		if pad1.get_button(2) == 0:
+		if gstt.pad1.get_button(2) == 0:
 			gstt.surprise = 0
 			gstt.cc[21] = 21 	#FOV
 			gstt.cc[22] = gstt.surpriseoff 	#Distance
 			
 		#Bouton "4". cycle couleur
 		
-		#if pad1.get_button(3) == 1:
-		#	print "3", str(pad1.get_button(3))
+		#if gstt.pad1.get_button(3) == 1:
+		#	print "3", str(gstt.pad1.get_button(3))
 		'''
-		if pad1.get_button(3) == 1:
+		if gstt.pad1.get_button(3) == 1:
 			newcolor = random.randint(0,2)
 			print newcolor
 			
@@ -467,34 +479,34 @@ while True:
 				
 		'''
 		#Bouton "3" : diminue Vitesse des planetes
-		if pad1.get_button(2) == 1:
-			print "2", str(pad1.get_button(2))
-		if pad1.get_button(2) == 1 and gstt.cc[5] > 2:
+		if gstt.pad1.get_button(2) == 1:
+			print "2", str(gstt.pad1.get_button(2))
+		if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
 			gstt.cc[5] -=1
 			print "X Curve : ",str(gstt.cc[5])
 			
 			
 		#Bouton "1"	: augmente Vitesse des planetes
-		if pad1.get_button(0) == 1:
-			print "0", str(pad1.get_button(0))
-		if pad1.get_button(0) == 1 and gstt.cc[5] < 125:
+		if gstt.pad1.get_button(0) == 1:
+			print "0", str(gstt.pad1.get_button(0))
+		if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
 			gstt.cc[5] +=1
 			print "X Curve : ",str(gstt.cc[5])
 			
 			
 		#Bouton "4". diminue Nombre de planetes
-		if pad1.get_button(3) == 1:
-			print "3", str(pad1.get_button(3))
-		if pad1.get_button(3) == 1 and gstt.cc[6] > 2:
+		if gstt.pad1.get_button(3) == 1:
+			print "3", str(gstt.pad1.get_button(3))
+		if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
 			gstt.cc[6] -=1
 			print "Y Curve : ",str(gstt.cc[6])
 		
 		
 		
 		#Bouton "2"	augmente Nombre de planetes
-		if pad1.get_button(1) == 1:
-			print "1", str(pad1.get_button(1))
-		if pad1.get_button(1) == 1 and gstt.cc[6] < 125:
+		if gstt.pad1.get_button(1) == 1:
+			print "1", str(gstt.pad1.get_button(1))
+		if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
 			gstt.cc[6] +=1
 			print "Y Curve : ",str(gstt.cc[6])
 		
@@ -502,38 +514,38 @@ while True:
 
 
 		# Hat bas : diminue Vitesse des planetes
-		#if pad1.get_hat(0)[1] == -1:
-			#print "2", str(pad1.get_hat(0)[1])
-		if pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
+		#if gstt.pad1.get_hat(0)[1] == -1:
+			#print "2", str(gstt.pad1.get_hat(0)[1])
+		if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
 			gstt.cc[5] -=1
 			print "X Curve/vitesse planete : ",str(gstt.cc[5])
 			
 			
 		#Hat haut : augmente Vitesse des planetes
-		#if pad1.get_hat(0)[1] == 1:
-			#print "0", str(pad1.get_hat(0)[1])
-		if pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
+		#if gstt.pad1.get_hat(0)[1] == 1:
+			#print "0", str(gstt.pad1.get_hat(0)[1])
+		if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
 			gstt.cc[5] +=1
 			print "X Curve/Vitesse planete : ",str(gstt.cc[5])
 			
 			
 		# hat Gauche. diminue Nombre de planetes
-		#if pad1.get_hat(0)[0] == -1:
-			#print "3", str(pad1.get_hat(0)[0])
-		if pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
+		#if gstt.pad1.get_hat(0)[0] == -1:
+			#print "3", str(gstt.pad1.get_hat(0)[0])
+		if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
 			gstt.cc[6] -=1
 			print "Y Curve/ nombre planete : ",str(gstt.cc[6])
 		
 		
 		
 		# hat droit	augmente Nombre de planetes
-		#if pad1.get_hat(0)[0] == 1:
-			#print "1", str(pad1.get_hat(0)[0])
-		if pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
+		#if gstt.pad1.get_hat(0)[0] == 1:
+			#print "1", str(gstt.pad1.get_hat(0)[0])
+		if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
 			gstt.cc[6] +=1
 			print "Y Curve/nb de planetes : ",str(gstt.cc[6])
 		
-		#print "hat : ", str(pad1.get_hat(0)[1])
+		#print "hat : ", str(gstt.pad1.get_hat(0)[1])
 
 			
 

@@ -124,6 +124,8 @@ def Slave(fwork):
     fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
 
 
+
+# Remap values in different scales i.e CC value in screen position.
 def cc2scrX(s):
     a1, a2 = 0,127  
     b1, b2 = -screen_size[0]/2, screen_size[0]/2
@@ -155,7 +157,7 @@ def extracc2range(s,min,max):
     return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
 
 
-
+# 3D rotation and 2D projection for a given 3D point
 def proj(x,y,z):
 
     gstt.angleX += cc2range(gstt.cc[29],0,0.1)
@@ -182,11 +184,13 @@ def proj(x,y,z):
     x2 = x
     x = x2 * cosa - y * sina
     y = x2 * sina + y * cosa
-
     # 3D to 2D projection
     factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
-    x = x * factor + xy_center [0]
-    y = - y * factor + xy_center [1]
+    #print xy_center [0] + gstt.cc[1] -100
+    x = x * factor +  xy_center [0] + gstt.cc[1] -100
+    y = - y * factor +  xy_center [1] - gstt.cc[2]
+    #x = x * factor + xy_center [0]
+    #y = - y * factor + xy_center [1]
 
     return x,y
 

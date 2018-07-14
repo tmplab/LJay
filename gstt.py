@@ -16,7 +16,7 @@ Laser = 4
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
-Set = 0 #nozoid loloster.py
+Set = 1 #nozoid loloster.py
 maxCurvesByLaser = 4
 #curveColor = [255,0,0] * maxCurvesByLaser
 curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
@@ -24,7 +24,8 @@ colorX = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 colorY = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 offsetX = [0] * maxCurvesByLaser
 offsetY = [0] * maxCurvesByLaser
-curveNumber = 4
+curveNumber = 1
+Curve = curveNumber
 
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser

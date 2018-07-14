@@ -1,8 +1,8 @@
-#N canvas 199 198 725 706 10;
-#X obj 323 554 sendOSC;
-#X floatatom 323 581 5 0 0 0 - - -;
-#X floatatom 377 583 5 0 0 0 - - -;
-#X text 378 597 bundleDepth;
+#N canvas 591 152 725 706 10;
+#X obj 159 557 sendOSC;
+#X floatatom 159 584 5 0 0 0 - - -;
+#X floatatom 213 586 5 0 0 0 - - -;
+#X text 214 600 bundleDepth;
 #X msg 21 164 disconnect;
 #X obj 13 9 bng 40 250 50 0 empty empty empty 8 -8 0 10 -262144 -1
 -1;
@@ -11,21 +11,21 @@
 -1;
 #X text 69 -15 /red 1;
 #X msg 19 148 connect 127.0.0.1 8000;
-#X obj 185 476 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+#X obj 21 479 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
 -1 -1 0 256;
-#X obj 185 405 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
+#X obj 21 408 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
 -1 -1 0 1;
-#X obj 318 477 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+#X obj 154 480 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
 -1 -1 0 256;
-#X obj 318 403 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
+#X obj 154 406 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
 -1 -1 0 1;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X coords 0 1 100 -1 100 30 1 0 0;
 #X restore 301 -59 graph;
 #X text 312 -53 OSC Laser GUI;
-#X obj 444 477 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+#X obj 280 480 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
 -1 -1 0 256;
-#X obj 444 404 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
+#X obj 280 407 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
 -1 -1 0 0;
 #X obj 131 7 bng 40 250 50 0 empty empty empty 8 -8 0 10 -262144 -1
 -1;
@@ -48,9 +48,9 @@
 #X msg 180 49 1;
 #X msg 253 51 0;
 #X msg 301 50 1;
-#X msg 187 494 send /cc/29 \$1;
-#X msg 317 494 send /cc/30 \$1;
-#X msg 442 494 send /cc/31 \$1;
+#X msg 23 497 send /cc/29 \$1;
+#X msg 153 497 send /cc/30 \$1;
+#X msg 278 497 send /cc/31 \$1;
 #X obj 357 315 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
 -1 -1 0 256;
 #X obj 357 238 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
@@ -79,9 +79,9 @@
 #X obj 500 239 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
 -1 -1 0 0;
 #X text 119 220 /rotz/speed;
-#X text 507 448 Z;
-#X text 376 450 Y;
-#X text 248 449 X;
+#X text 343 451 Z;
+#X text 212 453 Y;
+#X text 84 452 X;
 #X msg 231 333 send /cc/5 \$1;
 #X msg 356 332 send /cc/6 \$1;
 #X text 422 287 Y;
@@ -202,8 +202,8 @@
 #X text 674 -2 10;
 #X msg 673 32 23;
 #X msg 17 123 connect 10.255.255.84 8001;
-#X obj 321 538 r oscout;
-#X obj 321 510 s oscout;
+#X obj 157 541 r oscout;
+#X obj 157 513 s oscout;
 #X obj 233 351 s oscout;
 #X text 375 354 X;
 #X obj 357 349 s oscout;
@@ -218,12 +218,29 @@
 #X text 34 192 X;
 #X obj 16 187 s oscout;
 #X obj 19 352 s oscout;
-#X text 469 542 comment;
-#X text 343 384 Rotation;
+#X text 305 545 comment;
+#X text 179 387 Rotation;
 #X text 682 283 Dist;
 #X text 381 -16 Colors;
 #X obj 372 70 s oscout;
-#X msg 16 104 connect 192.168.1.10 8001;
+#X obj 616 483 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+-1 -1 32.2881 256;
+#X obj 616 409 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
+-1 -1 1500 0;
+#X obj 492 483 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
+-1 -1 40.8983 256;
+#X obj 493 409 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
+-1 -1 1900 0;
+#X text 510 523 X;
+#X obj 492 518 s oscout;
+#X text 633 522 X;
+#X obj 615 517 s oscout;
+#X msg 491 500 send /cc/1 \$1;
+#X msg 614 500 send /cc/2 \$1;
+#X text 554 449 X;
+#X text 675 453 Y;
+#X text 571 385 Move;
+#X msg 16 104 connect 192.168.2.61 8001;
 #X connect 0 0 1 0;
 #X connect 0 1 2 0;
 #X connect 4 0 165 0;
@@ -325,4 +342,10 @@
 #X connect 149 0 125 0;
 #X connect 150 0 165 0;
 #X connect 151 0 0 0;
-#X connect 172 0 165 0;
+#X connect 172 0 181 0;
+#X connect 173 0 172 0;
+#X connect 174 0 180 0;
+#X connect 175 0 174 0;
+#X connect 180 0 177 0;
+#X connect 181 0 179 0;
+#X connect 185 0 165 0;

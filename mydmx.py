@@ -11,7 +11,8 @@ from sys import platform
 
 gstt.serdmx =""
 print("")
-print("Search DMX serial devices")
+print("")
+print("Searching for DMX serial devices...")
 ports = list(list_ports.comports())
 for p in ports:
     print(p)
