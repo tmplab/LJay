@@ -290,10 +290,10 @@ def Align(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
-	f.Line((0, 0), (l, 0), 0xFFFFFF)
-	f.LineTo((l, h), 0xFFFFFF)
-	f.LineTo((0, h), 0xFFFFFF)
-	f.LineTo((0, 0), 0xFFFFFF)
+	f.Line((0, 0), (l, 0), 0xFFFFFF, 1)
+	f.LineTo((l, h), 0xFFFFFF, 1)
+	f.LineTo((0, h), 0xFFFFFF, 1)
+	f.LineTo((0, 0), 0xFFFFFF, 1)
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 	WriteSettings()
