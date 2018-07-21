@@ -53,6 +53,7 @@ python main.py
 (Doc in Progress)
 
 LPD8 : A config file is included.
+Joypads : Xbox style controllers. Joypads are detected and read by pygame, you need to decide what to do with joypads axis, hat, buttons. Example in set1.joypads()
 
 #
 # Make your own curve generator
@@ -213,11 +214,11 @@ Note on effects :
 58 		Color mode : RGB 
 
 
-CC channel effects (0-127):
+CC channel effects (0-127) if you use built in 3D rotation and 2D projection in your set.
 
-1
+1	  X position
 
-2
+2	  Y position 
 
 5 
 

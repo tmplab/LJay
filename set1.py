@@ -7,40 +7,32 @@ import gstt
 from globalVars import *
 import bhorosc
 import colorify
+import orbits
 
 f_sine = 0
 
 # Curve 0
-def Noz(fwork):
-    global f_sine,x
+def LineX(fwork):
+
+    joypads()
+    # vertical line
     dots = []
-        
-    amp = 200
-    nb_point = 40
-    '''
-    for t in range(0, nb_point+1):
-    
-        y = cc2scrX((66000 + gstt.osc[4])%127)
-        x = cc2scrX((66000 + gstt.osc[5])%127)
-        #rint x,y
-        #print proj(int(x),int(y),0)
-        dots.append(proj(1,int(y),0))
-        
-    '''
-    #x = cc2scrX((66000 + gstt.osc[4])%127)
-    #x += 1
-    #if x >= 840:
-    #    x = -840
-    x = 1.8 *(extracc2scrX(gstt.osc[4]) - 300)
-    #y = cc2scrX((32000 + gstt.osc[4])%127)
-    y = 3 *(extracc2scrY(gstt.osc[5]) - 300)
-    #print x,y
-    #gstt.cc[22]=extracc2range(gstt.osc[6],0,127)
-    newx,newy =  proj(int(x),int(y),0)
-    #print newx,newy
-    #dots.append(proj(int(x),int(y),0))    
-    fwork.Line((newx,newy),(newx+ 5,newy+5), colorify.rgb2hex(gstt.color) )
-    
+    x = cc2scrX(gstt.cc[1]+1)
+    y = 0
+    dots.append((int(x),int(y)))
+    dots.append((int(x),int(screen_size[1])))
+    #print dots
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color))
+
+    # horizontal line
+    dots = []
+    y = cc2scrY(gstt.cc[2]+1)
+    x = 0       
+    dots.append((int(x),int(y)))
+    dots.append((int(screen_size[0]),int(y)))
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color))
+
+
 
 # Curve 1
 def Sine(fwork):
@@ -64,8 +56,8 @@ def Sine(fwork):
 # Curve 2
 def Orbits(fwork):
 
-    orbits.Draw(fwork)
-
+    orbits.Orbits.Draw(fwork)
+   
 
 # Curve 3	
 def Dot(fwork):
@@ -186,11 +178,158 @@ def proj(x,y,z):
     y = x2 * sina + y * cosa
     # 3D to 2D projection
     factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
-    #print xy_center [0] + gstt.cc[1] -100
     x = x * factor +  xy_center [0] + gstt.cc[1] -100
     y = - y * factor +  xy_center [1] - gstt.cc[2]
-    #x = x * factor + xy_center [0]
-    #y = - y * factor + xy_center [1]
+
 
     return x,y
 
+
+
+def joypads():
+
+	if gstt.SLAVERY == False and gstt.Nbpads > 0:
+	
+	
+		# Champi gauche
+		# Move center on X axis according to pad
+		if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
+			gstt.cc[1] += gstt.pad1.get_axis(2) * 2
+
+		# Move center on Y axis according to pad
+		if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
+			gstt.cc[2] += gstt.pad1.get_axis(3) * 2
+
+		# Champi droite
+		'''
+		# Change FOV according to joypad
+		if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
+			gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
+
+		# Change dist according to pad
+		if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
+			gstt.cc[22] += gstt.pad1.get_axis(1) * 2
+		'''	
+		# "1" pygame 0
+		# "2" pygame 1
+		# "3" pygame 2
+		# "4" pygame 3
+		# "L1" pygame 4
+		# "L2" pygame 6
+		# "R1" pygame 5
+		# "R2" pygame 7
+			
+		# Hat gauche gstt.pad1.get_hat(0)[0] = -1
+		# Hat droit  gstt.pad1.get_hat(0)[0] = 1
+
+		# Hat bas gstt.pad1.get_hat(0)[1] = -1
+		# Hat haut  gstt.pad1.get_hat(0)[1] = 1
+		
+				
+		#Bouton "3" 1 : surprise ON
+		
+		if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
+			gstt.surprise = 1
+			gstt.cc[21] = 21 	#FOV
+			gstt.cc[22] = gstt.surpriseon 	#Distance
+			gstt.cc[2] +=  gstt.surprisey
+			gstt.cc[1] +=  gstt.surprisex
+			print "Surprise ON"
+		
+		#Bouton "3" 0 : surprise OFF
+		
+		if gstt.pad1.get_button(2) == 0:
+			gstt.surprise = 0
+			gstt.cc[21] = 21 	#FOV
+			gstt.cc[22] = gstt.surpriseoff 	#Distance
+			
+		#Bouton "4". cycle couleur
+		
+		#if gstt.pad1.get_button(3) == 1:
+		#	print "3", str(gstt.pad1.get_button(3))
+		'''
+		if gstt.pad1.get_button(3) == 1:
+			newcolor = random.randint(0,2)
+			print newcolor
+			
+			if gstt.color[newcolor] == 0:
+				gstt.color[newcolor] = 1
+				
+			else:
+				gstt.color[newcolor] = 0
+				
+			print "Newcolor  : ",str(gstt.newcolor), " ", str(gstt.color[newcolor])
+		
+		'''
+				
+		'''
+		#Bouton "3" : diminue Vitesse des planetes
+		if gstt.pad1.get_button(2) == 1:
+			print "2", str(gstt.pad1.get_button(2))
+		if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
+			gstt.cc[5] -=1
+			print "X Curve : ",str(gstt.cc[5])
+			
+			
+		#Bouton "1"	: augmente Vitesse des planetes
+		if gstt.pad1.get_button(0) == 1:
+			print "0", str(gstt.pad1.get_button(0))
+		if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
+			gstt.cc[5] +=1
+			print "X Curve : ",str(gstt.cc[5])
+			
+			
+		#Bouton "4". diminue Nombre de planetes
+		if gstt.pad1.get_button(3) == 1:
+			print "3", str(gstt.pad1.get_button(3))
+		if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
+			gstt.cc[6] -=1
+			print "Y Curve : ",str(gstt.cc[6])
+		
+		
+		
+		#Bouton "2"	augmente Nombre de planetes
+		if gstt.pad1.get_button(1) == 1:
+			print "1", str(gstt.pad1.get_button(1))
+		if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
+			gstt.cc[6] +=1
+			print "Y Curve : ",str(gstt.cc[6])
+		
+		'''
+
+
+		# Hat bas : diminue Vitesse des planetes
+		#if gstt.pad1.get_hat(0)[1] == -1:
+			#print "2", str(gstt.pad1.get_hat(0)[1])
+		if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
+			gstt.cc[5] -=1
+			print "X Curve/vitesse planete : ",str(gstt.cc[5])
+			
+			
+		#Hat haut : augmente Vitesse des planetes
+		#if gstt.pad1.get_hat(0)[1] == 1:
+			#print "0", str(gstt.pad1.get_hat(0)[1])
+		if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
+			gstt.cc[5] +=1
+			print "X Curve/Vitesse planete : ",str(gstt.cc[5])
+			
+			
+		# hat Gauche. diminue Nombre de planetes
+		#if gstt.pad1.get_hat(0)[0] == -1:
+			#print "3", str(gstt.pad1.get_hat(0)[0])
+		if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
+			gstt.cc[6] -=1
+			print "Y Curve/ nombre planete : ",str(gstt.cc[6])
+		
+		
+		
+		# hat droit	augmente Nombre de planetes
+		#if gstt.pad1.get_hat(0)[0] == 1:
+			#print "1", str(gstt.pad1.get_hat(0)[0])
+		if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
+			gstt.cc[6] +=1
+			print "Y Curve/nb de planetes : ",str(gstt.cc[6])
+		
+		#print "hat : ", str(gstt.pad1.get_hat(0)[1])
+
+		

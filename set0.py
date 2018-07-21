@@ -21,7 +21,7 @@ def Sine(fwork):
     global f_sine
 
     dots = []
-        
+    etherlaser = 2
     amp = 200
     nb_point = 40
     for t in range(0, nb_point+1):
@@ -29,7 +29,7 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color)  )
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), laser =  1, closed = False)
     
     if f_sine > 24:
         f_sine = 0
@@ -39,8 +39,21 @@ def Sine(fwork):
 def Sine(fwork):
     global f_sine
 
+
+    # point list 1 generator (assigned to a laser in gstt.lasersPLS)
+    
     dots = []
-        
+    x = cc2scrX(gstt.cc[1]+1)
+    y = 0
+    dots.append((int(x),int(y)))
+    dots.append((int(x),int(screen_size[1])))
+    #print dots
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), laser = 1, closed = False)
+    
+    
+    
+    # point list 2 generator (assigned to a laser in gstt.lasersPLS)
+    dots = []     
     amp = 200
     nb_point = 40
     for t in range(0, nb_point+1):
@@ -48,16 +61,19 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color)  )
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), laser =  2, closed = False)
     
     if f_sine > 24:
         f_sine = 0
     f_sine += 0.01
+    
+    
+
 
 # Curve 2
 def Orbits(fwork):
 
-    orbits.Draw(fwork)
+    orbits.Orbits.Draw(fwork)
 
 # Curve 3	
 def Dot(fwork):

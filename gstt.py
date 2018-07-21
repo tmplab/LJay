@@ -14,6 +14,24 @@ MyLaser = 4
 
 Laser = 4
 
+
+
+
+
+# gstt.simuPL select what point list number to display in pygame simulator
+
+simuPL = 1
+
+# gstt.laserIPS
+
+lasersIPS = ['192.168.1.3','192.168.1.5','192.168.1.4','192.168.1.6']
+
+
+# gstt.laserPLS : What point list is sent to what laser.
+
+lasersPLS = [1,1,2,2]
+
+
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
 Set = 1 #nozoid loloster.py
@@ -24,7 +42,7 @@ colorX = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 colorY = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 offsetX = [0] * maxCurvesByLaser
 offsetY = [0] * maxCurvesByLaser
-curveNumber = 1
+curveNumber = 0
 Curve = curveNumber
 
 #curveX = [255,255,255] * maxCurvesByLaser
@@ -117,10 +135,10 @@ angleX = 0
 angleY = 0
 angleZ = 0
 
-tomidi = False
+tomidi = True
 todmx = False
 toled = False
-tolaser = False
+tolaser = True
 tosynth = False
 
 sernozoid = ""

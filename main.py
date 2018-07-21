@@ -62,8 +62,6 @@ def ReadSettings():
 	gstt.Curve = config.getint('laser1', 'curve')
 
 
-	print ("Alignement settings loaded for Laser 1 ")
-	print ("Center x : " + str(gstt.centerx) + " Center Y : " + str(gstt.centery) + " Zoom X : " + str(gstt.zoomx) + " Zoom Y : " + str(gstt.zoomy) + " Size X :" + str(gstt.sizex) + " Size Y : " + str(gstt.sizey) + " Rotation Angle : " + str(gstt.finangle)  + "  Swap X : " + str(gstt.swapx) + "  Swap Y : " + str(gstt.swapy)+ " Set : " + str(gstt.Set) + "  Curve : " + str(gstt.Curve))
 
 config = ConfigParser.ConfigParser()
 config.read("settings.conf")
@@ -81,6 +79,7 @@ argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
 argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
 argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
 argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
+argsparser.add_argument("-d","--display",help="Point list number displayed in pygame simulator",type=int)
 
 args = argsparser.parse_args()
 
@@ -102,34 +101,48 @@ print "gstt.oport:",gstt.oport
 print "gstt.iport:",gstt.iport
 
 
-
 # X Y inversion arguments
-if args.invx:
-	print("X inverted")
-	gstt.swapx = -1
-else:
-	print ("X not Inverted")
-	gstt.swapx = 1
+if args.invx == True:
 
-if args.invy:
-	print("Y inverted")
-	gstt.swapy = -1
-else:
-	print ("Y not Inverted")
-	gstt.swapy = 1
-	
+	gstt.swapx = -1 * gstt.swapx
+	gstt.centerx = 0
+	gstt.centery = 0
+	WriteSettings()
+	print("X invertion Asked")
+	if gstt.swapx == 1:
+		print ("X not Inverted")
+	else:
+		print ("X Inverted")
+
+if args.invy == True:
+
+	gstt.swapy = -1 * gstt.swapy
+	gstt.centerx = 0
+	gstt.centery = 0
+	WriteSettings()
+	print("Y invertion Asked")
+	if gstt.swapy == 1:
+		print ("Y not Inverted")
+	else:
+		print("Y inverted")
+
 
 
 # Set / Curves arguments
-if args.set:
+if args.set != None:
 	gstt.Set = args.set
 	print "Set : " + str(gstt.Set)
 
-if args.curve:
+if args.curve != None:
 	gstt.Curve = args.curve
 	print "Curve : " + str(gstt.Curve)
 
 
+# Point list number used by simulator
+if args.display  != None:
+	gstt.simuPL = args.display
+	
+	
 # Etherdream target
 if args.laser  != None:
 	lstdgtlaser = args.laser
@@ -144,6 +157,8 @@ else:
 print ("Laser 1 etherIP:",etherIP)
 
 
+print ("Alignement settings loaded for Laser 1 ")
+print ("Center x : " + str(gstt.centerx) + " Center Y : " + str(gstt.centery) + " Zoom X : " + str(gstt.zoomx) + " Zoom Y : " + str(gstt.zoomy) + " Size X :" + str(gstt.sizex) + " Size Y : " + str(gstt.sizey) + " Rotation Angle : " + str(gstt.finangle)  + "  Swap X : " + str(gstt.swapx) + "  Swap Y : " + str(gstt.swapy)+ " Set : " + str(gstt.Set) + "  Curve : " + str(gstt.Curve))
 
 
 
@@ -177,9 +192,9 @@ settables =  {
         6: set0.Orbits,
         7: set0.Slave
     }, {
-        0: set1.Sine,
+        0: set1.LineX,
         1: set1.Sine,
-        2: set1.CC,
+        2: set1.Orbits,
         3: set1.Dot,
         4: set1.Circle,
         5: set1.CC,
@@ -198,6 +213,7 @@ settables =  {
 if gstt.debug == 0:
 	print "NO DEBUG"
 
+'''
 def dac_thread():
 	while True:
 		try:
@@ -214,7 +230,40 @@ def dac_thread():
 				print "\n"
 			pass
 
+'''
 
+def dac_thread1():
+    while True:
+        try:
+            d1 = dac.DAC(gstt.lasersIPS[0])
+            d1.play_stream(laser)
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
+
+
+def dac_thread2():
+    while True:
+        try:
+            d2 = dac.DAC(gstt.lasersIPS[1])
+            d2.play_stream(laser)
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
 
 
 
@@ -261,35 +310,35 @@ def alignjump():
 		Align(fwork)
 		
 	if keystates[pygame.K_r]:
-		gstt.centerx += 20
+		gstt.centerx -= 20
 		Align(fwork)
 
 	if keystates[pygame.K_t]:
-		gstt.centerx -= 20
+		gstt.centerx += 20
 		Align(fwork)
 		
 	if keystates[pygame.K_y]:
-		gstt.centery += 20
-		Align(fwork)
-
-	if keystates[pygame.K_u]:
 		gstt.centery -= 20
 		Align(fwork)
 
+	if keystates[pygame.K_u]:
+		gstt.centery += 20
+		Align(fwork)
+
 	if keystates[pygame.K_f]:
-		gstt.zoomx += 0.1
+		gstt.zoomx -= 0.1
 		Align(fwork)
 
 	if keystates[pygame.K_g]:
-		gstt.zoomx -= 0.1
+		gstt.zoomx += 0.1
 		Align(fwork)
 		
 	if keystates[pygame.K_h]:
-		gstt.zoomy += 0.1
+		gstt.zoomy -= 0.1
 		Align(fwork)
 
 	if keystates[pygame.K_j]:
-		gstt.zoomy -= 0.1
+		gstt.zoomy += 0.1
 		Align(fwork)
 	
 	if keystates[pygame.K_c]:
@@ -331,10 +380,10 @@ if gstt.SLAVERY == False:
 	pygame.display.set_caption("Laser Master")
 	
 	print ""
-	Nbpads = pygame.joystick.get_count()
-	print "Joypads : ", str(Nbpads)
+	gstt.Nbpads = pygame.joystick.get_count()
+	print "Joypads : ", str(gstt.Nbpads)
 
-	if Nbpads > 1:
+	if gstt.Nbpads > 1:
 
 		gstt.pad2 = pygame.joystick.Joystick(1)
 		gstt.pad2.init()
@@ -344,7 +393,7 @@ if gstt.SLAVERY == False:
 		numButtons = gstt.pad2.get_numbuttons()
 		print "Buttons : " , str(numButtons)
 
-	if Nbpads > 0:
+	if gstt.Nbpads > 0:
 
 		gstt.pad1 = pygame.joystick.Joystick(0)
 		gstt.pad1.init()
@@ -366,7 +415,10 @@ clock = pygame.time.Clock()
 
 fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
-thread.start_new_thread(dac_thread, ())
+
+#thread.start_new_thread(dac_thread, ())
+thread.start_new_thread(dac_thread1, ())
+thread.start_new_thread(dac_thread2, ())
 
 update_screen = False
 keystates = pygame.key.get_pressed()
@@ -403,151 +455,7 @@ while True:
 	if keystates[pygame.K_ESCAPE]:
 		break
 		
-	if gstt.SLAVERY == False and Nbpads > 0:
 	
-	
-		# Champi gauche
-		# Move center on X axis according to pad
-		if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
-			gstt.cc[1] += -gstt.pad1.get_axis(2) * 2
-
-		# Move center on Y axis according to pad
-		if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
-			gstt.cc[2] += gstt.pad1.get_axis(3) * 2
-
-		# Champi droite
-		'''
-		# Move center on X axis according to pad
-		if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
-			gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
-
-		# Move center on Y axis according to pad
-		if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
-			gstt.cc[22] += gstt.pad1.get_axis(1) * 2
-		'''	
-		# "1" pygame 0
-		# "2" pygame 1
-		# "3" pygame 2
-		# "4" pygame 3
-		# "L1" pygame 4
-		# "L2" pygame 6
-		# "R1" pygame 5
-		# "R2" pygame 7
-			
-		# Hat gauche gstt.pad1.get_hat(0)[0] = -1
-		# Hat droit  gstt.pad1.get_hat(0)[0] = 1
-
-		# Hat bas gstt.pad1.get_hat(0)[1] = -1
-		# Hat haut  gstt.pad1.get_hat(0)[1] = 1
-		
-				
-		#Bouton "3" 1 : surprise ON
-		
-		if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
-			gstt.surprise = 1
-			gstt.cc[21] = 21 	#FOV
-			gstt.cc[22] = gstt.surpriseon 	#Distance
-			gstt.cc[2] +=  gstt.surprisey
-			gstt.cc[1] +=  gstt.surprisex
-			print "Surprise ON"
-		
-		#Bouton "3" 0 : surprise OFF
-		
-		if gstt.pad1.get_button(2) == 0:
-			gstt.surprise = 0
-			gstt.cc[21] = 21 	#FOV
-			gstt.cc[22] = gstt.surpriseoff 	#Distance
-			
-		#Bouton "4". cycle couleur
-		
-		#if gstt.pad1.get_button(3) == 1:
-		#	print "3", str(gstt.pad1.get_button(3))
-		'''
-		if gstt.pad1.get_button(3) == 1:
-			newcolor = random.randint(0,2)
-			print newcolor
-			
-			if gstt.color[newcolor] == 0:
-				gstt.color[newcolor] = 1
-				
-			else:
-				gstt.color[newcolor] = 0
-				
-			print "Newcolor  : ",str(gstt.newcolor), " ", str(gstt.color[newcolor])
-		
-		'''
-				
-		'''
-		#Bouton "3" : diminue Vitesse des planetes
-		if gstt.pad1.get_button(2) == 1:
-			print "2", str(gstt.pad1.get_button(2))
-		if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
-			gstt.cc[5] -=1
-			print "X Curve : ",str(gstt.cc[5])
-			
-			
-		#Bouton "1"	: augmente Vitesse des planetes
-		if gstt.pad1.get_button(0) == 1:
-			print "0", str(gstt.pad1.get_button(0))
-		if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
-			gstt.cc[5] +=1
-			print "X Curve : ",str(gstt.cc[5])
-			
-			
-		#Bouton "4". diminue Nombre de planetes
-		if gstt.pad1.get_button(3) == 1:
-			print "3", str(gstt.pad1.get_button(3))
-		if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
-			gstt.cc[6] -=1
-			print "Y Curve : ",str(gstt.cc[6])
-		
-		
-		
-		#Bouton "2"	augmente Nombre de planetes
-		if gstt.pad1.get_button(1) == 1:
-			print "1", str(gstt.pad1.get_button(1))
-		if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
-			gstt.cc[6] +=1
-			print "Y Curve : ",str(gstt.cc[6])
-		
-		'''
-
-
-		# Hat bas : diminue Vitesse des planetes
-		#if gstt.pad1.get_hat(0)[1] == -1:
-			#print "2", str(gstt.pad1.get_hat(0)[1])
-		if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
-			gstt.cc[5] -=1
-			print "X Curve/vitesse planete : ",str(gstt.cc[5])
-			
-			
-		#Hat haut : augmente Vitesse des planetes
-		#if gstt.pad1.get_hat(0)[1] == 1:
-			#print "0", str(gstt.pad1.get_hat(0)[1])
-		if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
-			gstt.cc[5] +=1
-			print "X Curve/Vitesse planete : ",str(gstt.cc[5])
-			
-			
-		# hat Gauche. diminue Nombre de planetes
-		#if gstt.pad1.get_hat(0)[0] == -1:
-			#print "3", str(gstt.pad1.get_hat(0)[0])
-		if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
-			gstt.cc[6] -=1
-			print "Y Curve/ nombre planete : ",str(gstt.cc[6])
-		
-		
-		
-		# hat droit	augmente Nombre de planetes
-		#if gstt.pad1.get_hat(0)[0] == 1:
-			#print "1", str(gstt.pad1.get_hat(0)[0])
-		if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
-			gstt.cc[6] +=1
-			print "Y Curve/nb de planetes : ",str(gstt.cc[6])
-		
-		#print "hat : ", str(gstt.pad1.get_hat(0)[1])
-
-			
 
 	screen.fill(0)
 	fwork = frame.Frame()

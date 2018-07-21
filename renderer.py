@@ -113,7 +113,7 @@ class LaserRenderer(Renderer):
 		#x = (((xyc[0] * math.cos(gstt.finangle)) - (xyc[1] * math.sin(gstt.finangle))) - screen_size[0]/2) * gstt.zoomx + gstt.centerx
 		#y = (((xyc[0] * math.sin(gstt.finangle)) + (xyc[1] * math.cos(gstt.finangle))) - screen_size[1]/2) * gstt.zoomy + gstt.centery
 		# TODO : optimiser les calculs d'ajustement de la couleur
-		return (-x, -y, ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+		return (x*gstt.swapx, y*gstt.swapy, ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
 	
 def ClipPoint(xyc):
 	# gestion simple du clipping : borner x et y, et éteindre le laser

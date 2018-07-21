@@ -224,13 +224,13 @@
 #X text 381 -16 Colors;
 #X obj 372 70 s oscout;
 #X obj 616 483 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
--1 -1 32.2881 256;
+-1 -1 0 256;
 #X obj 616 409 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
--1 -1 1500 0;
+-1 -1 0 0;
 #X obj 492 483 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
--1 -1 40.8983 256;
+-1 -1 0 256;
 #X obj 493 409 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
--1 -1 1900 0;
+-1 -1 0 0;
 #X text 510 523 X;
 #X obj 492 518 s oscout;
 #X text 633 522 X;
@@ -240,7 +240,7 @@
 #X text 554 449 X;
 #X text 675 453 Y;
 #X text 571 385 Move;
-#X msg 16 104 connect 192.168.2.61 8001;
+#X msg 16 104 connect 192.168.1.176 8001;
 #X connect 0 0 1 0;
 #X connect 0 1 2 0;
 #X connect 4 0 165 0;

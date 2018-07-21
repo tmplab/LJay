@@ -78,6 +78,9 @@ class Orbits(object):
 		self.angleY += 0.0
 		self.angleZ += 0.0
 		'''
+		
+		set1.joypads()
+		
 		gstt.angleX += set1.cc2range(gstt.cc[29],0,0.1)
 		gstt.angleY += set1.cc2range(gstt.cc[30],0,0.1)
 		gstt.angleZ += set1.cc2range(gstt.cc[31],0,0.1)

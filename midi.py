@@ -20,6 +20,7 @@ import bhorosc
 import bhoreal
 import launchpad
 import orbits
+import gstt
 
 midiname = ["Name"] * 16
 midiport = [rtmidi.MidiOut() for i in range(16) ]
