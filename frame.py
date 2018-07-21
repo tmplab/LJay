@@ -23,32 +23,32 @@ class Frame(object):
 		self.pl = [[],[],[],[]]
 		
 
-	def LineTo(self, xy, c, laser):
+	def LineTo(self, xy, c, list):
 	
-		print laser
+		print list
 		self.point_list.append((xy + (c,)))				#add c to the tuple 
-		self.pl[laser].append((xy + (c,)))
+		self.pl[list].append((xy + (c,)))
 		
 		#print self.pl	
 	
 	
-	def Line(self, xy1, xy2, c, laser):
-		self.LineTo(xy1, 0, laser)
-		self.LineTo(xy2, c , laser)
+	def Line(self, xy1, xy2, c, list):
+		self.LineTo(xy1, 0, list)
+		self.LineTo(xy2, c , list)
 	
 	
-	def PolyLineOneColor(self, xy_list, c, laser , closed ):
+	def PolyLineOneColor(self, xy_list, c, list , closed ):
 		# code compatible avec les générateurs
 		xy0 = None
 		
 		for xy in xy_list:
 			if xy0 is None:
 				xy0 = xy
-				self.LineTo(xy0,0, laser)
+				self.LineTo(xy0,0, list)
 			else:
-				self.LineTo(xy,c, laser)
+				self.LineTo(xy,c, list)
 		if closed:
-			self.LineTo(xy0,c, laser)
+			self.LineTo(xy0,c, list)
 	
 	'''
 	def RenderScreen(self, surface):

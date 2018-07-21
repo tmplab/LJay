@@ -110,8 +110,8 @@ def NozMode(fwork):
 	#if len(dotsoscT[(currentdotsosc+1)%2]):
 	#        dotsoscT[(currentdotsosc+1)%2].popleft()
         dotsoscT[currentdotsosc[curveNumber]][curveNumber].append((newx,newy))
-        fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), laser =  1, closed = False )
-        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), laser =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), list =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), list =  1, closed = False )
 
       if gstt.X[curveNumber] == 0 and gstt.Y[curveNumber] != 0:
         if 1 < len(dotsoscT[currentdotsosc[curveNumber]][curveNumber]) and newx < dotsoscT[currentdotsosc[curveNumber]][curveNumber][-1][0]:
@@ -123,8 +123,8 @@ def NozMode(fwork):
 	#if len(dotsoscT[(currentdotsosc+1)%2]):
 	#        dotsoscT[(currentdotsosc+1)%2].popleft()
         dotsoscT[currentdotsosc[curveNumber]][curveNumber].append((newx,newy))
-        fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), laser =  1, closed = False )
-        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), laser =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), list =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), list =  1, closed = False )
 
       #if (gstt.X == 0 and gstt.Y == 0) or (gstt.X != 0 and gstt.Y != 0):
       if (gstt.X[curveNumber] != 0 and gstt.Y[curveNumber] != 0):
@@ -135,7 +135,7 @@ def NozMode(fwork):
 	#print "Plotting first lissajou curve"
 	#print "gstt.X[0]=%d" % gstt.X[0]
 	#print "gstt.Y[0]=%d" % gstt.Y[0]
-        fwork.PolyLineOneColor( dotsoscT[currentdotsosc[curveNumber]][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), laser =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[currentdotsosc[curveNumber]][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), list =  1, closed = False )
 
       #fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
       #fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
@@ -245,7 +245,7 @@ def NozMode2(fwork):
                 dots.append(proj(int(x),int(y),0,0))
             else:
             #dots.append(proj(0,0,0))
-                fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), laser =  1, closed = False )
+                fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), list =  1, closed = False )
             #dots=[]
         #if not idx%nb_point:
             #   fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
@@ -264,7 +264,7 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0,0))
 
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), laser =  1, closed = False )
+    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), list =  1, closed = False )
     
     if f_sine > 24:
         f_sine = 0
@@ -287,7 +287,7 @@ def Circle(fwork):
         x = 0 - amp*math.cos(2* PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0,0))
 
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), laser =  1, closed = False )
+    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), list =  1, closed = False )
     
     #print f_sine
     if f_sine > 24:
@@ -308,7 +308,7 @@ def CC(fwork):
         #bhorosc.send5("/point", [proj(int(x),int(y),0),colorify.rgb2hex(gstt.color)])       
         dots.append(proj(int(x),int(y),0,0))
         
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), laser =  1, closed = False )
+    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), list =  1, closed = False )
 
 
 
