@@ -325,6 +325,7 @@ def Align(f):
 	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
 	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
 	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
+
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 	WriteSettings()
