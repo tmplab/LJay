@@ -24,7 +24,7 @@ simuPL = 1
 
 # gstt.laserIPS
 
-lasersIPS = ['192.168.1.3','192.168.1.5','192.168.1.4','192.168.1.6']
+lasersIPS = ['192.168.1.3','192.168.1.5','192.168.1.6','192.168.1.4']
 
 
 # gstt.laserPLS : What point list is sent to what laser.
@@ -84,6 +84,18 @@ cc[22]= 60
 fov = 4 * cc[22]
 
 debug = 1
+
+'''
+
+if debug = 1 you get :
+
+
+if debug = 2 you get :
+- continuous doc status packets.
+
+
+'''
+
 
 JumpFlag =0
 

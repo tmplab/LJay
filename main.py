@@ -78,6 +78,7 @@ argsparser.add_argument("-x","--invx",help="Invert X axis",action="store_true")
 argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
 argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
 argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
+argsparser.add_argument("-r","--reset",help="Reset alignement values",action="store_true")
 argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
 argsparser.add_argument("-d","--display",help="Point list number displayed in pygame simulator",type=int)
 
@@ -156,7 +157,21 @@ else:
 
 print ("Laser 1 etherIP:",etherIP)
 
+# Reset alignment values
+if args.reset == True:
 
+	gstt.centerx = 0
+	gstt.centery = 0
+	gstt.zoomx = 15
+	gstt.zoomy = 15
+	gstt.sizex = 32000
+	gstt.sizey = 32000
+	gstt.finangle = 0.0
+	gstt.swapx = 1
+	gstt.swapy = 1
+	WriteSettings()
+	
+	
 print ("Alignement settings loaded for Laser 1 ")
 print ("Center x : " + str(gstt.centerx) + " Center Y : " + str(gstt.centery) + " Zoom X : " + str(gstt.zoomx) + " Zoom Y : " + str(gstt.zoomy) + " Size X :" + str(gstt.sizex) + " Size Y : " + str(gstt.sizey) + " Rotation Angle : " + str(gstt.finangle)  + "  Swap X : " + str(gstt.swapx) + "  Swap Y : " + str(gstt.swapy)+ " Set : " + str(gstt.Set) + "  Curve : " + str(gstt.Curve))
 
@@ -184,7 +199,7 @@ x = 0
 
 settables =  {
         0: set0.Sine,
-        1: set0.Sine,
+        1: set0.xPLS,
         2: set0.Orbits,
         3: set0.Dot,
         4: set0.Circle,
@@ -231,8 +246,7 @@ def dac_thread():
 			pass
 
 '''
-
-def dac_thread1():
+def dac_thread0():
     while True:
         try:
             d1 = dac.DAC(gstt.lasersIPS[0])
@@ -249,10 +263,27 @@ def dac_thread1():
             pass
 
 
+def dac_thread1():
+    while True:
+        try:
+            d1 = dac.DAC(gstt.lasersIPS[1])
+            d1.play_stream(laser)
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
+
+
 def dac_thread2():
     while True:
         try:
-            d2 = dac.DAC(gstt.lasersIPS[1])
+            d2 = dac.DAC(gstt.lasersIPS[2])
             d2.play_stream(laser)
         except Exception as e:
 
@@ -271,29 +302,29 @@ def DrawTestPattern(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
-	f.Line((0, 0), (l, 0), 0xFFFFFF)
-	f.LineTo((l, h), 0xFFFFFF)
-	f.LineTo((0, h), 0xFFFFFF)
-	f.LineTo((0, 0), 0xFFFFFF)
+	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
 	
-	f.LineTo((2*L_SLOPE, h), 0)
+	f.LineTo((2*L_SLOPE, h), 0, gstt.simuPL)
 	for i in xrange(1,7):
 		c = (0xFF0000 if i & 1 else 0) | (0xFF00 if i & 2 else 0) | (0xFF if i & 4 else 0)
-		f.LineTo(((2 * i + 1) * L_SLOPE, 0), c)
-		f.LineTo(((2 * i + 2) * L_SLOPE, h), c)
-	f.Line((l*.5, h*.5), (l*.75, -h*.5), 0xFF00FF)
-	f.LineTo((l*1.5, h*.5), 0xFF00FF)
-	f.LineTo((l*.75, h*1.5), 0xFF00FF)
-	f.LineTo((l*.5, h*.5), 0xFF00FF)
+		f.LineTo(((2 * i + 1) * L_SLOPE, 0), c, gstt.simuPL)
+		f.LineTo(((2 * i + 2) * L_SLOPE, h), c, gstt.simuPL)
+	f.Line((l*.5, h*.5), (l*.75, -h*.5), 0xFF00FF, gstt.simuPL)
+	f.LineTo((l*1.5, h*.5), 0xFF00FF, gstt.simuPL)
+	f.LineTo((l*.75, h*1.5), 0xFF00FF, gstt.simuPL)
+	f.LineTo((l*.5, h*.5), 0xFF00FF, gstt.simuPL)
 
 def Align(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
-	f.Line((0, 0), (l, 0), 0xFFFFFF)
-	f.LineTo((l, h), 0xFFFFFF)
-	f.LineTo((0, h), 0xFFFFFF)
-	f.LineTo((0, 0), 0xFFFFFF)
+	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 	WriteSettings()
@@ -417,8 +448,16 @@ fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 #thread.start_new_thread(dac_thread, ())
+
 thread.start_new_thread(dac_thread1, ())
+print ""
+print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
+
 thread.start_new_thread(dac_thread2, ())
+print ""
+print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
+
+
 
 update_screen = False
 keystates = pygame.key.get_pressed()
@@ -434,6 +473,8 @@ if gstt.SLAVERY != False:
 else: 
 	print "Node Mode : MASTER"
 print "Using Curve : ", str(gstt.Curve), " in Set : ", str(gstt.Set)
+print "Simulator displays point list : ", str(gstt.simuPL)
+
 
 WriteSettings()
 

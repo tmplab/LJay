@@ -29,14 +29,14 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), laser =  1, closed = False)
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  1, closed = False)
     
     if f_sine > 24:
         f_sine = 0
     f_sine += 0.01
 
 # Curve 1
-def Sine(fwork):
+def xPLS(fwork):
     global f_sine
 
 
@@ -48,7 +48,7 @@ def Sine(fwork):
     dots.append((int(x),int(y)))
     dots.append((int(x),int(screen_size[1])))
     #print dots
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), laser = 1, closed = False)
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
     
     
     
@@ -61,7 +61,7 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), laser =  2, closed = False)
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
     
     if f_sine > 24:
         f_sine = 0
