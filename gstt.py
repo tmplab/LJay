@@ -85,6 +85,18 @@ fov = 4 * cc[22]
 
 debug = 1
 
+'''
+
+if debug = 1 you get :
+
+
+if debug = 2 you get :
+- continuous doc status packets.
+
+
+'''
+
+
 JumpFlag =0
 
 

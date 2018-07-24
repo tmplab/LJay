@@ -17,6 +17,7 @@
 import socket
 import time
 import struct
+from gstt import debug
 from globalVars import *
 
 
@@ -53,6 +54,8 @@ class Status(object):
 	def dump(self, prefix = " - "):
 		"""Dump to a string."""
 		lines = [
+			""
+			"Host ",
 			"Light engine: state %d, flags 0x%x" %
 				(self.le_state, self.le_flags),
 			"Playback: state %d, flags 0x%x" %
@@ -64,8 +67,9 @@ class Status(object):
 			"Source: %d, flags 0x%x" %
 				(self.source, self.source_flags)
 		]
-		for l in lines:
-			print prefix + l
+		if debug == 2:
+			for l in lines:
+				print prefix + l
 
 
 class BroadcastPacket(object):
@@ -90,7 +94,8 @@ class BroadcastPacket(object):
 		]
 		for l in lines:
 			print prefix + l
-		self.status.dump(prefix)
+		if debug == 1:
+			self.status.dump(prefix)
 
 
 class DAC(object):

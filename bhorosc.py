@@ -947,7 +947,10 @@ def stoprot(path, tags, args, source):
 
 
 # Change simulator point list
+<<<<<<< HEAD
 # /display/PL/ pointlistnumber
+=======
+>>>>>>> c9cc84f1d5cffde71b601925d7a973daa1969fc1
 def display(path, tags, args, source):
     user = ''.join(path.split("/"))
     print ""

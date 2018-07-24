@@ -246,8 +246,7 @@ def dac_thread():
 			pass
 
 '''
-
-def dac_thread1():
+def dac_thread0():
     while True:
         try:
             d1 = dac.DAC(gstt.lasersIPS[0])
@@ -264,10 +263,27 @@ def dac_thread1():
             pass
 
 
+def dac_thread1():
+    while True:
+        try:
+            d1 = dac.DAC(gstt.lasersIPS[1])
+            d1.play_stream(laser)
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
+
+
 def dac_thread2():
     while True:
         try:
-            d2 = dac.DAC(gstt.lasersIPS[1])
+            d2 = dac.DAC(gstt.lasersIPS[2])
             d2.play_stream(laser)
         except Exception as e:
 
@@ -286,29 +302,37 @@ def DrawTestPattern(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
-	f.Line((0, 0), (l, 0), 0xFFFFFF)
-	f.LineTo((l, h), 0xFFFFFF)
-	f.LineTo((0, h), 0xFFFFFF)
-	f.LineTo((0, 0), 0xFFFFFF)
+	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
 	
-	f.LineTo((2*L_SLOPE, h), 0)
+	f.LineTo((2*L_SLOPE, h), 0, gstt.simuPL)
 	for i in xrange(1,7):
 		c = (0xFF0000 if i & 1 else 0) | (0xFF00 if i & 2 else 0) | (0xFF if i & 4 else 0)
-		f.LineTo(((2 * i + 1) * L_SLOPE, 0), c)
-		f.LineTo(((2 * i + 2) * L_SLOPE, h), c)
-	f.Line((l*.5, h*.5), (l*.75, -h*.5), 0xFF00FF)
-	f.LineTo((l*1.5, h*.5), 0xFF00FF)
-	f.LineTo((l*.75, h*1.5), 0xFF00FF)
-	f.LineTo((l*.5, h*.5), 0xFF00FF)
+		f.LineTo(((2 * i + 1) * L_SLOPE, 0), c, gstt.simuPL)
+		f.LineTo(((2 * i + 2) * L_SLOPE, h), c, gstt.simuPL)
+	f.Line((l*.5, h*.5), (l*.75, -h*.5), 0xFF00FF, gstt.simuPL)
+	f.LineTo((l*1.5, h*.5), 0xFF00FF, gstt.simuPL)
+	f.LineTo((l*.75, h*1.5), 0xFF00FF, gstt.simuPL)
+	f.LineTo((l*.5, h*.5), 0xFF00FF, gstt.simuPL)
 
 def Align(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
+<<<<<<< HEAD
 	f.Line((0, 0), (l, 0), 0xFFFFFF)
 	f.LineTo((l, h), 0xFFFFFF)
 	f.LineTo((0, h), 0xFFFFFF)
 	f.LineTo((0, 0), 0xFFFFFF)
+=======
+	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
+	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
+
+>>>>>>> c9cc84f1d5cffde71b601925d7a973daa1969fc1
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 	WriteSettings()
@@ -432,9 +456,14 @@ fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 #thread.start_new_thread(dac_thread, ())
+
 thread.start_new_thread(dac_thread1, ())
 print ""
 print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
+<<<<<<< HEAD
+=======
+
+>>>>>>> c9cc84f1d5cffde71b601925d7a973daa1969fc1
 thread.start_new_thread(dac_thread2, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
