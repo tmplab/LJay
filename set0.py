@@ -21,7 +21,7 @@ def Sine(fwork):
     global f_sine
 
     dots = []
-    etherlist = 2
+    etherlaser = 2
     amp = 200
     nb_point = 40
     for t in range(0, nb_point+1):
@@ -29,26 +29,46 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), list =  1, closed = False)
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  1, closed = False)
     
     if f_sine > 24:
         f_sine = 0
     f_sine += 0.01
 
 # Curve 1
-def Sine(fwork):
+def xPLS(fwork):
     global f_sine
 
 
+    # point list 0 generator (assigned to a laser in gstt.lasersPLS) 
+    
+    # middle horizontal line
+    dots = []
+    # x = cc2scrX(gstt.cc[1]+1)
+    # y = 0
+    x = (int(screen_size[1]) / 2) - 50
+    y = (int(screen_size[0])/2)
+    dots.append((int(x),int(y)))
+    dots.append((int((int(screen_size[1]) / 2) + 50),(int(y))))
+    #dots.append((int(x),int(screen_size[1])))
+    #print dots
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    
+    
+    
     # point list 1 generator (assigned to a laser in gstt.lasersPLS)
     
+    # middle vertical line
     dots = []
-    x = cc2scrX(gstt.cc[1]+1)
-    y = 0
+    # x = cc2scrX(gstt.cc[1]+1)
+    # y = 0
+    x = int(screen_size[1]) / 2
+    y = (int(screen_size[1])/2) -50
     dots.append((int(x),int(y)))
-    dots.append((int(x),int(screen_size[1])))
+    dots.append((int(x),(int(screen_size[1])/2)+50))
+    #dots.append((int(x),int(screen_size[1])))
     #print dots
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), list = 1, closed = False)
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
     
     
     
@@ -61,7 +81,7 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), list =  2, closed = False)
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
     
     if f_sine > 24:
         f_sine = 0

@@ -24,12 +24,12 @@ simuPL = 1
 
 # gstt.laserIPS
 
-lasersIPS = ['192.168.1.3','192.168.1.5','192.168.1.4','192.168.1.6']
+lasersIPS = ['192.168.1.3','192.168.1.5','192.168.1.6','192.168.1.4']
 
 
 # gstt.laserPLS : What point list is sent to what laser.
 
-lasersPLS = [1,1,2,2]
+lasersPLS = [1,0,1,2]
 
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15

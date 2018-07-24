@@ -63,11 +63,11 @@ Joypads : Xbox style controllers. Joypads are detected and read by pygame, you n
 
 Duplicate and rename a set file like set0.py (import it in main.py).
 
-Program your own curve :
+Program your own "curve" :
  
-- Generate a point list array.
-- Use Laser drawing functions : polyline, line, lineto.
-- You can have several drawing functions to draw several objects.
+- Generate at least one point list array. One laser takes one "point list". Any point list can be sent to any laser (= all lasers can draw the same point list or different ones)
+- Use Laser "drawing functions" : polyline, line, lineto.
+- You can have several drawing functions to draw several objects in one point list.
 
 
 If you need to receive data externally : 
@@ -77,7 +77,7 @@ or program your own OSC commands in bhorosc.py
 
 Add your set and curve in settables (main.py)
 
-Modify in gstt set and curve to run your curve at startup.
+Use command line arguments (-s setnumber -c curvenumber) or modify in gstt Set and Curve.
 
 #
 # LJay OSC commands :
@@ -104,6 +104,8 @@ Modify in gstt set and curve to run your curve at startup.
 /number value : 	switch current displayed curve to value.
 
 /quit : 			Do nothing yet
+
+/display/PL	number	Select what point list (PL) is displayed by simulator
 
 
 # Colors 
@@ -132,7 +134,7 @@ In RGB Color mode (see note effects to switch Color mode)
 
 /led led number color : Switch on given led with given color. 
 
-/led/xy  x y color	Switch on led wit x y position to given color.
+/led/xy  x y color	Switch on led with x y position to given color.
 
 /xy x y 
 
@@ -199,7 +201,7 @@ Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme fo
 # Laser Effects 
 #
 
-Note on effects :
+Midi Note on effects :
 
 0-7 	Curve choice 
 
@@ -214,7 +216,7 @@ Note on effects :
 58 		Color mode : RGB 
 
 
-CC channel effects (0-127) if you use built in 3D rotation and 2D projection in your set.
+Midi CC channel effects (0-127) if you use built in 3D rotation and 2D projection in your set.
 
 1	  X position
 

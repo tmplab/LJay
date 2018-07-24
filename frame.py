@@ -19,36 +19,40 @@ class Frame(object):
 		'''
 		Constructor
 		'''
+		
+		# legacy point list
 		self.point_list = []
+		
+		# 4 point list
 		self.pl = [[],[],[],[]]
 		
 
-	def LineTo(self, xy, c, list):
+	def LineTo(self, xy, c, PL):
 	
-		print list
+		#print PL
 		self.point_list.append((xy + (c,)))				#add c to the tuple 
-		self.pl[list].append((xy + (c,)))
+		self.pl[PL].append((xy + (c,)))
 		
 		#print self.pl	
 	
 	
-	def Line(self, xy1, xy2, c, list):
-		self.LineTo(xy1, 0, list)
-		self.LineTo(xy2, c , list)
+	def Line(self, xy1, xy2, c, PL):
+		self.LineTo(xy1, 0, PL)
+		self.LineTo(xy2, c , PL)
 	
 	
-	def PolyLineOneColor(self, xy_list, c, list , closed ):
+	def PolyLineOneColor(self, xy_list, c, PL , closed ):
 		# code compatible avec les générateurs
 		xy0 = None
 		
 		for xy in xy_list:
 			if xy0 is None:
 				xy0 = xy
-				self.LineTo(xy0,0, list)
+				self.LineTo(xy0,0, PL)
 			else:
-				self.LineTo(xy,c, list)
+				self.LineTo(xy,c, PL)
 		if closed:
-			self.LineTo(xy0,c, list)
+			self.LineTo(xy0,c, PL)
 	
 	'''
 	def RenderScreen(self, surface):

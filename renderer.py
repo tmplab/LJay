@@ -33,27 +33,27 @@ class LaserRenderer(Renderer):
 		self.x_halfsize, self.y_halfsize = x_halfsize, y_halfsize
 		self.stream = self.produce()
 	
-	#TODO : générateur de points clippés à implémenter.
-	# Ce générateur ne parcourra la liste du frame qu'une seule fois.
-	# (la boucle infinie n'a cours que dans le générateur final).
-	# Gérer l'élimination des points noirs inutiles.
-	
 	# Transformer les points écran en points laser (ToStreamPt())
 	# en amont du générateur final.
+	
 	def genClippedLaserPts(self):
-			# Obtenir une référence de la dernière frame valide
+			
+			# Obtenir la dernière frame valide
 			f_cur = self.fh.f
 			# point précédent, initialisé pour usage ultérieur
 			xyrgb_prev = self.ToStreamPt((0,0,0))
+			
 			if f_cur is None:
 				#TODO : voir si cas frame vide est mieux à traiter ici ou en aval.
 				return
 
 			for xyc in f_cur.point_list:
 				xyrgb = self.ToStreamPt(xyc)
+				
 				#Déterminer la ligne clippée de (précédent, courant)
 				#TODO : rendre configurable la zone de clipping = plage de consignes analogiques valides
-#				line = ClipLine(xyrgb_prev, xyrgb, (-13000, 0), (13000, 17000))
+				#line = ClipLine(xyrgb_prev, xyrgb, (-13000, 0), (13000, 17000))
+				
 				line = ClipLine(xyrgb_prev, xyrgb, (self.x_center - self.x_halfsize, self.y_center - self.y_halfsize), (self.x_center + self.x_halfsize, self.y_center + self.y_halfsize))
 				# Ligne totalement en-dehors ==> on passe car il n'y a aucun point à générer
 				if not line is None:
@@ -73,19 +73,22 @@ class LaserRenderer(Renderer):
 	
 	
 	def produce(self):
-		'''
-		Générateur de points façon PointStream d'Asteroids
-		'''
+	
+		# Genere a la demande les points envoyés au laser en rajoutant des points intermédiaires
+		# (compenser le temps de réponse des galvas et de la commutation des couleurs)
+		
+		
 		while True:
-			#NOTE : ce générateur est seulement dédié à mettre en forme la suite de points envoyés au laser
-			# dans le but de compenser le temps de éponse des galvas et de la commutation des couleurs.
-			
+		
 			# point précédent, initialisé pour usage ultérieur
 			xyrgb_prev = (0,0,0,0,0)
 			
 			#TODO : le générateur peut être vide ==> YIELDer un point bidon au minimum
+			
 			for xyrgb in self.genClippedLaserPts():
+				
 				delta_x, delta_y = xyrgb[0] - xyrgb_prev[0], xyrgb[1] - xyrgb_prev[1]
+				
 				#test adaptation traçage selon longueur ligne
 				if math.hypot(delta_x, delta_y) < 4000:
 					l_steps = [ (1.0, 8)]
@@ -98,14 +101,28 @@ class LaserRenderer(Renderer):
 						yield xyrgb_step
 				
 				xyrgb_prev = xyrgb
+				
+
 
 	def read(self, n):
+	
+		# Called by dac : ask ("read") for n new points needed.
+		# (stream renvoie a produce dans init)
+		
 		d = [self.stream.next() for i in xrange(n)]
+		print d
 		return d
+		
+		
+		
 
 	def ToStreamPt(self, xyc):
+		
+		# compute for a given point, actual coordinates transformed by alignment parameters (center, size, zoom, axis swap,....)
+		
+		print ""
+		print xyc
 		c = xyc[2]
-
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2
 		x = (screen_size[0]/2 + ((XX * math.cos(gstt.finangle)) - (YY * math.sin(gstt.finangle))) - screen_size[0]/2) * gstt.zoomx + gstt.centerx
@@ -113,7 +130,9 @@ class LaserRenderer(Renderer):
 		#x = (((xyc[0] * math.cos(gstt.finangle)) - (xyc[1] * math.sin(gstt.finangle))) - screen_size[0]/2) * gstt.zoomx + gstt.centerx
 		#y = (((xyc[0] * math.sin(gstt.finangle)) + (xyc[1] * math.cos(gstt.finangle))) - screen_size[1]/2) * gstt.zoomy + gstt.centery
 		# TODO : optimiser les calculs d'ajustement de la couleur
+		print x,y
 		return (x*gstt.swapx, y*gstt.swapy, ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+	
 	
 def ClipPoint(xyc):
 	# gestion simple du clipping : borner x et y, et éteindre le laser

@@ -943,6 +943,20 @@ def stoprot(path, tags, args, source):
 	gstt.angleX=0
 	gstt.angleY=0
 	gstt.angleZ=0
+	
+
+
+# Change simulator point list
+# /display/PL/ pointlistnumber
+def display(path, tags, args, source):
+    user = ''.join(path.split("/"))
+    print ""
+    print user,path,args
+    print "New Point list number for simulator : ", args[0]
+    gstt.simuPL = args[0]
+    
+    status(''.join(("Simu point list : ", str(args[0]))))
+
 
 
 #
@@ -1008,6 +1022,9 @@ oscserver.addMsgHandler( "/gyrosc/gyro", gyro )
 oscserver.addMsgHandler( "/point", point )
 oscserver.addMsgHandler( "/accxyz", accxyztouchosc )
 accxyztouchosc
+oscserver.addMsgHandler( "/display/PL", display )
+
+
 oscserver.addMsgHandler( "/nozoid/X", nozX )
 oscserver.addMsgHandler( "/nozoid/Y", nozY )
 oscserver.addMsgHandler( "/nozoid/color", nozcolor )
