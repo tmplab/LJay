@@ -108,10 +108,10 @@ class LaserRenderer(Renderer):
 	
 		# Called by dac : ask ("read") for n new points needed.
 		# (stream renvoie a produce dans init)
-		print PL
+		#print PL
 		d = [self.stream.next() for i in xrange(n)]
 		#print d
-		# test
+		# test 2
 		return d
 		
 		
@@ -122,7 +122,7 @@ class LaserRenderer(Renderer):
 		# compute for a given point, actual coordinates transformed by alignment parameters (center, zoom, axis swap,....) and rescaled in etherdream coord space
 		# 
 
-		#print xyc
+		print "xyc " , xyc
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2

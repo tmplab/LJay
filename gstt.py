@@ -79,7 +79,7 @@ viewer_distance = cc[21] * 8
 cc[22]= 60
 fov = 4 * cc[22]
 
-debug = 1
+debug = 0
 
 '''
 

@@ -81,6 +81,7 @@ argsparser.add_argument("-c","--curve",help="Specify with generator curve to use
 argsparser.add_argument("-r","--reset",help="Reset alignement values",action="store_true")
 argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
 argsparser.add_argument("-d","--display",help="Point list number displayed in pygame simulator",type=int)
+argsparser.add_argument("-v","--verbose",help="Debug mode 0,1 or 2.",type=int)
 
 args = argsparser.parse_args()
 
@@ -142,6 +143,13 @@ if args.curve != None:
 # Point list number used by simulator
 if args.display  != None:
 	gstt.simuPL = args.display
+
+
+
+# Verbose = debug
+if args.verbose  != None:
+	gstt.debug = args.verbose
+	
 	
 	
 # Etherdream target
