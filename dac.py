@@ -130,12 +130,13 @@ class DAC(object):
 		self.last_status = status
 		return status
 
-	def __init__(self, host, port = 7765):
+	def __init__(self, host, PL, port = 7765):
 		"""Connect to the DAC over TCP."""
 		conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		conn.connect((host, port))
 		self.conn = conn
 		self.buf = ""
+		self.PL = PL
 
 		# Read the "hello" message
 		first_status = self.readresp("?")
@@ -192,7 +193,7 @@ class DAC(object):
 		while True:
 			# How much room?
 			cap = 1799 - self.last_status.fullness
-			points = stream.read(cap)
+			points = stream.read(cap, self.PL)
 
 			if cap < 100:
 				time.sleep(0.005)

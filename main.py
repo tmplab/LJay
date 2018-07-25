@@ -15,7 +15,7 @@ import itertools
 import sys
 import os
 import thread
-import time
+import time 
 import frame
 import renderer
 import dac
@@ -249,7 +249,7 @@ def dac_thread():
 def dac_thread0():
     while True:
         try:
-            d1 = dac.DAC(gstt.lasersIPS[0])
+            d1 = dac.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
             d1.play_stream(laser)
         except Exception as e:
 
@@ -266,7 +266,7 @@ def dac_thread0():
 def dac_thread1():
     while True:
         try:
-            d1 = dac.DAC(gstt.lasersIPS[1])
+            d1 = dac.DAC(gstt.lasersIPS[1],gstt.lasersPLS[1])
             d1.play_stream(laser)
         except Exception as e:
 
@@ -283,7 +283,7 @@ def dac_thread1():
 def dac_thread2():
     while True:
         try:
-            d2 = dac.DAC(gstt.lasersIPS[2])
+            d2 = dac.DAC(gstt.lasersIPS[2],gstt.lasersPLS[2])
             d2.play_stream(laser)
         except Exception as e:
 
@@ -297,6 +297,21 @@ def dac_thread2():
             pass
 
 
+def dac_thread3():
+    while True:
+        try:
+            d2 = dac.DAC(gstt.lasersIPS[3],gstt.lasersPLS[3])
+            d2.play_stream(laser)
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
 
 def DrawTestPattern(f):
 	l,h = screen_size
@@ -321,18 +336,11 @@ def Align(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
-<<<<<<< HEAD
-	f.Line((0, 0), (l, 0), 0xFFFFFF)
-	f.LineTo((l, h), 0xFFFFFF)
-	f.LineTo((0, h), 0xFFFFFF)
-	f.LineTo((0, 0), 0xFFFFFF)
-=======
 	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
 	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
 	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
 	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
 
->>>>>>> c9cc84f1d5cffde71b601925d7a973daa1969fc1
 	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 	WriteSettings()
@@ -457,17 +465,23 @@ laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zo
 
 #thread.start_new_thread(dac_thread, ())
 
+thread.start_new_thread(dac_thread0, ())
+print ""
+print "dac thread 0 with IP : ", gstt.lasersIPS[0]," and point list : ", gstt.lasersPLS[0],
+
+
 thread.start_new_thread(dac_thread1, ())
 print ""
 print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
-<<<<<<< HEAD
-=======
 
->>>>>>> c9cc84f1d5cffde71b601925d7a973daa1969fc1
+
 thread.start_new_thread(dac_thread2, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
 
+thread.start_new_thread(dac_thread3, ())
+print ""
+print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
 
 update_screen = False

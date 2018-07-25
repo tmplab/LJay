@@ -68,7 +68,7 @@ def xPLS(fwork):
     dots.append((int(x),(int(screen_size[1])/2)+50))
     #dots.append((int(x),int(screen_size[1])))
     #print dots
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
+    #fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
     
     
     
@@ -81,7 +81,7 @@ def xPLS(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
+    #fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
     
     if f_sine > 24:
         f_sine = 0

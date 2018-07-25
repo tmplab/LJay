@@ -104,13 +104,14 @@ class LaserRenderer(Renderer):
 				
 
 
-	def read(self, n):
+	def read(self, n, PL):
 	
 		# Called by dac : ask ("read") for n new points needed.
 		# (stream renvoie a produce dans init)
-		
+		print PL
 		d = [self.stream.next() for i in xrange(n)]
-		print d
+		#print d
+		# test
 		return d
 		
 		
@@ -118,10 +119,10 @@ class LaserRenderer(Renderer):
 
 	def ToStreamPt(self, xyc):
 		
-		# compute for a given point, actual coordinates transformed by alignment parameters (center, size, zoom, axis swap,....)
-		
-		print ""
-		print xyc
+		# compute for a given point, actual coordinates transformed by alignment parameters (center, zoom, axis swap,....) and rescaled in etherdream coord space
+		# 
+
+		#print xyc
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2
@@ -130,7 +131,7 @@ class LaserRenderer(Renderer):
 		#x = (((xyc[0] * math.cos(gstt.finangle)) - (xyc[1] * math.sin(gstt.finangle))) - screen_size[0]/2) * gstt.zoomx + gstt.centerx
 		#y = (((xyc[0] * math.sin(gstt.finangle)) + (xyc[1] * math.cos(gstt.finangle))) - screen_size[1]/2) * gstt.zoomy + gstt.centery
 		# TODO : optimiser les calculs d'ajustement de la couleur
-		print x,y
+		#print x,y
 		return (x*gstt.swapx, y*gstt.swapy, ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
 	
 	
