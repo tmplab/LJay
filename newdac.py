@@ -181,7 +181,7 @@ class DAC(object):
 
 	
 	# Point generator #2 :
-	# PL is cycled
+	# PL is cycled. Problem : cycle restart each time at the beginning of the PL that one can see it.
 
 	def nPoints(self, cap):
 			

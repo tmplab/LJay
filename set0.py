@@ -9,7 +9,7 @@ import bhorosc
 import colorify
 import orbits
 import numpy as np
-
+import pdb
 
 
 orbits = orbits.Orbits()
@@ -42,46 +42,38 @@ def xPLS(fwork):
 
     # point list 0 generator (assigned to a laser in gstt.lasersPLS) 
     PL = 0
-    # middle horizontal line
     dots = []
-    # x = cc2scrX(gstt.cc[1]+1)
-    # y = 0
+    
+    
+    # middle horizontal line
     x = (int(screen_size[1]) / 2) - 50
     y = (int(screen_size[0])/2)
     dots.append((int(x),int(y)))
     dots.append((int((int(screen_size[1]) / 2) + 50),(int(y))))
-    #dots.append((int(x),int(screen_size[1])))
-    #print dots
-
-    #print "0 : ", dots
+    
     gstt.PL[0] = dots
     gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
-    #print "0 gstt : ", gstt.PL[0]
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     
-    
+   
     
     # point list 1 generator (assigned to a laser in gstt.lasersPLS)
     PL = 1
-    # middle vertical line
     dots = []
-    # x = cc2scrX(gstt.cc[1]+1)
-    # y = 0
+    
+    #pdb.set_trace()
+    # middle vertical line
     x = int(screen_size[1]) / 2
     y = (int(screen_size[1])/2) -50
     dots.append((int(x),int(y)))
     dots.append((int(x),(int(screen_size[1])/2)+50))
-
-    #dots.append((int(x),int(screen_size[1])))
-    #print "1 : ", dots
+    
     gstt.PL[1] = dots
     gstt.PLcolor[1] = colorify.rgb2hex(gstt.color)
-
-    #print "1 gstt ", gstt.PL[1]
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
     
     
-    
+  
     # point list 2 generator (assigned to a laser in gstt.lasersPLS)
     PL = 2
     dots = []     
@@ -94,15 +86,12 @@ def xPLS(fwork):
 
     gstt.PL[PL] = dots
     gstt.PLcolor[PL] = colorify.rgb2hex(gstt.color)
-    
     fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
     
     
     if f_sine > 24:
         f_sine = 0
     f_sine += 0.01
-    
-    
 
 
 # Curve 2

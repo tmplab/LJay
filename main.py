@@ -27,7 +27,7 @@ from globalVars import *
 import gstt
 import cli
 import colorify
-
+import pdb
 
 print ""
 print "LJay"
@@ -80,7 +80,7 @@ def ReadSettings():
 	gstt.LaserNumber = config.getint('General', 'lasernumber')
 
 	# Legacy mono laser style
-	gstt.color = config.getint('laser1', 'color')
+	#gstt.color = config.getint('laser1', 'color')
 	gstt.centerx = config.getint('laser1', 'centerx')
 	gstt.centery = config.getint('laser1', 'centery')
 	gstt.zoomx = config.getfloat('laser1', 'zoomx')
@@ -123,7 +123,7 @@ print ""
 print "Lasers parameters..."
 print "IPs ", gstt.lasersIPS
 print "PLs : ", gstt.lasersPLS
-print "Colors TODO : ", gstt.lasersPLcolor
+#print "Colors TODO : ", gstt.lasersPLcolor
 print "center X : ", gstt.centerX
 print "center Y : ",gstt.centerY
 print "zoom X : ", gstt.zoomX

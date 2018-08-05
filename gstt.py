@@ -27,7 +27,8 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 lasersPLS = [2,2,2,2]
 
 PL = [[],[],[],[]]
-PLcolor = [[-1,-1,-1],[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]]
+#PLcolor = [[-1,-1,-1],[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]]
+PLcolor = [0,0,0,0]
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
@@ -56,7 +57,7 @@ Mode = 5
 point = [0,0,0]
 
 # gstt.colormode select what to display. Can be changed with /noteon 57-64
-colormode = 1
+colormode = 0
 color = [255,255,0]
 newcolor = 0
 
