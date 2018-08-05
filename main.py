@@ -19,21 +19,44 @@ import time
 import frame
 import renderer
 import dac
+import newdac
+import dac2
 import ConfigParser
 from globalVars import *
 
 import gstt
+import cli
 import colorify
 
-import argparse
 
 print ""
 print "LJay"
 print ""
 print "Autoconfiguring..."
 
+
 def WriteSettings(): 
 
+
+	config.set('General', 'set', str(gstt.Set))
+	config.set('General', 'curve', str(gstt.Curve))
+	config.set('General', 'lasernumber', str(gstt.LaserNumber))
+
+	# Multilaser style
+	for i in range(gstt.LaserNumber):
+		laser = 'laser' + str(i)
+		config.set
+		config.set(laser, 'centerx', str(gstt.centerX[i]))
+		config.set(laser, 'centery', str(gstt.centerY[i]))
+		config.set(laser, 'zoomx', str(gstt.zoomX[i]))
+		config.set(laser, 'zoomy', str(gstt.zoomY[i]))
+		config.set(laser, 'sizex', str(gstt.sizeX[i]))
+		config.set(laser, 'sizey', str(gstt.sizeY[i]))
+		config.set(laser, 'finangle', str(gstt.finANGLE[i]))
+		config.set(laser, 'swapx', str(gstt.swapX[i]))
+		config.set(laser, 'swapy', str(gstt.swapY[i]))
+
+	# Legacy mono laser style
 	config.set('laser1', 'centerx', str(gstt.centerx))
 	config.set('laser1', 'centery', str(gstt.centery))
 	config.set('laser1', 'zoomx', str(gstt.zoomx))
@@ -43,12 +66,21 @@ def WriteSettings():
 	config.set('laser1', 'finangle', str(gstt.finangle))
 	config.set('laser1', 'swapx', str(gstt.swapx))
 	config.set('laser1', 'swapy', str(gstt.swapy))
-	config.set('laser1', 'set', str(gstt.Set))
-	config.set('laser1', 'curve', str(gstt.Curve))
+
+
 	config.write(open('settings.conf','w'))
+
+
 
 def ReadSettings(): 
 	
+
+	gstt.Set = config.getint('General', 'set')
+	gstt.Curve = config.getint('General', 'curve')
+	gstt.LaserNumber = config.getint('General', 'lasernumber')
+
+	# Legacy mono laser style
+	gstt.color = config.getint('laser1', 'color')
 	gstt.centerx = config.getint('laser1', 'centerx')
 	gstt.centery = config.getint('laser1', 'centery')
 	gstt.zoomx = config.getfloat('laser1', 'zoomx')
@@ -58,132 +90,54 @@ def ReadSettings():
 	gstt.finangle = config.getfloat('laser1', 'finangle')
 	gstt.swapx = config.getint('laser1', 'swapx')
 	gstt.swapy = config.getint('laser1', 'swapy')
-	gstt.Set = config.getint('laser1', 'set')
-	gstt.Curve = config.getint('laser1', 'curve')
-
+	
+	# Multilaser style
+	for i in range(4):
+		laser = 'laser' + str(i)
+		gstt.lasersIPS[i]= config.get(laser, 'ip')
+		gstt.lasersPLS[i] = config.getint(laser, 'PL')
+		#gstt.lasersPLcolor[i] = config.getint(laser, 'color')
+		gstt.centerX[i]= config.getint(laser, 'centerx')
+		gstt.centerY[i] = config.getint(laser, 'centery')
+		gstt.zoomX[i] = config.getfloat(laser, 'zoomx')
+		gstt.zoomY[i] = config.getfloat(laser, 'zoomy')
+		gstt.sizeX[i] = config.getint(laser, 'sizex')
+		gstt.sizeY[i] = config.getint(laser, 'sizey')
+		gstt.finANGLE[i] = config.getfloat(laser, 'finangle')
+		gstt.swapX[i] = config.getint(laser, 'swapx')
+		gstt.swapY[i] = config.getint(laser, 'swapy')
 
 
 config = ConfigParser.ConfigParser()
 config.read("settings.conf")
 
+
+
 ReadSettings()
 
 print ""
-print "Arguments parsing if needed..."
-#have to be done before importing bhorosc.py to get correct port assignment
-argsparser = argparse.ArgumentParser(description="LJay")
-argsparser.add_argument("-i","--iport",help="OSC port number to listen to (8001 by default)",type=int)
-argsparser.add_argument("-o","--oport",help="OSC port number to send to (8002 by default)",type=int)
-argsparser.add_argument("-x","--invx",help="Invert X axis",action="store_true")
-argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
-argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
-argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
-argsparser.add_argument("-r","--reset",help="Reset alignement values",action="store_true")
-argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
-argsparser.add_argument("-d","--display",help="Point list number displayed in pygame simulator",type=int)
-argsparser.add_argument("-v","--verbose",help="Debug mode 0,1 or 2.",type=int)
-
-args = argsparser.parse_args()
-
-
-# Ports arguments
-if args.iport:
-	iport = args.iport
-	gstt.iport = iport
-else:
-	iport = gstt.iport
-
-if args.oport:
-	oport = args.oport
-	gstt.oport = oport
-else:
-	oport = gstt.oport
-
-print "gstt.oport:",gstt.oport
-print "gstt.iport:",gstt.iport
+print "Set : ", gstt.Set
+print "Curve : ", gstt.Curve
+print "Lasers number : ", gstt.LaserNumber
+print ""
+print "Lasers parameters..."
+print "IPs ", gstt.lasersIPS
+print "PLs : ", gstt.lasersPLS
+print "Colors TODO : ", gstt.lasersPLcolor
+print "center X : ", gstt.centerX
+print "center Y : ",gstt.centerY
+print "zoom X : ", gstt.zoomX
+print "zoom Y : ", gstt.zoomY
+print "size X : ", gstt.sizeX
+print "size Y : ", gstt.sizeY
+print "Rotation : ", gstt.finANGLE
+print "swap X : ", gstt.swapX
+print "swap Y : ", gstt.swapY
 
 
-# X Y inversion arguments
-if args.invx == True:
+cli.handle()
 
-	gstt.swapx = -1 * gstt.swapx
-	gstt.centerx = 0
-	gstt.centery = 0
-	WriteSettings()
-	print("X invertion Asked")
-	if gstt.swapx == 1:
-		print ("X not Inverted")
-	else:
-		print ("X Inverted")
-
-if args.invy == True:
-
-	gstt.swapy = -1 * gstt.swapy
-	gstt.centerx = 0
-	gstt.centery = 0
-	WriteSettings()
-	print("Y invertion Asked")
-	if gstt.swapy == 1:
-		print ("Y not Inverted")
-	else:
-		print("Y inverted")
-
-
-
-# Set / Curves arguments
-if args.set != None:
-	gstt.Set = args.set
-	print "Set : " + str(gstt.Set)
-
-if args.curve != None:
-	gstt.Curve = args.curve
-	print "Curve : " + str(gstt.Curve)
-
-
-# Point list number used by simulator
-if args.display  != None:
-	gstt.simuPL = args.display
-
-
-
-# Verbose = debug
-if args.verbose  != None:
-	gstt.debug = args.verbose
-	
-	
-	
-# Etherdream target
-if args.laser  != None:
-	lstdgtlaser = args.laser
-	if lstdgtlaser == 0:
-		etherIP = "127.0.0.1"
-	else:
-		etherIP = "192.168.1."+str(lstdgtlaser)
-
-else:
-	etherIP = "192.168.1.4"
-
-print ("Laser 1 etherIP:",etherIP)
-
-# Reset alignment values
-if args.reset == True:
-
-	gstt.centerx = 0
-	gstt.centery = 0
-	gstt.zoomx = 15
-	gstt.zoomy = 15
-	gstt.sizex = 32000
-	gstt.sizey = 32000
-	gstt.finangle = 0.0
-	gstt.swapx = 1
-	gstt.swapy = 1
-	WriteSettings()
-	
-	
-print ("Alignement settings loaded for Laser 1 ")
-print ("Center x : " + str(gstt.centerx) + " Center Y : " + str(gstt.centery) + " Zoom X : " + str(gstt.zoomx) + " Zoom Y : " + str(gstt.zoomy) + " Size X :" + str(gstt.sizex) + " Size Y : " + str(gstt.sizey) + " Rotation Angle : " + str(gstt.finangle)  + "  Swap X : " + str(gstt.swapx) + "  Swap Y : " + str(gstt.swapy)+ " Set : " + str(gstt.Set) + "  Curve : " + str(gstt.Curve))
-
-
+WriteSettings()
 
 #raw_input("Hit Enter To Continue!")
 
@@ -197,9 +151,6 @@ import orbits
 if not gstt.SLAVERY :
 	midi.InConfig()
 	midi.OutConfig()
-	#import nozoid
-
-
 
 #dots = []
 
@@ -253,12 +204,43 @@ def dac_thread():
 				print "\n"
 			pass
 
+def dac_thread0():
+    while True:
+        try:
+            d0 = dac2.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
+            d0.play_stream()
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
+'''        
+def dac_thread0():
+    while True:
+        try:
+            d0 = newdac.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
+            d0.play_stream()
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
 '''
 def dac_thread0():
     while True:
         try:
-            d1 = dac.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
-            d1.play_stream(laser)
+            d0 = dac.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
+            d0.play_stream(laser)
         except Exception as e:
 
             import sys, traceback
@@ -270,12 +252,17 @@ def dac_thread0():
                 print "\n"
             pass
 
-
+'''
 def dac_thread1():
     while True:
         try:
-            d1 = dac.DAC(gstt.lasersIPS[1],gstt.lasersPLS[1])
-            d1.play_stream(laser)
+
+            d1 = newdac.DAC(gstt.lasersIPS[1],gstt.lasersPLS[1])
+            d1.play_stream()
+
+            # Legacy style
+            #d1 = dac.DAC(gstt.lasersIPS[1],gstt.lasersPLS[1])
+            #d1.play_stream(laser)
         except Exception as e:
 
             import sys, traceback
@@ -291,8 +278,8 @@ def dac_thread1():
 def dac_thread2():
     while True:
         try:
-            d2 = dac.DAC(gstt.lasersIPS[2],gstt.lasersPLS[2])
-            d2.play_stream(laser)
+            d2 = newdac.DAC(gstt.lasersIPS[2],gstt.lasersPLS[2])
+            d2.play_stream()
         except Exception as e:
 
             import sys, traceback
@@ -308,8 +295,8 @@ def dac_thread2():
 def dac_thread3():
     while True:
         try:
-            d2 = dac.DAC(gstt.lasersIPS[3],gstt.lasersPLS[3])
-            d2.play_stream(laser)
+            d3 = dac.DAC(gstt.lasersIPS[3],gstt.lasersPLS[3])
+            d3.play_stream(laser)
         except Exception as e:
 
             import sys, traceback
@@ -471,6 +458,9 @@ clock = pygame.time.Clock()
 fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
+
+print ""
+print gstt.LaserNumber, "lasers connected." 
 #thread.start_new_thread(dac_thread, ())
 
 thread.start_new_thread(dac_thread0, ())
@@ -482,7 +472,7 @@ thread.start_new_thread(dac_thread1, ())
 print ""
 print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
 
-
+'''
 thread.start_new_thread(dac_thread2, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
@@ -491,6 +481,7 @@ thread.start_new_thread(dac_thread3, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
+'''
 
 update_screen = False
 keystates = pygame.key.get_pressed()
@@ -505,7 +496,6 @@ if gstt.SLAVERY != False:
 	print "Node Slavery Mode : ", str(gstt.SLAVERY)
 else: 
 	print "Node Mode : MASTER"
-print "Using Curve : ", str(gstt.Curve), " in Set : ", str(gstt.Set)
 print "Simulator displays point list : ", str(gstt.simuPL)
 
 

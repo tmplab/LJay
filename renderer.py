@@ -32,6 +32,7 @@ class LaserRenderer(Renderer):
 		self.x_stretch, self.y_stretch = x_stretch, y_stretch;
 		self.x_halfsize, self.y_halfsize = x_halfsize, y_halfsize
 		self.stream = self.produce()
+		self.PL = 0
 	
 	# Transformer les points écran en points laser (ToStreamPt())
 	# en amont du générateur final.
@@ -46,10 +47,27 @@ class LaserRenderer(Renderer):
 			if f_cur is None:
 				#TODO : voir si cas frame vide est mieux à traiter ici ou en aval.
 				return
+			
+			#print "PL = ", self.PL, " gstt.PL self.PL : ", gstt.PL[self.PL] , " gstt colors : ", gstt.PLcolor[self.PL], " len : ", len(gstt.PL[self.PL]) 
+			
+			#print gstt.PL[self.PL][0]
+			#print self.ToStreamPt(gstt.PL[self.PL][0])
+			#print f_cur.point_list
+			#for xyc in f_cur.pl(self.PL):
+			#for xyc in f_cur.point_list:
+			#for xyc in gstt.PL[self.PL]:
+			for currentpoint in range(0,len(gstt.PL[self.PL])):
 
-			for xyc in f_cur.point_list:
+
+				#print currentpoint
+				#print gstt.PL[self.PL][currentpoint][0], gstt.PL[self.PL][currentpoint][1], gstt.PLcolor[self.PL]
+				xyc = [gstt.PL[self.PL][currentpoint][0], gstt.PL[self.PL][currentpoint][1], gstt.PLcolor[self.PL]]
+				#print "point in fcur.pl : ", xyc
+				#print "point in gstt.PL : ", xyc
+
 				xyrgb = self.ToStreamPt(xyc)
 				
+				#print "point rescaled : ", xyrgb
 				#Déterminer la ligne clippée de (précédent, courant)
 				#TODO : rendre configurable la zone de clipping = plage de consignes analogiques valides
 				#line = ClipLine(xyrgb_prev, xyrgb, (-13000, 0), (13000, 17000))
@@ -85,8 +103,19 @@ class LaserRenderer(Renderer):
 			
 			#TODO : le générateur peut être vide ==> YIELDer un point bidon au minimum
 			
+			#print gstt.PL[self.PL]
+
 			for xyrgb in self.genClippedLaserPts():
-				
+				'''
+			#for currentpoint in range(0,len(gstt.PL[self.PL])):
+			#for indexpoint, currentpoint in enumerate(gstt.PL[self.PL]):
+
+				#print "currentpoint : ", currentpoint
+				#xyc = [currentpoint[0],currentpoint[1],gstt.PLcolor[self.PL]]
+				xyrgb = self.ToStreamPt(xyc)
+
+				'''
+
 				delta_x, delta_y = xyrgb[0] - xyrgb_prev[0], xyrgb[1] - xyrgb_prev[1]
 				
 				#test adaptation traçage selon longueur ligne
@@ -109,6 +138,11 @@ class LaserRenderer(Renderer):
 		# Called by dac : ask ("read") for n new points needed.
 		# (stream renvoie a produce dans init)
 		#print PL
+		#print ""
+		#print ""
+		#print n
+		self.PL = PL
+		#print  "read : ", self.PL
 		d = [self.stream.next() for i in xrange(n)]
 		#print d
 		# test 2
@@ -122,7 +156,7 @@ class LaserRenderer(Renderer):
 		# compute for a given point, actual coordinates transformed by alignment parameters (center, zoom, axis swap,....) and rescaled in etherdream coord space
 		# 
 
-		print "xyc " , xyc
+		#print "Converting point : " , xyc
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2

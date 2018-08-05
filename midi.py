@@ -148,6 +148,7 @@ def midinProcess(midiqueue):
     while True:
         msg = midiqueue_get()
         print msg
+        time.sleep(0.001)
 
 
 def MidinProcess(inqueue):
@@ -155,6 +156,7 @@ def MidinProcess(inqueue):
     inqueue_get = inqueue.get
     print "midiprocess"
     while True:
+        time.sleep(0.001)
         msg = inqueue_get()
         print msg[0]
         

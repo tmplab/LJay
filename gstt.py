@@ -6,27 +6,28 @@ Etat global (anciennement singleton de la classe GameState + autres VARIABLES n�
 from globalVars import *
 
 
+# How many lasers are connected. Different that "currentlaser" used by bhorosc
+LaserNumber = 2
+
 SLAVERY = False
 MyLaser = 4
 
 # gstt.Laser select what to display. Can be changed with /noteon 0-7
 # Laser 4 correspond to IP 4
-
 Laser = 4
 
 # gstt.simuPL select what point list number to display in pygame simulator
-
 simuPL = 1
 
-# gstt.laserIPS
-
+# gstt.laserIPS. Will be overridden by settings.conf values
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 
 
-# gstt.laserPLS : What point list is sent to what laser.
+# gstt.laserPLS : What point list is sent to what laser. ** Will be overridden by settings.conf values **
+lasersPLS = [2,2,2,2]
 
-lasersPLS = [0,1,1,2]
-
+PL = [[],[],[],[]]
+PLcolor = [[-1,-1,-1],[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]]
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
@@ -46,7 +47,6 @@ Curve = curveNumber
 
 
 # gstt.Curve select what to display. Can be changed with /noteon 16-21
-
 Curve = 0 #nozmod
 
 # gstt.Mode select what to display. Can be changed with /noteon 16-21
@@ -82,6 +82,7 @@ fov = 4 * cc[22]
 debug = 0
 
 '''
+Also vailable with args : -v Value 
 
 if debug = 1 you get :
 
@@ -156,6 +157,7 @@ newnumber = ""
 oldnumber = ""
 
 # will be overrided but settings.conf values.
+# legacy one laser only values
 centerx = LASER_CENTER_X
 centery = LASER_CENTER_Y
 zoomx = LASER_ZOOM_X
@@ -164,6 +166,18 @@ sizex = LASER_SIZE_X
 sizey = LASER_SIZE_Y
 finangle = LASER_ANGLE
 
+
+# multilasers arrays
+# will be overrided but settings.conf values.
+centerX = [LASER_CENTER_X, LASER_CENTER_X,LASER_CENTER_X,LASER_CENTER_X]
+centerY = [LASER_CENTER_Y, LASER_CENTER_Y,LASER_CENTER_Y,LASER_CENTER_Y]
+zoomX = [LASER_ZOOM_X, LASER_ZOOM_X, LASER_ZOOM_X, LASER_ZOOM_X]
+zoomY = [LASER_ZOOM_Y, LASER_ZOOM_Y, LASER_ZOOM_Y, LASER_ZOOM_Y]
+sizeX = [LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X]
+sizeY = [LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y]
+finANGLE = [LASER_ANGLE, LASER_ANGLE, LASER_ANGLE, LASER_ANGLE]
+swapX = [1,1,1,1]
+swapY = [1,1,1,1]
 
 # Etat global général
 app_path = ""
