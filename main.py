@@ -156,7 +156,7 @@ if not gstt.SLAVERY :
 
 x = 0
 
-settables =  {
+settables =  {					# Set 0
         0: set0.Sine,
         1: set0.xPLS,
         2: set0.Orbits,
@@ -164,8 +164,8 @@ settables =  {
         4: set0.Circle,
         5: set0.CC,
         6: set0.Orbits,
-        7: set0.Slave
-    }, {
+        7: set0.Astro
+    }, {						# Set 1
         0: set1.LineX,
         1: set1.Sine,
         2: set1.Orbits,
@@ -173,7 +173,7 @@ settables =  {
         4: set1.Circle,
         5: set1.CC,
         6: set1.Slave
-    }, {
+    }, {						# setllstr
         0: setllstr.NozMode,
         1: setllstr.NozMode2,
         2: setllstr.Sine,

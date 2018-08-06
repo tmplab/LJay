@@ -17,7 +17,7 @@ MyLaser = 4
 Laser = 4
 
 # gstt.simuPL select what point list number to display in pygame simulator
-simuPL = 1
+simuPL = 0
 
 # gstt.laserIPS. Will be overridden by settings.conf values
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
@@ -189,3 +189,6 @@ plyr = None
 score = None
 
 
+year = 2018
+month = 8
+day = 11

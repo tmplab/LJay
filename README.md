@@ -1,4 +1,4 @@
-LJay v0.5
+LJay v0.6
 
 By Sam Neurohack, Loloster,
 
@@ -44,7 +44,7 @@ python main.py
 - OSC to DMX bridge (see /cc/number)
 - Bhoreal and Launchpad device start animation
 - Control all leds of Bhoreal and Launchpad
-
+- A multi laser example : display solar planet position is provided see Astro() (set 0 Curve 7). You need python module jplephem and to download de430.bsp : http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
 
 #
 # External devices 
@@ -264,7 +264,7 @@ pip install python-rtmidi tokenize
 
 pip install pygame, pyserial, pyosc
 
-
+pip install jplephem
 
 
 

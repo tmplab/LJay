@@ -10,8 +10,12 @@ import colorify
 import orbits
 import numpy as np
 import pdb
+import time
+from jplephem.spk import SPK
+kernel = SPK.open('de430.bsp')
 
-
+gstt.JulianDate = 367 * gstt.year - 7 * (gstt.year + (gstt.month + 9)/12)/4 + 275 * gstt.month/9 + gstt.day + 1721014
+print "JD : ", gstt.JulianDate
 orbits = orbits.Orbits()
 f_sine = 0
 
@@ -110,7 +114,7 @@ def Dot(fwork):
     #print x,y,proj(int(x),int(y),0)
     dots.append(proj(int(x),int(y),0))
     dots.append(proj(int(x)+5,int(y)+5,0))
-    
+      
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color)  )
 
 # Curve 4
@@ -157,8 +161,39 @@ def Slave(fwork):
 
 # Curve 7
 
-def Osci(fwork):
-    Pass
+def Astro(fwork):
+
+    #print gstt.JulianDate
+
+    PlanetsPositions = []
+    dots = []
+    amp = 0.8
+    for planet in xrange(9):
+        PlanetsPositions.append(kernel[0,planet+1].compute(gstt.JulianDate))
+
+    for planet in xrange(9):
+
+        #print ""
+        #print "planet ", planet
+        x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
+        #print "x,y,z ", x,y,z
+        x,y = proj(int(x),int(y),int(z))
+        x = x * amp - 420
+        y = y * amp + 60
+        #dots.append((int(x)-300,int(y)+200))
+        #dots.append((int(x)-295,int(y)+205))
+        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
+        #fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+
+
+    #print dots
+
+    #gstt.PL[0] = dots
+    #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
+    
+    time.sleep(0.001)
+
+    gstt.JulianDate +=1
 
 def ssawtooth(samples,freq,phase):
 
@@ -213,6 +248,17 @@ def extracc2range(s,min,max):
     b1, b2 = min, max
     return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
 
+def planet2screen(planetx, planety, planetz):
+    #screen_size = [800,600]
+    a1, a2 = -1e+9,1e+9  
+    b1, b2 = 0, screen_size[1]
+    x = b1 + ((planetx - a1) * (b2 - b1) / (a2 - a1))
+    b1, b2 = 0, screen_size[1]
+    y = b1 + ((planety - a1) * (b2 - b1) / (a2 - a1))
+    b1, b2 = 0, screen_size[1]
+    z = b1 + ((planetz - a1) * (b2 - b1) / (a2 - a1))
+    return x,y,z
+
 
 # 3D rotation and 2D projection for a given 3D point
 def proj(x,y,z):
@@ -244,8 +290,8 @@ def proj(x,y,z):
 
     # 3D to 2D projection
     factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
-    x = x * factor + xy_center [0]
-    y = - y * factor + xy_center [1]
+    x = x * factor + xy_center [0] 
+    y = - y * factor + xy_center [1] 
 
     return x,y
 
