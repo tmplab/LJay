@@ -44,7 +44,7 @@ def xPLS(fwork):
     global f_sine
 
 
-    # point list 0 generator (assigned to a laser in gstt.lasersPLS) 
+    # point list "PL" 0 generator (assigned to a laser in gstt.lasersPLS) 
     PL = 0
     dots = []
     
@@ -61,7 +61,7 @@ def xPLS(fwork):
     
    
     
-    # point list 1 generator (assigned to a laser in gstt.lasersPLS)
+    # PL 1 generator (assigned to a laser in gstt.lasersPLS)
     PL = 1
     dots = []
     
@@ -78,7 +78,7 @@ def xPLS(fwork):
     
     
   
-    # point list 2 generator (assigned to a laser in gstt.lasersPLS)
+    # PL 2 generator (assigned to a laser in gstt.lasersPLS)
     PL = 2
     dots = []     
     amp = 200
@@ -163,10 +163,13 @@ def Slave(fwork):
 
 def Astro(fwork):
 
+    # PL 0
     #print gstt.JulianDate
 
+    PL = 0
     PlanetsPositions = []
     dots = []
+    gstt.PL[0] = []
     amp = 0.8
     for planet in xrange(9):
         PlanetsPositions.append(kernel[0,planet+1].compute(gstt.JulianDate))
@@ -178,16 +181,15 @@ def Astro(fwork):
         x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
         #print "x,y,z ", x,y,z
         x,y = proj(int(x),int(y),int(z))
-        x = x * amp - 420
+        x = x * amp 
         y = y * amp + 60
         #dots.append((int(x)-300,int(y)+200))
         #dots.append((int(x)-295,int(y)+205))
-        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
+        dots = fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
         #fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
 
 
     #print dots
-
     #gstt.PL[0] = dots
     #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
     

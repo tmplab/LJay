@@ -32,14 +32,15 @@ class Frame(object):
 		#print PL
 		self.point_list.append((xy + (c,)))				#add c to the tuple 
 		self.pl[PL].append((xy + (c,)))
-		
+
+		#gstt.PL[PL].append((xy + (c,)))
 		#print self.pl	
 	
 	
 	def Line(self, xy1, xy2, c, PL):
 		self.LineTo(xy1, 0, PL)
 		self.LineTo(xy2, c , PL)
-	
+		return self.pl[PL]	
 	
 	def PolyLineOneColor(self, xy_list, c, PL , closed ):
 		# code compatible avec les générateurs

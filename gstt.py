@@ -17,14 +17,14 @@ MyLaser = 4
 Laser = 4
 
 # gstt.simuPL select what point list number to display in pygame simulator
-simuPL = 0
+simuPL = 2
 
 # gstt.laserIPS. Will be overridden by settings.conf values
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 
 
 # gstt.laserPLS : What point list is sent to what laser. ** Will be overridden by settings.conf values **
-lasersPLS = [2,2,2,2]
+lasersPLS = [0,0,0,0]
 
 PL = [[],[],[],[]]
 #PLcolor = [[-1,-1,-1],[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]]
