@@ -56,8 +56,9 @@ class Frame(object):
 	
 
 
-	def AllLinesPL(self, PL):
-		print  self.pl[PL]
+	def LinesPL(self, PL):
+
+		return self.pl[PL]
 
 	def ResetPL(self, PL):
 		self.pl[PL] = []

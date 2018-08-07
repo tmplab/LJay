@@ -37,6 +37,8 @@ def Sine(fwork):
 
     fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  1, closed = False)
     
+    gstt.PL[PL] = fwork.LinesPL(PL)
+    
     if f_sine > 24:
         f_sine = 0
     f_sine += 0.01
@@ -57,10 +59,11 @@ def xPLS(fwork):
     dots.append((int(x),int(y)))
     dots.append((int((int(screen_size[1]) / 2) + 50),(int(y))))
     
-    gstt.PL[0] = dots
-    gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
+    #gstt.PL[0] = dots
+    #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     
+    gstt.PL[PL] = fwork.LinesPL(PL)
    
     
     # PL 1 generator (assigned to a laser in gstt.lasersPLS)
@@ -74,10 +77,11 @@ def xPLS(fwork):
     dots.append((int(x),int(y)))
     dots.append((int(x),(int(screen_size[1])/2)+50))
     
-    gstt.PL[1] = dots
-    gstt.PLcolor[1] = colorify.rgb2hex(gstt.color)
+    #gstt.PL[1] = dots
+    #gstt.PLcolor[1] = colorify.rgb2hex(gstt.color)
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
     
+    gstt.PL[PL] = fwork.LinesPL(PL)
     
   
     # PL 2 generator (assigned to a laser in gstt.lasersPLS)
@@ -90,10 +94,12 @@ def xPLS(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    gstt.PL[PL] = dots
-    gstt.PLcolor[PL] = colorify.rgb2hex(gstt.color)
+    #gstt.PL[PL] = dots
+    #gstt.PLcolor[PL] = colorify.rgb2hex(gstt.color)
+    
     fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
     
+    gstt.PL[PL] = fwork.LinesPL(PL)
     
     if f_sine > 24:
         f_sine = 0
@@ -117,7 +123,8 @@ def Dot(fwork):
     dots.append(proj(int(x),int(y),0))
     dots.append(proj(int(x)+5,int(y)+5,0))
       
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color)  )
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color))
+    gstt.PL[PL] = fwork.LinesPL(PL)
 
 # Curve 4
 def Circle(fwork):
@@ -132,6 +139,7 @@ def Circle(fwork):
         dots.append(proj(int(x),int(y),0))
 
     fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
+    gstt.PL[PL] = fwork.LinesPL(PL)
     
     #print f_sine
     if f_sine > 24:
@@ -153,7 +161,7 @@ def CC(fwork):
         dots.append(proj(int(x),int(y),0))
         
     fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
-
+    gstt.PL[PL] = fwork.LinesPL(PL)
 
 
 # Curve 6
@@ -171,8 +179,9 @@ def Astro(fwork):
     PL = 0
     PlanetsPositions = []
     dots = []
-    gstt.PL[0] = []
+    gstt.PL[PL] = []
     amp = 0.8
+
     for planet in xrange(9):
         PlanetsPositions.append(kernel[0,planet+1].compute(gstt.JulianDate))
 
@@ -192,13 +201,14 @@ def Astro(fwork):
 
 
     #print dots
-    #print fwork.AllLinesPL[0]
 
-    #gstt.PL[0] = fwork.AllLinesPL[0]
+    gstt.PL[PL] = fwork.LinesPL(PL)
+    #print dots[0][0]
+
     #print gstt.PL[0]
     #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
     
-    time.sleep(0.001)
+    #time.sleep(0.001)
 
     gstt.JulianDate +=1
 

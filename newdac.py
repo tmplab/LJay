@@ -119,7 +119,8 @@ class DAC(object):
 				#print indexpoint
 				#currentpoint = PL[self.PL][indexpoint]
 				#print currentpoint
-				xyc = [currentpoint[0],currentpoint[1],gstt.PLcolor[self.PL]]
+				#xyc = [currentpoint[0],currentpoint[1],gstt.PLcolor[self.PL]]
+				xyc = [currentpoint[0],currentpoint[1],currentpoint[2]]
 			
 				#print xyc, self.EtherPoint(xyc)
 
@@ -150,7 +151,7 @@ class DAC(object):
 	
 		#self.PL = PL
 		#print  "read : ", self.PL
-		d = [self.newstream	.next() for i in xrange(n)]
+		d = [self.newstream.next() for i in xrange(n)]
 		#print d
 		# test 2
 		return d
