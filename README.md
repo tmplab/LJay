@@ -266,6 +266,8 @@ pip install pygame, pyserial, pyosc
 
 pip install jplephem
 
+wget http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
+
 
 
 # 

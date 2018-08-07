@@ -20,7 +20,7 @@ import frame
 import renderer
 import dac
 import newdac
-import dac2
+#import dac2
 import ConfigParser
 from globalVars import *
 
