@@ -12,10 +12,12 @@ import numpy as np
 import pdb
 import time
 from jplephem.spk import SPK
-kernel = SPK.open('de430.bsp')
 
+kernel = SPK.open('de430.bsp')
 gstt.JulianDate = 367 * gstt.year - 7 * (gstt.year + (gstt.month + 9)/12)/4 + 275 * gstt.month/9 + gstt.day + 1721014
 print "JD : ", gstt.JulianDate
+
+
 orbits = orbits.Orbits()
 f_sine = 0
 
@@ -185,12 +187,15 @@ def Astro(fwork):
         y = y * amp + 60
         #dots.append((int(x)-300,int(y)+200))
         #dots.append((int(x)-295,int(y)+205))
-        dots = fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
+        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
         #fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
 
 
     #print dots
-    #gstt.PL[0] = dots
+    #print fwork.AllLinesPL[0]
+
+    #gstt.PL[0] = fwork.AllLinesPL[0]
+    #print gstt.PL[0]
     #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
     
     time.sleep(0.001)

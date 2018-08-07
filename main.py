@@ -460,7 +460,13 @@ laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zo
 
 
 print ""
-print gstt.LaserNumber, "lasers connected." 
+print "Settings require", gstt.LaserNumber, "lasers." 
+
+#print os.system("ping -c 1 " + gstt.lasersIPS[0])
+for lasercheck in xrange(gstt.LaserNumber):
+	if os.system("ping -c 1 " + gstt.lasersIPS[lasercheck]) == 256:
+		print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
+
 #thread.start_new_thread(dac_thread, ())
 
 thread.start_new_thread(dac_thread0, ())

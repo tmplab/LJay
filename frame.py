@@ -40,12 +40,11 @@ class Frame(object):
 	def Line(self, xy1, xy2, c, PL):
 		self.LineTo(xy1, 0, PL)
 		self.LineTo(xy2, c , PL)
-		return self.pl[PL]	
 	
+
 	def PolyLineOneColor(self, xy_list, c, PL , closed ):
-		# code compatible avec les générateurs
-		xy0 = None
-		
+
+		xy0 = None		
 		for xy in xy_list:
 			if xy0 is None:
 				xy0 = xy
@@ -55,6 +54,14 @@ class Frame(object):
 		if closed:
 			self.LineTo(xy0,c, PL)
 	
+
+
+	def AllLinesPL(self, PL):
+		print  self.pl[PL]
+
+	def ResetPL(self, PL):
+		self.pl[PL] = []
+
 	'''
 	def RenderScreen(self, surface):
 		if len(self.point_list):
@@ -76,6 +83,8 @@ class Frame(object):
 				c = int(xyc[2])
 				if c: pygame.draw.line(surface,c,xyc_prev[:2],xyc[:2],3)
 				xyc_prev = xyc
+
+
 
 class FrameHolder(object):
 	def __init__(self):
