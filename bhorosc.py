@@ -263,6 +263,15 @@ def status(text):
 	if gstt.SLAVERY == False:
 		sendosc("/status", text)
 
+'''
+
+# Send text to status display widget if one is connected
+def status(text):
+	if oscdevice == 1:
+		sendosc("/status", text)
+	else:
+		print text, "but no status UI connected."
+'''
 
 
 # RAW OSC Frame available ? 
@@ -328,7 +337,11 @@ def noteupdate(note):
 			gstt.Laser = note -13
 			print "New Laser  : ",gstt.Laser
 
-		if note > 57:
+		if  note > 23 and note < 32:
+			gstt.simuPL = note - 24
+			print "New Simu PL  : ", gstt.simuPL
+
+		if note == 57 or note == 58:
 			gstt.colormode = note- 56
 			print "New Color mode : ",gstt.colormode
 
@@ -396,7 +409,10 @@ def point(path, tags, args, source):
     gstt.point[2]= args[2]
     
     #print gstt.point[0],gstt.point[1],gstt.point[2]
-    
+
+# 
+# Nozosc commands for Nozoids synthetizer
+#
 # /nozoid/offset value = decalage X, decalage Y, courbe
 def nozoffset(path, tags, args, source):
     user = ''.join(path.split("/"))

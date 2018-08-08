@@ -23,15 +23,18 @@ simuPL = 2
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 
 
-# gstt.laserPLS : What point list is sent to what laser. ** Will be overridden by settings.conf values **
+# gstt.laserPLS : What point list is sent to what laser. 
+# ** Will be overridden by settings.conf values **
 lasersPLS = [1,1,0,0]
-
 PL = [[],[],[],[]]
 
-# gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
 
+# gstt.Set select what to Curve Set to display. 
+#Can be changed with /noteon 8-15
 Set = 1 #nozoid loloster.py
 maxCurvesByLaser = 4
+
+
 #curveColor = [255,0,0] * maxCurvesByLaser
 curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 colorX = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
@@ -87,8 +90,7 @@ if debug = 1 you get :
 
 
 if debug = 2 you get :
-- continuous doc status packets.
-
+- dac errors
 
 '''
 
@@ -123,12 +125,12 @@ aisensibility = 0.5
 aibeauty =  0.5
 
 
-
+# OSC ports
 #temporaray fix hack : iport=nozoport
 iport = 8001 #LJay (bhorosc) input port
-oport = 8002 #LJay (bhoros) output port
+oport = 8002 #LJay (bhorosc) output port
 noziport=8003 #nozosc.py receiving commands port
-nozoport=8001 #nozosc.py sending port to LJay(main.py)
+nozoport=8001 #nozosc.py sending port to LJay (main.py)
 nozuport=0 #linux serial usb port connecting nozoid devices ACM0 by default
 
 

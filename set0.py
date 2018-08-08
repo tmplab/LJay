@@ -11,11 +11,20 @@ import orbits
 import numpy as np
 import pdb
 import time
+from datetime import datetime
 from jplephem.spk import SPK
 
 kernel = SPK.open('de430.bsp')
+
+jd = datetime.now()
+gstt.year = jd.year
+gstt.month = jd.month
+gstt.day = jd.day
+
 gstt.JulianDate = 367 * gstt.year - 7 * (gstt.year + (gstt.month + 9)/12)/4 + 275 * gstt.month/9 + gstt.day + 1721014
-print "JD : ", gstt.JulianDate
+
+print ""
+print "For Astro(), today : ", datetime.now().strftime('%Y-%m-%d'), "is in Julian : ", gstt.JulianDate
 
 
 orbits = orbits.Orbits()

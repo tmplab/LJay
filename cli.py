@@ -15,10 +15,13 @@ def handle():
 	argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
 	argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
 	argsparser.add_argument("-r","--reset",help="Reset alignement values",action="store_true")
-	argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
 	argsparser.add_argument("-d","--display",help="Point list number displayed in pygame simulator",type=int)
 	argsparser.add_argument("-v","--verbose",help="Debug mode 0,1 or 2.",type=int)
 	argsparser.add_argument("-L","--Lasers",help="Number of lasers connected.",type=int)
+
+	# Keep it ! if new features of cli.py is used in a monolaser program
+	# argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
+	
 
 	args = argsparser.parse_args()
 
@@ -93,9 +96,11 @@ def handle():
 		gstt.LaserNumber = args.Lasers
 	
 	
-	# Etherdream target
+	# Etherdream target for mono laser program
+	'''
 	if args.laser  != None:
-		lstdgtlaser = args.laser
+		lstdgtlaser = args.laser		
+
 		if lstdgtlaser == 0:
 			etherIP = "127.0.0.1"
 		else:
@@ -104,7 +109,8 @@ def handle():
 	else:
 		etherIP = "192.168.1.4"
 
-	print ("Laser 1 etherIP:",etherIP)
+	#print ("Laser 1 etherIP:",etherIP)
+	'''
 
 	# Reset alignment values
 	if args.reset == True:

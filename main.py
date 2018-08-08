@@ -20,7 +20,6 @@ import frame
 import renderer
 import dac
 import newdac
-#import dac2
 import ConfigParser
 from globalVars import *
 
@@ -33,6 +32,13 @@ print ""
 print "LJay"
 print ""
 print "Autoconfiguring..."
+
+print ""
+if gstt.debug == 0:
+	print "NO DEBUG"
+else:
+	print "DEBUG : ", gstt.debug
+
 
 
 def WriteSettings(): 
@@ -115,24 +121,24 @@ config.read("settings.conf")
 
 ReadSettings()
 
-print ""
-print "Set : ", gstt.Set
-print "Curve : ", gstt.Curve
-print "Lasers number : ", gstt.LaserNumber
-print ""
-print "Lasers parameters..."
-print "IPs ", gstt.lasersIPS
-print "PLs : ", gstt.lasersPLS
-#print "Colors TODO : ", gstt.lasersPLcolor
-print "center X : ", gstt.centerX
-print "center Y : ",gstt.centerY
-print "zoom X : ", gstt.zoomX
-print "zoom Y : ", gstt.zoomY
-print "size X : ", gstt.sizeX
-print "size Y : ", gstt.sizeY
-print "Rotation : ", gstt.finANGLE
-print "swap X : ", gstt.swapX
-print "swap Y : ", gstt.swapY
+if gstt.debug > 0:
+	print ""
+	print "Set : ", gstt.Set
+	print "Curve : ", gstt.Curve
+	print "Lasers number : ", gstt.LaserNumber
+	print ""
+	print "Lasers parameters..."
+	print "IPs ", gstt.lasersIPS
+	print "PLs : ", gstt.lasersPLS
+	print "center X : ", gstt.centerX
+	print "center Y : ",gstt.centerY
+	print "zoom X : ", gstt.zoomX
+	print "zoom Y : ", gstt.zoomY
+	print "size X : ", gstt.sizeX
+	print "size Y : ", gstt.sizeY
+	print "Rotation : ", gstt.finANGLE
+	print "swap X : ", gstt.swapX
+	print "swap Y : ", gstt.swapY
 
 
 cli.handle()
@@ -184,29 +190,8 @@ settables =  {					# Set 0
     }
 
 
-if gstt.debug == 0:
-	print "NO DEBUG"
 
-'''
-
-Legacy monolaser s
-def dac_thread():
-	while True:
-		try:
-			d = dac.DAC(etherIP)
-			d.play_stream(laser)
-		except Exception as e:
-
-			import sys, traceback
-			if gstt.debug == 2:
-				print '\n---------------------'
-				print 'Exception: %s' % e
-				print '- - - - - - - - - - -'
-				traceback.print_tb(sys.exc_info()[2])
-				print "\n"
-			pass
-
-'''        
+       
 def dac_thread0():
     while True:
         try:
@@ -381,17 +366,27 @@ def alignjump():
 
 # Inits
 
-
+# Check if all required etherdream are actually on the network..
 print ""
 print "Settings require", gstt.LaserNumber, "lasers." 
-print "Checking..."
-
-print os.system("ping -c 1 " + gstt.lasersIPS[0])
-for lasercheck in xrange(gstt.LaserNumber):
-	if os.system("ping -c 1 " + gstt.lasersIPS[lasercheck]) == 256:
-		print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
 
 
+if gstt.debug > 0:
+	for lasercheck in xrange(gstt.LaserNumber):
+
+		print ""
+		print "Checking... ", gstt.lasersIPS[lasercheck]
+		if os.system("ping -c 1 -i 0.5 -q  " + gstt.lasersIPS[lasercheck]) != 0:
+			print ""
+			print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
+		else:
+			print ""
+			print gstt.lasersIPS[lasercheck], "IS OK"
+else:
+	print "Checking is available with debug mode : -v 1 or 2"
+
+
+print ""
 app_path = os.path.dirname(os.path.realpath(__file__))
 
 pygame.init()
@@ -440,6 +435,9 @@ fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 
+
+# Start Dac threads
+
 thread.start_new_thread(dac_thread0, ())
 print ""
 print "dac thread 0 with IP : ", gstt.lasersIPS[0]," and point list : ", gstt.lasersPLS[0],
@@ -459,6 +457,7 @@ print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
 '''
+print ""
 
 update_screen = False
 keystates = pygame.key.get_pressed()
@@ -479,7 +478,7 @@ print "Simulator displays point list : ", str(gstt.simuPL)
 WriteSettings()
 
 print ""
-print "Starting Laser..."
+print "Starting Main Loop..."
 
 # Main loop
 
@@ -495,8 +494,6 @@ while True:
 
 	if keystates[pygame.K_ESCAPE]:
 		break
-		
-	
 
 	screen.fill(0)
 	fwork = frame.Frame()

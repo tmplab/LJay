@@ -4,6 +4,8 @@ By Sam Neurohack, Loloster, Cocoa
 
 LICENCE : CC BY
 
+
+
 ![LJay](http://www.teamlaser.fr/thsf/images/fulls/THSF9-33.jpg)
 
 A software for Live laser actions : choose what to display, modify parameters with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
@@ -28,6 +30,8 @@ python main.py
 -l or --laser : Last digit of etherdream ip address 192.168.1.0/24 (4 by default)
 
 
+
+
 #
 # Features
 # 
@@ -46,6 +50,8 @@ python main.py
 - Control all leds of Bhoreal and Launchpad
 - A multi laser example : display solar planet position is provided see Astro() (set 0 Curve 7). You need python module jplephem and to download de430.bsp : http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
 
+
+
 #
 # External devices 
 #
@@ -54,6 +60,8 @@ python main.py
 
 LPD8 : A config file is included.
 Joypads : Xbox style controllers. Joypads are detected and read by pygame, you need to decide what to do with joypads axis, hat, buttons. Example in set1.joypads()
+
+
 
 #
 # Make your own curve generator
@@ -78,6 +86,8 @@ or program your own OSC commands in bhorosc.py
 Add your set and curve in settables (main.py)
 
 Use command line arguments (-s setnumber -c curvenumber) or modify in gstt Set and Curve.
+
+
 
 #
 # LJay OSC commands :
@@ -146,6 +156,7 @@ In RGB Color mode (see note effects to switch Color mode)
 
 
  
+
 # Nozoids synthetizers 
 
 ![Nozoid synthetizer](http://nozoid.com/wp-content/uploads/2017/05/OCS_previus-600x330.png)
@@ -197,18 +208,19 @@ Functions originated by nozosc.py and executed in llstr.py (See Nozosc readme fo
 /pad/tops/cc 0 or 1	
 				"Pad" screen top raw : Send CC 0/127
 
+
+
 #
-# Laser Effects 
+# Midi commands
 #
 
-Midi Note on effects :
+Midi Note :
 
 0-7 	Curve choice 
 
 8-15 	Set choice
 
 16-23 	Laser choice 
-		At this time LJay cannot control directly more than one laser. Therefore at least one LJay has to start in master mode : if you issue a noteon in this laser choice range, all future laser osc commands will be forwarded to the correct LJay for execution.
 
 
 57 		Color mode : Rainbow 
@@ -236,6 +248,7 @@ Midi CC channel effects (0-127) if you use built in 3D rotation and 2D projectio
 30 		3D Rotation speed Y
 
 31 		3D Rotation speed Z
+
 
 
 #
