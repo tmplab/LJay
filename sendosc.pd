@@ -1,4 +1,4 @@
-#N canvas 2279 209 740 721 10;
+#N canvas 2663 102 740 721 10;
 #X obj 237 567 sendOSC;
 #X floatatom 237 594 5 0 0 0 - - -;
 #X floatatom 291 596 5 0 0 0 - - -;
@@ -64,9 +64,9 @@
 #X obj 233 242 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
 -1 -1 0 0;
 #X obj 19 318 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
--1 -1 0 256;
+-1 -1 2.15254 256;
 #X obj 19 244 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
--1 -1 0 1;
+-1 -1 100 1;
 #X obj 123 318 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
 -1 -1 0 256;
 #X obj 123 244 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
@@ -75,9 +75,9 @@
 #X msg 18 335 send /cc/30 \$1;
 #X msg 121 335 send /cc/31 \$1;
 #X obj 499 313 nbx 5 14 0 255 0 0 \$0-A \$0-B empty 0 -8 1 10 -262144
--1 -1 0 256;
+-1 -1 23.678 256;
 #X obj 500 239 knob 60 60 0 127 0 0 empty empty empty 0 -8 0 8 -262144
--1 -1 0 0;
+-1 -1 1100 0;
 #X text 128 220 /rotz/speed;
 #X text 402 455 Z;
 #X text 271 457 Y;
@@ -238,7 +238,6 @@
 #X text 160 109 5;
 #X text 183 108 6;
 #X text 209 109 7;
-#X msg 28 539 connect 192.168.2.64 8001;
 #X obj 16 15 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 19 -3 0;
@@ -276,6 +275,7 @@
 #X msg 206 30 31;
 #X text 69 94 Destination Laser;
 #X text 531 86;
+#X msg 28 539 connect 192.168.1.52 8001;
 #X connect 0 0 1 0;
 #X connect 0 1 2 0;
 #X connect 4 0 156 0;
@@ -383,21 +383,21 @@
 #X connect 165 0 164 0;
 #X connect 170 0 167 0;
 #X connect 171 0 169 0;
-#X connect 183 0 156 0;
-#X connect 184 0 203 0;
+#X connect 183 0 202 0;
+#X connect 185 0 203 0;
 #X connect 186 0 204 0;
 #X connect 187 0 205 0;
 #X connect 188 0 206 0;
-#X connect 189 0 207 0;
-#X connect 192 0 208 0;
-#X connect 195 0 201 0;
+#X connect 191 0 207 0;
+#X connect 194 0 200 0;
+#X connect 195 0 208 0;
 #X connect 196 0 209 0;
-#X connect 197 0 210 0;
-#X connect 203 0 195 0;
-#X connect 204 0 195 0;
-#X connect 205 0 195 0;
-#X connect 206 0 195 0;
-#X connect 207 0 195 0;
-#X connect 208 0 195 0;
-#X connect 209 0 195 0;
-#X connect 210 0 195 0;
+#X connect 202 0 194 0;
+#X connect 203 0 194 0;
+#X connect 204 0 194 0;
+#X connect 205 0 194 0;
+#X connect 206 0 194 0;
+#X connect 207 0 194 0;
+#X connect 208 0 194 0;
+#X connect 209 0 194 0;
+#X connect 212 0 156 0;

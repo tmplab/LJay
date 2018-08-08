@@ -10,13 +10,16 @@ from globalVars import *
 LaserNumber = 2
 
 SLAVERY = False
-MyLaser = 4
+MyLaser = 0
 
-# gstt.Laser select what to display. Can be changed with /noteon 0-7
-# Laser 4 correspond to IP 4
-Laser = 4
+# gstt.Laser select to what laser modifcation will occur.
+# Can be changed with /noteon 16-23
+
+Laser = 0
 
 # gstt.simuPL select what point list number to display in pygame simulator
+# Can be changed with /noteon 24-31
+
 simuPL = 2
 
 # gstt.laserIPS. Will be overridden by settings.conf values
@@ -30,8 +33,15 @@ PL = [[],[],[],[]]
 
 
 # gstt.Set select what to Curve Set to display. 
-#Can be changed with /noteon 8-15
+# Can be changed with /noteon 8-15
 Set = 1 #nozoid loloster.py
+
+
+# gstt.Curve select what curve to use in . 
+# Can be changed with /noteon 0-7
+Curve = 0 #nozmod
+
+
 maxCurvesByLaser = 4
 
 
@@ -48,10 +58,6 @@ Curve = curveNumber
 #curveY = [255,255,255] * maxCurvesByLaser
 
 
-# gstt.Curve select what to display. Can be changed with /noteon 16-21
-Curve = 0 #nozmod
-
-# gstt.Mode select what to display. Can be changed with /noteon 16-21
 
 Mode = 5
 

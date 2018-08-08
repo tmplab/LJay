@@ -335,7 +335,7 @@ def noteupdate(note):
 
 		if  note > 15 and note < 24:
 			gstt.Laser = note -13
-			print "New Laser  : ",gstt.Laser
+			print "New Destination Laser  : ",gstt.Laser
 
 		if  note > 23 and note < 32:
 			gstt.simuPL = note - 24

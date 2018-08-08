@@ -62,6 +62,7 @@ def WriteSettings():
 		config.set(laser, 'swapx', str(gstt.swapX[i]))
 		config.set(laser, 'swapy', str(gstt.swapY[i]))
 
+	'''
 	# Legacy mono laser style
 	config.set('laser1', 'centerx', str(gstt.centerx))
 	config.set('laser1', 'centery', str(gstt.centery))
@@ -72,10 +73,9 @@ def WriteSettings():
 	config.set('laser1', 'finangle', str(gstt.finangle))
 	config.set('laser1', 'swapx', str(gstt.swapx))
 	config.set('laser1', 'swapy', str(gstt.swapy))
-
+	'''
 
 	config.write(open('settings.conf','w'))
-
 
 
 def ReadSettings(): 
@@ -85,6 +85,7 @@ def ReadSettings():
 	gstt.Curve = config.getint('General', 'curve')
 	gstt.LaserNumber = config.getint('General', 'lasernumber')
 
+	'''
 	# Legacy mono laser style
 	#gstt.color = config.getint('laser1', 'color')
 	gstt.centerx = config.getint('laser1', 'centerx')
@@ -96,7 +97,8 @@ def ReadSettings():
 	gstt.finangle = config.getfloat('laser1', 'finangle')
 	gstt.swapx = config.getint('laser1', 'swapx')
 	gstt.swapy = config.getint('laser1', 'swapy')
-	
+	'''
+
 	# Multilaser style
 	for i in range(4):
 		laser = 'laser' + str(i)
@@ -286,15 +288,23 @@ def Align(f):
 	l,h = screen_size
 	L_SLOPE = 30
 	
-	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
-	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
-	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
-	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
+	'''
+	Mono laser style
+	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.Laser)
+	f.LineTo((l, h), 0xFFFFFF, gstt.Laser)
+	f.LineTo((0, h), 0xFFFFFF, gstt.Laser)
+	f.LineTo((0, 0), 0xFFFFFF, gstt.Laser)
+	'''
+	
+	#laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
-	laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
+	f.Line((0,0),(l,0),  c=0xFFFFFF, PL=gstt.Laser)
+	f.LineTo((l,h),  c=0xFFFFFF, PL=gstt.Laser)	
+	f.LineTo((0,h),  c=0xFFFFFF, PL=gstt.Laser)	
+	f.LineTo((0,0),  c=0xFFFFFF, PL=gstt.Laser)	
+	config.write(open('settings.conf','w'))
 
-	WriteSettings()
-	print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
+	#print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
 
 
 
@@ -307,59 +317,59 @@ def alignjump():
 		Align(fwork)
 		
 	if keystates[pygame.K_r]:
-		gstt.centerx -= 20
+		gstt.centerX[gstt.Laser] -= 20
 		Align(fwork)
 
 	if keystates[pygame.K_t]:
-		gstt.centerx += 20
+		gstt.centerX[gstt.Laser] += 20
 		Align(fwork)
 		
 	if keystates[pygame.K_y]:
-		gstt.centery -= 20
+		gstt.centerY[gstt.Laser] -= 20
 		Align(fwork)
 
 	if keystates[pygame.K_u]:
-		gstt.centery += 20
+		gstt.centerY[gstt.Laser] += 20
 		Align(fwork)
 
 	if keystates[pygame.K_f]:
-		gstt.zoomx -= 0.1
+		gstt.zoomX[gstt.Laser]-= 0.1
 		Align(fwork)
 
 	if keystates[pygame.K_g]:
-		gstt.zoomx += 0.1
+		gstt.zoomX[gstt.Laser] += 0.1
 		Align(fwork)
 		
 	if keystates[pygame.K_h]:
-		gstt.zoomy -= 0.1
+		gstt.zoomY[gstt.Laser] -= 0.1
 		Align(fwork)
 
 	if keystates[pygame.K_j]:
-		gstt.zoomy += 0.1
+		gstt.zoomY[gstt.Laser] += 0.1
 		Align(fwork)
 	
 	if keystates[pygame.K_c]:
-		gstt.sizex -= 50
+		gstt.sizeX[gstt.Laser] -= 50
 		Align(fwork)
 		
 	if keystates[pygame.K_v]:
-		gstt.sizex += 50
+		gstt.sizeX[gstt.Laser] += 50
 		Align(fwork)
 		
 	if keystates[pygame.K_b]:
-		gstt.sizey -= 50
+		gstt.sizeY[gstt.Laser] -= 50
 		Align(fwork)
 		
 	if keystates[pygame.K_n]:
-		gstt.sizey += 50
+		gstt.sizeY[gstt.Laser] += 50
 		Align(fwork)
 		
 	if keystates[pygame.K_l]:
-		gstt.finangle -= 0.001
+		gstt.finANGLE[gstt.Laser] -= 0.001
 		Align(fwork)
 		
 	if keystates[pygame.K_m]:
-		gstt.finangle += 0.001
+		gstt.finANGLE[gstt.Laser] += 0.001
 		Align(fwork)
 
 
