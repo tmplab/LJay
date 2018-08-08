@@ -1,6 +1,6 @@
-LJay v0.6
+LJay v0.6.1
 
-By Sam Neurohack, Loloster,
+By Sam Neurohack, Loloster, Cocoa
 
 LICENCE : CC BY
 

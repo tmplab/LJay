@@ -18,7 +18,7 @@
 import socket
 import time
 import struct
-from gstt import debug, PL, PLcolor
+from gstt import debug, PL
 import gstt
 import math
 from itertools import cycle
@@ -106,8 +106,7 @@ class BroadcastPacket(object):
 class DAC(object):
 	"""A connection to a DAC."""
 
-
-	# Point generator #1
+	# "Laser point List" Point generator
 	# points are yielded : Getpoints() call n times OnePoint()
 	
 	def OnePoint(self):
@@ -116,14 +115,8 @@ class DAC(object):
 
 			#pdb.set_trace()	
 			for indexpoint,currentpoint in enumerate(PL[self.PL]):
-				#print indexpoint
-				#currentpoint = PL[self.PL][indexpoint]
-				#print currentpoint
-				#xyc = [currentpoint[0],currentpoint[1],gstt.PLcolor[self.PL]]
-				xyc = [currentpoint[0],currentpoint[1],currentpoint[2]]
-			
-				#print xyc, self.EtherPoint(xyc)
 
+				xyc = [currentpoint[0],currentpoint[1],currentpoint[2]]
 				self.xyrgb = self.EtherPoint(xyc)
 
 				delta_x, delta_y = self.xyrgb[0] - self.xyrgb_prev[0], self.xyrgb[1] - self.xyrgb_prev[1]
@@ -149,86 +142,25 @@ class DAC(object):
 
 	def GetPoints(self, n):
 	
-		#self.PL = PL
-		#print  "read : ", self.PL
+
 		d = [self.newstream.next() for i in xrange(n)]
-		#print d
-		# test 2
+
 		return d
 
 	def EtherPoint(self, xyc):
 		
-		# compute for a given point, actual coordinates transformed by alignment parameters (center, zoom, axis swap,....) and rescaled in etherdream coord space
-		# 
+		# compute for a given point, actual coordinates with alignment parameters (center, zoom, axis swap,..) 
+		# and rescaled in etherdream coord space
 
-		#print "Converting point : " , xyc
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2
-		#x = (screen_size[0]/2 + ((XX * math.cos(gstt.finangle)) - (YY * math.sin(gstt.finangle))) - screen_size[0]/2) * gstt.zoomx + gstt.centerx
-		#y = (screen_size[1]/2 + ((XX * math.sin(gstt.finangle)) + (YY * math.cos(gstt.finangle))) - screen_size[1]/2) * gstt.zoomy + gstt.centery
-		
+
 		# Multilaser style
 		x = (screen_size[0]/2 + ((XX * math.cos(gstt.finANGLE[self.PL])) - (YY * math.sin(gstt.finANGLE[self.PL]))) - screen_size[0]/2) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
 		y = (screen_size[1]/2 + ((XX * math.sin(gstt.finANGLE[self.PL])) + (YY * math.cos(gstt.finANGLE[self.PL]))) - screen_size[1]/2) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
 		
-		#x = (((xyc[0] * math.cos(gstt.finangle)) - (xyc[1] * math.sin(gstt.finangle))) - screen_size[0]/2) * gstt.zoomx + gstt.centerx
-		#y = (((xyc[0] * math.sin(gstt.finangle)) + (xyc[1] * math.cos(gstt.finangle))) - screen_size[1]/2) * gstt.zoomy + gstt.centery
-		# TODO : optimiser les calculs d'ajustement de la couleur
-		#print x,y
-		#return (x*gstt.swapx, y*gstt.swapy, ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
-		
 		return (x*gstt.swapX[self.PL], y*gstt.swapY[self.PL], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
-
-	
-	# Point generator #2 :
-	# PL is cycled. Problem : cycle restart each time at the beginning of the PL that one can see it.
-
-	def nPoints(self, cap):
-			
-		#pdb.set_trace()
-		count = 0
-		d =[]
-		
-		for currentpoint in cycle(PL[self.PL]):
-			#print currentpoint
-			xyc = [currentpoint[0],currentpoint[1],gstt.PLcolor[self.PL]]
-			
-			if count == cap:
-				break	
-			#print count, xyc, self.EtherPoint(xyc)
-
-			self.xyrgb = self.EtherPoint(xyc)
-
-			delta_x, delta_y = self.xyrgb[0] - self.xyrgb_prev[0], self.xyrgb[1] - self.xyrgb_prev[1]
-				
-			#test adaptation selon longueur ligne
-			if math.hypot(delta_x, delta_y) < 4000:
-
-				l_steps = [ (1.0, 8)]
-
-			else:
-				l_steps = [ (0.25, 3), (0.75, 3), (1.0, 10)]#(0.0, 1),
-
-			for e in l_steps:
-				step = e[0]
-
-				for i in xrange(0,e[1]):
-
-					self.xyrgb_step = (self.xyrgb_prev[0] + step*delta_x, self.xyrgb_prev[1] + step*delta_y) + self.xyrgb[2:]		
-					d.append(self.xyrgb_step)
-
-					count += 1
-					if count == cap:
-						break	
-
-			self.xyrgb_prev = self.xyrgb
-			
-			#d.append(self.EtherPoint(xyc))
-			#count += 1
-		return d
-
-
 
 	def read(self, l):
 		"""Read exactly length bytes from the connection."""
@@ -323,17 +255,12 @@ class DAC(object):
 
 		while True:
 			
-			
 			#pdb.set_trace()
 			# How much room?
 			cap = 1799 - self.last_status.fullness
 			#print cap
-			
-			#points = stream.read(cap, self.PL)
-			#points = self.nPoints(cap)
-			points = self.GetPoints(cap)
 
-			#print "cap ", cap, " points : ", len(points)
+			points = self.GetPoints(cap)
 			if cap < 100:
 				time.sleep(0.005)
 				cap += 150

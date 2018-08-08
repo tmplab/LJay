@@ -173,41 +173,57 @@ def Slave(fwork):
 
 def Astro(fwork):
 
-    # PL 0
     #print gstt.JulianDate
-
-    PL = 0
     PlanetsPositions = []
     dots = []
-    gstt.PL[PL] = []
+    gstt.PL[0] = []
+    gstt.PL[1] = []
+
     amp = 0.8
 
+    PL = 0
+    # get solar planet positions
     for planet in xrange(9):
         PlanetsPositions.append(kernel[0,planet+1].compute(gstt.JulianDate))
 
-    for planet in xrange(9):
 
-        #print ""
-        #print "planet ", planet
+
+    # first 3 planets goes to PL 0
+    PL = 0
+
+    for planet in xrange(5):
+
+        #print "0 ", planet
         x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
-        #print "x,y,z ", x,y,z
+
         x,y = proj(int(x),int(y),int(z))
         x = x * amp 
         y = y * amp + 60
         #dots.append((int(x)-300,int(y)+200))
         #dots.append((int(x)-295,int(y)+205))
         fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
-        #fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-
-
-    #print dots
 
     gstt.PL[PL] = fwork.LinesPL(PL)
-    #print dots[0][0]
 
-    #print gstt.PL[0]
-    #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
-    
+
+    # Last planet goes to PL 1
+    PL = 1
+
+    for planet in range(5,9):
+
+        #print "1 ", planet
+        x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
+
+        x,y = proj(int(x),int(y),int(z))
+        x = x * amp 
+        y = y * amp + 60
+        #dots.append((int(x)-300,int(y)+200))
+        #dots.append((int(x)-295,int(y)+205))
+        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=1)
+
+
+    gstt.PL[PL] = fwork.LinesPL(PL)
+
     #time.sleep(0.001)
 
     gstt.JulianDate +=1

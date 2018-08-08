@@ -188,6 +188,8 @@ if gstt.debug == 0:
 	print "NO DEBUG"
 
 '''
+
+Legacy monolaser s
 def dac_thread():
 	while True:
 		try:
@@ -204,21 +206,6 @@ def dac_thread():
 				print "\n"
 			pass
 
-def dac_thread0():
-    while True:
-        try:
-            d0 = dac2.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
-            d0.play_stream()
-        except Exception as e:
-
-            import sys, traceback
-            if gstt.debug == 2:
-                print '\n---------------------'
-                print 'Exception: %s' % e
-                print '- - - - - - - - - - -'
-                traceback.print_tb(sys.exc_info()[2])
-                print "\n"
-            pass
 '''        
 def dac_thread0():
     while True:
@@ -235,24 +222,7 @@ def dac_thread0():
                 traceback.print_tb(sys.exc_info()[2])
                 print "\n"
             pass
-'''
-def dac_thread0():
-    while True:
-        try:
-            d0 = dac.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
-            d0.play_stream(laser)
-        except Exception as e:
 
-            import sys, traceback
-            if gstt.debug == 2:
-                print '\n---------------------'
-                print 'Exception: %s' % e
-                print '- - - - - - - - - - -'
-                traceback.print_tb(sys.exc_info()[2])
-                print "\n"
-            pass
-
-'''
 def dac_thread1():
     while True:
         try:
@@ -411,6 +381,17 @@ def alignjump():
 
 # Inits
 
+
+print ""
+print "Settings require", gstt.LaserNumber, "lasers." 
+print "Checking..."
+
+print os.system("ping -c 1 " + gstt.lasersIPS[0])
+for lasercheck in xrange(gstt.LaserNumber):
+	if os.system("ping -c 1 " + gstt.lasersIPS[lasercheck]) == 256:
+		print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
+
+
 app_path = os.path.dirname(os.path.realpath(__file__))
 
 pygame.init()
@@ -458,18 +439,6 @@ clock = pygame.time.Clock()
 fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
-
-print ""
-print "Settings require", gstt.LaserNumber, "lasers." 
-
-'''
-print os.system("ping -c 1 " + gstt.lasersIPS[0])
-for lasercheck in xrange(gstt.LaserNumber):
-	if os.system("ping -c 1 " + gstt.lasersIPS[lasercheck]) == 256:
-		print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
-'''
-
-#thread.start_new_thread(dac_thread, ())
 
 thread.start_new_thread(dac_thread0, ())
 print ""
