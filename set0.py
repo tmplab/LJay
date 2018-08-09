@@ -35,6 +35,7 @@ f_sine = 0
 def Sine(fwork):
     global f_sine
 
+    PL = 0
     dots = []
     etherlaser = 2
     amp = 200
@@ -44,13 +45,14 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  1, closed = False)
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  PL, closed = False)
     
     gstt.PL[PL] = fwork.LinesPL(PL)
     
     if f_sine > 24:
         f_sine = 0
     f_sine += 0.01
+
 
 # Curve 1
 def xPLS(fwork):
@@ -123,6 +125,8 @@ def Orbits(fwork):
 # Curve 3	
 def Dot(fwork):
 
+    
+    PL = 0
     dots = []
     x = cc2scrX(gstt.cc[5])
     y = cc2scrY(gstt.cc[6])
@@ -132,13 +136,14 @@ def Dot(fwork):
     dots.append(proj(int(x),int(y),0))
     dots.append(proj(int(x)+5,int(y)+5,0))
       
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color))
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     gstt.PL[PL] = fwork.LinesPL(PL)
 
 # Curve 4
 def Circle(fwork):
     global f_sine
 
+    PL = 0
     dots = []
     amp = 200
     nb_point = 40
@@ -147,7 +152,7 @@ def Circle(fwork):
         x = 0 - amp*math.cos(2* PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
+    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
     gstt.PL[PL] = fwork.LinesPL(PL)
     
     #print f_sine
@@ -159,6 +164,7 @@ def Circle(fwork):
 # Curve 5
 def CC(fwork):
 
+    PL = 0
     dots = []
         
     amp = 200
@@ -169,7 +175,7 @@ def CC(fwork):
         #bhorosc.send5("/point", [proj(int(x),int(y),0),colorify.rgb2hex(gstt.color)])       
         dots.append(proj(int(x),int(y),0))
         
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
+    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
     gstt.PL[PL] = fwork.LinesPL(PL)
 
 
@@ -185,19 +191,18 @@ def Astro(fwork):
     #print gstt.JulianDate
     PlanetsPositions = []
     dots = []
-    gstt.PL[0] = []
-    gstt.PL[1] = []
+    #gstt.PL[0] = []
+    #gstt.PL[1] = []
 
     amp = 0.8
 
-    PL = 0
     # get solar planet positions
     for planet in xrange(9):
         PlanetsPositions.append(kernel[0,planet+1].compute(gstt.JulianDate))
 
 
 
-    # first 3 planets goes to PL 0
+    # first 5 planets goes to PL 0
     PL = 0
 
     for planet in xrange(5):
@@ -210,7 +215,7 @@ def Astro(fwork):
         y = y * amp + 60
         #dots.append((int(x)-300,int(y)+200))
         #dots.append((int(x)-295,int(y)+205))
-        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0)
+        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0 )
 
     gstt.PL[PL] = fwork.LinesPL(PL)
 
@@ -228,7 +233,7 @@ def Astro(fwork):
         y = y * amp + 60
         #dots.append((int(x)-300,int(y)+200))
         #dots.append((int(x)-295,int(y)+205))
-        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=1)
+        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=1 )
 
 
     gstt.PL[PL] = fwork.LinesPL(PL)
@@ -336,4 +341,153 @@ def proj(x,y,z):
     y = - y * factor + xy_center [1] 
 
     return x,y
+
+
+def joypads():
+
+    if gstt.SLAVERY == False and gstt.Nbpads > 0:
+    
+    
+        # Champi gauche
+        # Move center on X axis according to pad
+        if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
+            gstt.cc[1] += gstt.pad1.get_axis(2) * 2
+
+        # Move center on Y axis according to pad
+        if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
+            gstt.cc[2] += gstt.pad1.get_axis(3) * 2
+
+        # Champi droite
+        '''
+        # Change FOV according to joypad
+        if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
+            gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
+
+        # Change dist according to pad
+        if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
+            gstt.cc[22] += gstt.pad1.get_axis(1) * 2
+        ''' 
+        # "1" pygame 0
+        # "2" pygame 1
+        # "3" pygame 2
+        # "4" pygame 3
+        # "L1" pygame 4
+        # "L2" pygame 6
+        # "R1" pygame 5
+        # "R2" pygame 7
+            
+        # Hat gauche gstt.pad1.get_hat(0)[0] = -1
+        # Hat droit  gstt.pad1.get_hat(0)[0] = 1
+
+        # Hat bas gstt.pad1.get_hat(0)[1] = -1
+        # Hat haut  gstt.pad1.get_hat(0)[1] = 1
+        
+                
+        #Bouton "3" 1 : surprise ON
+        
+        if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
+            gstt.surprise = 1
+            gstt.cc[21] = 21    #FOV
+            gstt.cc[22] = gstt.surpriseon   #Distance
+            gstt.cc[2] +=  gstt.surprisey
+            gstt.cc[1] +=  gstt.surprisex
+            print "Surprise ON"
+        
+        #Bouton "3" 0 : surprise OFF
+        
+        if gstt.pad1.get_button(2) == 0:
+            gstt.surprise = 0
+            gstt.cc[21] = 21    #FOV
+            gstt.cc[22] = gstt.surpriseoff  #Distance
+            
+        #Bouton "4". cycle couleur
+        
+        #if gstt.pad1.get_button(3) == 1:
+        #   print "3", str(gstt.pad1.get_button(3))
+        '''
+        if gstt.pad1.get_button(3) == 1:
+            newcolor = random.randint(0,2)
+            print newcolor
+            
+            if gstt.color[newcolor] == 0:
+                gstt.color[newcolor] = 1
+                
+            else:
+                gstt.color[newcolor] = 0
+                
+            print "Newcolor  : ",str(gstt.newcolor), " ", str(gstt.color[newcolor])
+        
+        '''
+                
+        '''
+        #Bouton "3" : diminue Vitesse des planetes
+        if gstt.pad1.get_button(2) == 1:
+            print "2", str(gstt.pad1.get_button(2))
+        if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
+            gstt.cc[5] -=1
+            print "X Curve : ",str(gstt.cc[5])
+            
+            
+        #Bouton "1" : augmente Vitesse des planetes
+        if gstt.pad1.get_button(0) == 1:
+            print "0", str(gstt.pad1.get_button(0))
+        if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
+            gstt.cc[5] +=1
+            print "X Curve : ",str(gstt.cc[5])
+            
+            
+        #Bouton "4". diminue Nombre de planetes
+        if gstt.pad1.get_button(3) == 1:
+            print "3", str(gstt.pad1.get_button(3))
+        if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
+            gstt.cc[6] -=1
+            print "Y Curve : ",str(gstt.cc[6])
+        
+        
+        
+        #Bouton "2" augmente Nombre de planetes
+        if gstt.pad1.get_button(1) == 1:
+            print "1", str(gstt.pad1.get_button(1))
+        if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
+            gstt.cc[6] +=1
+            print "Y Curve : ",str(gstt.cc[6])
+        
+        '''
+
+
+        # Hat bas : diminue Vitesse des planetes
+        #if gstt.pad1.get_hat(0)[1] == -1:
+            #print "2", str(gstt.pad1.get_hat(0)[1])
+        if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
+            gstt.cc[5] -=1
+            print "X Curve/vitesse planete : ",str(gstt.cc[5])
+            
+            
+        #Hat haut : augmente Vitesse des planetes
+        #if gstt.pad1.get_hat(0)[1] == 1:
+            #print "0", str(gstt.pad1.get_hat(0)[1])
+        if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
+            gstt.cc[5] +=1
+            print "X Curve/Vitesse planete : ",str(gstt.cc[5])
+            
+            
+        # hat Gauche. diminue Nombre de planetes
+        #if gstt.pad1.get_hat(0)[0] == -1:
+            #print "3", str(gstt.pad1.get_hat(0)[0])
+        if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
+            gstt.cc[6] -=1
+            print "Y Curve/ nombre planete : ",str(gstt.cc[6])
+        
+        
+        
+        # hat droit augmente Nombre de planetes
+        #if gstt.pad1.get_hat(0)[0] == 1:
+            #print "1", str(gstt.pad1.get_hat(0)[0])
+        if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
+            gstt.cc[6] +=1
+            print "Y Curve/nb de planetes : ",str(gstt.cc[6])
+        
+        #print "hat : ", str(gstt.pad1.get_hat(0)[1])
+
+        
 

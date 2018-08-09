@@ -156,9 +156,8 @@ import set1
 import setllstr
 import orbits
 
-if not gstt.SLAVERY :
-	midi.InConfig()
-	midi.OutConfig()
+midi.InConfig()
+midi.OutConfig()
 
 #dots = []
 
@@ -403,40 +402,35 @@ pygame.init()
 screen = pygame.display.set_mode(screen_size)
 
 
-if gstt.SLAVERY == False:
-
-	pygame.display.set_caption("Laser Master")
+pygame.display.set_caption("Laser Master")
 	
-	print ""
-	gstt.Nbpads = pygame.joystick.get_count()
-	print "Joypads : ", str(gstt.Nbpads)
+print ""
+gstt.Nbpads = pygame.joystick.get_count()
+print "Joypads : ", str(gstt.Nbpads)
 
-	if gstt.Nbpads > 1:
+if gstt.Nbpads > 1:
 
-		gstt.pad2 = pygame.joystick.Joystick(1)
-		gstt.pad2.init()
+	gstt.pad2 = pygame.joystick.Joystick(1)
+	gstt.pad2.init()
 
-		print gstt.pad2.get_name()
-		print "Axis : ", str(gstt.pad2.get_numaxes())
-		numButtons = gstt.pad2.get_numbuttons()
-		print "Buttons : " , str(numButtons)
+	print gstt.pad2.get_name()
+	print "Axis : ", str(gstt.pad2.get_numaxes())
+	numButtons = gstt.pad2.get_numbuttons()
+	print "Buttons : " , str(numButtons)
 
-	if gstt.Nbpads > 0:
+if gstt.Nbpads > 0:
 
-		gstt.pad1 = pygame.joystick.Joystick(0)
-		gstt.pad1.init()
+	gstt.pad1 = pygame.joystick.Joystick(0)
+	gstt.pad1.init()
 
-		print gstt.pad1.get_name()
-
-
-		print "Axis : ", str(gstt.pad1.get_numaxes())
-		numButtons = gstt.pad1.get_numbuttons()
-		print "Buttons : " , str(numButtons)
+	print gstt.pad1.get_name()
 
 
-	
-else:
-	pygame.display.set_caption("Laser Slave ",str(gstt.SLAVERY))
+	print "Axis : ", str(gstt.pad1.get_numaxes())
+	numButtons = gstt.pad1.get_numbuttons()
+	print "Buttons : " , str(numButtons)
+
+
 
 clock = pygame.time.Clock()
 
@@ -478,10 +472,6 @@ gstt.jumptable = settables[gstt.Set]
 
 
 print ""
-if gstt.SLAVERY != False:
-	print "Node Slavery Mode : ", str(gstt.SLAVERY)
-else: 
-	print "Node Mode : MASTER"
 print "Simulator displays point list : ", str(gstt.simuPL)
 
 
@@ -514,8 +504,9 @@ while True:
 	# Colorify
 	colorify.jump()
 
-	# Points generation
+	# Select and call the Curve to generate points
 	
+	gstt.jumptable = settables[gstt.Set]
 	doit = gstt.jumptable.get(gstt.Curve)
 	doit(fwork)
 
@@ -531,6 +522,7 @@ while True:
 		pygame.display.flip()
 	else:
 		update_screen = True
+
 	clock.tick(100)
 	time.sleep(0.0001)
 

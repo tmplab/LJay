@@ -24,8 +24,7 @@ import socket
 import colorify
 
 
-if gstt.SLAVERY == False:
-	import mydmx
+import mydmx
 #import oscled
 #import oscdefault
 #import runmode
@@ -40,8 +39,6 @@ oscIPout = ""
 #oscPORTout = 8002
 oscPORTout = gstt.oport
 
-if gstt.SLAVERY != False:
-	oscPORTin = 8000 + gstt.SLAVERY
 	
 oscdevice = 0
 
@@ -80,10 +77,13 @@ oscserver.handle_timeout = types.MethodType(handle_timeout, oscserver)
 
 osclient = OSCClient()
 osclientme = OSCClient()
+
+# 
 osclient3 = OSCClient()
 osclient4 = OSCClient()
 osclient5 = OSCClient()
 osclient6 = OSCClient()
+
 oscmsg = OSCMessage()
 
 
@@ -258,20 +258,14 @@ def off(path, tags, args, source):
     oscdevice = 0
 
 
-# Send text to status display widget
-def status(text):
-	if gstt.SLAVERY == False:
-		sendosc("/status", text)
-
-'''
 
 # Send text to status display widget if one is connected
 def status(text):
 	if oscdevice == 1:
 		sendosc("/status", text)
 	else:
-		print text, "but no status UI connected."
-'''
+		print text, " but no device with status UI connected."
+
 
 
 # RAW OSC Frame available ? 
@@ -299,7 +293,7 @@ def noteon(path, tags, args, source):
     else:
     	noteupdate(int(args[0]))
 
-    status(''.join(("note on ", str(args[0])," on Laser ",str(gstt.Laser))))
+    status(''.join((str(args[0])," on Laser ",str(gstt.Laser))))
 
 
 # /noteoff number 
@@ -315,46 +309,38 @@ def noteoff(path, tags, args, source):
 # Update Laser 
 def noteupdate(note):
 
-
-	# Not my laser -> forward to slave
+	'''
+	# forward new instruction ? 
 	if gstt.MyLaser != gstt.Laser:
 		doit = jumplaser.get(gstt.Laser)
 		doit("/noteon",note)
+	'''
 
-	# My laser so change parameters
-	else:
-
-		if note < 8:
-			gstt.Curve = note
-			print "New Curve : ",gstt.Curve
+	if note < 8:
+		gstt.Curve = note
+		print "New Curve : ",gstt.Curve
 	
-		if note > 7 and note < 16:
-			gstt.Set = note - 8
-			print "New Set : ", gstt.Set
-			gstt.jumptable =  settables[note -8]
+	if note > 7 and note < 16:
+		gstt.Set = note - 8
+		print "New Set : ", gstt.Set
 
-		if  note > 15 and note < 24:
-			gstt.Laser = note -13
-			print "New Destination Laser  : ",gstt.Laser
+	if  note > 15 and note < 24:
+		gstt.Laser = note -13
+		print "New Destination Laser  : ",gstt.Laser
 
-		if  note > 23 and note < 32:
-			gstt.simuPL = note - 24
-			print "New Simu PL  : ", gstt.simuPL
+	if  note > 23 and note < 32:
+		gstt.simuPL = note - 24
+		print "New Simu PL  : ", gstt.simuPL
 
-		if note == 57 or note == 58:
-			gstt.colormode = note- 56
-			print "New Color mode : ",gstt.colormode
+	if note == 57 or note == 58:
+		gstt.colormode = note- 56
+		print "New Color mode : ",gstt.colormode
 
 
 # Update Laser cc
 def ccupdate(cc,value):
 
-	if gstt.MyLaser != gstt.Laser:
-	   	doit = jumplaser.get(gstt.Laser)
-		doit("/noteon",note)
-
-	else:
- 		gstt.cc[cc]=value
+ 	gstt.cc[cc]=value
 
 # /gyrosc/gyro x y z 
 def gyro(path, tags, args, source):
@@ -549,8 +535,6 @@ def handler(path, tags, args, source):
 	#print ""
 	#print "default handler"
 	#print path, oscpath, args
-	if gstt.SLAVERY != False:
-	   print path, pathlength, oscpath, args
 
 
 	# /control/matrix/Y/X 0 or 1
@@ -596,19 +580,22 @@ def handler(path, tags, args, source):
 			status(''.join((oscpath[4]," to 0")))
 
 
+	'''
+	Forward/send cc to some other osc server
 	# Not my laser -> forward to slave
 	if oscpath[1] == "cc" and gstt.MyLaser != gstt.Laser:
 		value = int(args[0])
 		doit = jumplaser.get(gstt.Laser)
 		doit(path,value)
+	'''
 
 	# Midi from LPD8 via midiosc
 
 	#if oscpath[1] == "midi" and oscpath[2] == "LPD8":
 
 
-	# /cc/number value  on my laser -> so change parameters
-	if oscpath[1] == "cc" and gstt.MyLaser == gstt.Laser:
+	# /cc/number value
+	if oscpath[1] == "cc":
 		number = int(oscpath[2])
 		value = int(args[0])
 		gstt.cc[number] = value
@@ -635,14 +622,14 @@ def handler(path, tags, args, source):
 		# Use cc to align laser
 		if gstt.tolaser == True and line2 == "Align":
 			if number == 1:
-				gstt.centerx = value * 20	
+				gstt.centerX[gstt.Laser]  = value * 20	
 			if number == 2:
-				gstt.centery = value * 20
+				gstt.centerY[gstt.Laser]  = value * 20
 				
 		# Use cc to change curve parameters
 		if gstt.tolaser == True and line2 == "Curve":
 			if number == 1:
-				gstt.centerx = value * 20				
+				gstt.centerX[gstt.Laser]  = value * 20				
 
 
 

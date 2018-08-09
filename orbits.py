@@ -78,18 +78,18 @@ class Orbits(object):
 		self.angleY += 0.0
 		self.angleZ += 0.0
 		'''
+		PL = 0
+		set0.joypads()
 		
-		set1.joypads()
-		
-		gstt.angleX += set1.cc2range(gstt.cc[29],0,0.1)
-		gstt.angleY += set1.cc2range(gstt.cc[30],0,0.1)
-		gstt.angleZ += set1.cc2range(gstt.cc[31],0,0.1)
+		gstt.angleX += set0.cc2range(gstt.cc[29],0,0.1)
+		gstt.angleY += set0.cc2range(gstt.cc[30],0,0.1)
+		gstt.angleZ += set0.cc2range(gstt.cc[31],0,0.1)
 
 
-		for number in range(int(set1.cc2range(gstt.cc[6],1,10))):
+		for number in range(int(set0.cc2range(gstt.cc[6],1,10))):
 
 			planet = self.planets[number]
-			planet[0] += set1.cc2range(gstt.cc[5],0,25)
+			planet[0] += set0.cc2range(gstt.cc[5],0,25)
 			
 			rad = planet[0] * PI / 180
 			r = (planet[1]*(1 - planet[2]**2))/(1 + (planet[2] * math.cos(rad))) #* gstt.
@@ -153,9 +153,11 @@ class Orbits(object):
 			#print x,y
 			
 				
-			f.Line((x,y),(x+5,y+5),  c=colorify.rgb2hex(gstt.color))
+			f.Line((x,y),(x+5,y+5),  c=colorify.rgb2hex(gstt.color), PL = PL)
 
 			#f.Line((x2,y2),(x2+5,y2+5),  c=colorify.rgb2hex(gstt.color))
 
 			#f.Line((x3,y3),(x3+5,y3+5),  c=colorify.rgb2hex(gstt.color))
+
+		gstt.PL[PL] = f.LinesPL(PL)
 

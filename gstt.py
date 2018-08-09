@@ -9,8 +9,7 @@ from globalVars import *
 # How many lasers are connected. Different that "currentlaser" used by bhorosc
 LaserNumber = 2
 
-SLAVERY = False
-MyLaser = 0
+#MyLaser = 0
 
 # gstt.Laser select to what laser modifcation will occur.
 # Can be changed with /noteon 16-23
@@ -151,7 +150,7 @@ angleX = 0
 angleY = 0
 angleZ = 0
 
-tomidi = True
+tomidi = False
 todmx = False
 toled = False
 tolaser = True
