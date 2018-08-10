@@ -17,7 +17,10 @@ import json
 import gstt
 import math
 import random
+import composers
 from os import path
+
+
 
 # https://pypi.org/project/opensimplex/
 from opensimplex import OpenSimplex
@@ -54,6 +57,9 @@ class Agent :
     noiseTable = []
     pointsList = {}
     clock = 0
+    piece = None 
+    composer = composers.twotones()
+    currentPattern = []
 
     def __init__(self):
         self.start()
@@ -98,6 +104,67 @@ class Agent :
                 tmp.append ( n ) 
             self.noiseTable.append(tmp) 
 
+    def run(self):
+
+        self.setPiece()
+
+        self.readPiece()
+
+        self.setComposition()  
+
+        self.setState()  
+
+        return self.getPoints()
+
+
+    def setPiece( self ):
+
+        # If the current piece is null or finished, get another one
+        if( self.piece == None or 0 == len ( self.piece.content['song'] ) ):
+
+            # Select a composer and require a piece from it
+            self.piece =  self.composer.generatePiece()
+
+    def readPiece( self ):
+
+        self.currentPattern = []
+        # If no available pattern, exit
+        if( 0 != len ( self.piece.content['song'] )):
+
+            # Get the new pattern
+            pattern_key = self.piece.content['song'].pop(0)
+            self.currentPattern = self.piece.content['patterns'][pattern_key]
+
+
+    def getPoints(self):
+        comp = self.composition
+        stat = self.state
+        sett = self.settings
+
+        if self.currentPattern and len( self.currentPattern ) > 0  : 
+            return self.currentPattern
+
+        for i in range( comp['points_cardinality'] ):
+            self.pointsList[0][i]['angle']               = self.pointsList[-1][i]['angle'] + 2 * PI * i / comp['points_cardinality'] + stat['rotation_angle']
+            tmp_radius                           = self.pointsList[-1][i]['radius']
+            ref = self.getSymmetricPoint(i)
+
+            if (ref != i ):
+                self.pointsList[0][i] = self.pointsList[0][ref]
+            else:
+                velocity,radius                 = self.getPointDynamic( self.pointsList[-1][i])
+                self.pointsList[0][i]['velocity']    = velocity
+                self.pointsList[0][i]['radius']      = radius
+
+        self.pointsList[-1] = self.pointsList[0]
+        dots = []
+        for i in range(0, comp['points_cardinality'] ) :
+            coordinates = self.getPointCoordinates( i, self.pointsList[0][i]['radius']) 
+            dots.append(coordinates)
+        dots.append( dots[0])
+        return dots
+
+
     def getWorldstate(self):
         try:
             with open( "/tmp/ws.json","r") as file :
@@ -108,18 +175,6 @@ class Agent :
                 return current
         except Exception as e:
             print "Oops, file not available?"
-
-    def storeWorldState(self):
-        pass
-
-    def storeComposition(self):
-        pass
-
-    def run(self):
-
-        self.setComposition()  
-        self.setState()  
-        return self.getPoints()
 
     def setComposition( self ):
 
@@ -276,42 +331,12 @@ class Agent :
         tmp = val * rand
         return( tmp if val > (tmp * 0.5) else (tmp + val) )
 
+    def storeWorldState(self):
+        pass
 
-    def getPoints(self):
-        comp = self.composition
-        stat = self.state
-        sett = self.settings
+    def storeComposition(self):
+        pass
 
-        for i in range( comp['points_cardinality'] ):
-            self.pointsList[0][i]['angle']               = self.pointsList[-1][i]['angle'] + 2 * PI * i / comp['points_cardinality'] + stat['rotation_angle']
-            tmp_radius                           = self.pointsList[-1][i]['radius']
-            ref = self.getSymmetricPoint(i)
-
-            if (ref != i ):
-                self.pointsList[0][i] = self.pointsList[0][ref]
-            else:
-                velocity,radius                 = self.getPointDynamic( self.pointsList[-1][i])
-                self.pointsList[0][i]['velocity']    = velocity
-                self.pointsList[0][i]['radius']      = radius
-
-        self.pointsList[-1] = self.pointsList[0]
-        dots = []
-        for i in range(0, comp['points_cardinality'] ) :
-            coordinates = self.getPointCoordinates( i, self.pointsList[0][i]['radius']) 
-            dots.append(coordinates)
-        dots.append( dots[0])
-        return dots
-
-        dots = []
-        current_radius = stat['current_radius']
-        radius_variation= comp['radius_variation']
-        points_cardinality = len( self.noiseTable ) - 1 
-        n = stat['counter'] % len(self.noiseTable)
-        for point in range(0, comp['points_cardinality'] +1 ) :
-            x = (current_radius+radius_variation*( self.noiseTable[n][point]  )+0.5)*math.cos(2 * PI  * point /  float(comp['points_cardinality']) + stat['rotation_angle'] )
-            y = ( current_radius+radius_variation*( self.noiseTable[n][point] )+0.5)*math.sin(2 * PI * point / float(comp['points_cardinality']) + stat['rotation_angle'] )
-            dots.append([int(x),int(y)])
-        return dots        
 
 
 agent = Agent()
@@ -322,7 +347,7 @@ def Circle(fwork):
     pointsList = agent.run()
     projected = []
     for dots in pointsList : 
-        projected.append( proj(dots[0],dots[1],0 ) )
+        projected.append( proj(int(dots[0]),int(dots[1]),0 ) )
     fwork.PolyLineOneColor( projected, c=colorify.rgb2hex(gstt.color)  )
 
 # Why the heck do we need that ?
