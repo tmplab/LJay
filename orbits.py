@@ -6,6 +6,13 @@ by Sam Neurohack
 from /team/laser
 
 Kept here as example : how to adapt previous code
+In your main use :
+
+import orbits
+
+def Orbits(fwork):
+
+    orbits.Draw(fwork)
 
 """
 
@@ -43,33 +50,86 @@ class Orbits(object):
 		self.color = 0xFF0000
 		self.speed = 0
 
-	def RotX(self,anglex):
-		self.angleX = anglex
+	# Remap values in different scales i.e CC value in screen position.
+	def cc2scrX(self,s):
+		a1, a2 = 0,127  
+		b1, b2 = -screen_size[0]/2, screen_size[0]/2
+		return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
 
-	def RotY(self,angley):
-		self.angleY = angley
+	def cc2scrY(self,s):
+		a1, a2 = 0,127  
+		b1, b2 = -screen_size[1]/2, screen_size[1]/2
+		return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
 
-	def RotZ(self,anglez):
-		self.angleZ = anglez
+	def cc2range(self,s,min,max):
+		a1, a2 = 0,127  
+		b1, b2 = min, max
+		return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+	def extracc2scrX(self,s):
+		a1, a2 = -66000,66000  
+		b1, b2 = 0, screen_size[0]
+		return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+	def extracc2scrY(self,s):
+		a1, a2 = -66000,66000 
+		b1, b2 = 0, screen_size[1]
+		return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+	def extracc2range(self,s,min,max):
+		a1, a2 = -66000,66000  
+		b1, b2 = min, max
+		return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
 
 	def Move(self,centerX,centerY):
-	
 		self.centerX = centerX
 		self.centerY = centerY	
 
+	def joypads(self):
 
-	def Speed(self,speed):
+		if gstt.Nbpads > 0:
+       
+			# Champi gauche
+			# Move center on X axis according to pad
+			if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
+				gstt.cc[1] += gstt.pad1.get_axis(2) * 2
+
+			# Move center on Y axis according to pad
+			if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
+				gstt.cc[2] += gstt.pad1.get_axis(3) * 2
+        
+			if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
+				gstt.surprise = 1
+				gstt.cc[21] = 21    #FOV
+ 				gstt.cc[22] = gstt.surpriseon   #Distance
+				gstt.cc[2] +=  gstt.surprisey
+				gstt.cc[1] +=  gstt.surprisex
+				print "Surprise ON"
+        
+			if gstt.pad1.get_button(2) == 0:
+				gstt.surprise = 0
+				gstt.cc[21] = 21    #FOV
+				gstt.cc[22] = gstt.surpriseoff  #Distance
+            
+			if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
+				gstt.cc[5] -=1
+				print "X Curve/vitesse planete : ",str(gstt.cc[5])
+
+			if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
+				gstt.cc[5] +=1
+				print "X Curve/Vitesse planete : ",str(gstt.cc[5])
+
+			if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
+				gstt.cc[6] -=1
+				print "Y Curve/ nombre planete : ",str(gstt.cc[6])
+        
+			# hat droit augmente Nombre de planetes
+			if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
+				gstt.cc[6] +=1
+			print "Y Curve/nb de planetes : ",str(gstt.cc[6])
+
 	
-	
-		self.speed = speed
-		self.centerY = centerY	
-		
-		
-	def Zoom(self, zoom):
-	
-		self.viewer_distance = zoom
-				
-				
 	def Draw(self,f):
 		
 		#f.LineTo((self.centerX,self.centerY), 0x000000)
@@ -79,17 +139,17 @@ class Orbits(object):
 		self.angleZ += 0.0
 		'''
 		PL = 0
-		set0.joypads()
+		self.joypads()
 		
-		gstt.angleX += set0.cc2range(gstt.cc[29],0,0.1)
-		gstt.angleY += set0.cc2range(gstt.cc[30],0,0.1)
-		gstt.angleZ += set0.cc2range(gstt.cc[31],0,0.1)
+		gstt.angleX += self.cc2range(gstt.cc[29],0,0.1)
+		gstt.angleY += self.cc2range(gstt.cc[30],0,0.1)
+		gstt.angleZ += self.cc2range(gstt.cc[31],0,0.1)
 
 
-		for number in range(int(set0.cc2range(gstt.cc[6],1,10))):
+		for number in range(int(self.cc2range(gstt.cc[6],1,10))):
 
 			planet = self.planets[number]
-			planet[0] += set0.cc2range(gstt.cc[5],0,25)
+			planet[0] += self.cc2range(gstt.cc[5],0,25)
 			
 			rad = planet[0] * PI / 180
 			r = (planet[1]*(1 - planet[2]**2))/(1 + (planet[2] * math.cos(rad))) #* gstt.

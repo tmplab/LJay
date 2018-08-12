@@ -120,7 +120,7 @@ def xPLS(fwork):
 # Curve 2
 def Orbits(fwork):
 
-    orbits.Orbits.Draw(fwork)
+    orbits.Draw(fwork)
 
 # Curve 3	
 def Dot(fwork):
@@ -345,9 +345,8 @@ def proj(x,y,z):
 
 def joypads():
 
-    if gstt.SLAVERY == False and gstt.Nbpads > 0:
-    
-    
+    if gstt.Nbpads > 0:
+        
         # Champi gauche
         # Move center on X axis according to pad
         if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:

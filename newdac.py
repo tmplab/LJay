@@ -258,7 +258,7 @@ class DAC(object):
 			#pdb.set_trace()
 			# How much room?
 			cap = 1799 - self.last_status.fullness
-			#print cap
+			print ping()
 
 			points = self.GetPoints(cap)
 			if cap < 100:

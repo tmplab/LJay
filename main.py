@@ -20,7 +20,7 @@ import frame
 import renderer
 import dac
 import newdac
-import ConfigParser
+import settings
 from globalVars import *
 
 import gstt
@@ -40,112 +40,11 @@ else:
 	print "DEBUG : ", gstt.debug
 
 
-
-def WriteSettings(): 
-
-
-	config.set('General', 'set', str(gstt.Set))
-	config.set('General', 'curve', str(gstt.Curve))
-	config.set('General', 'lasernumber', str(gstt.LaserNumber))
-
-	# Multilaser style
-	for i in range(gstt.LaserNumber):
-		laser = 'laser' + str(i)
-		config.set
-		config.set(laser, 'centerx', str(gstt.centerX[i]))
-		config.set(laser, 'centery', str(gstt.centerY[i]))
-		config.set(laser, 'zoomx', str(gstt.zoomX[i]))
-		config.set(laser, 'zoomy', str(gstt.zoomY[i]))
-		config.set(laser, 'sizex', str(gstt.sizeX[i]))
-		config.set(laser, 'sizey', str(gstt.sizeY[i]))
-		config.set(laser, 'finangle', str(gstt.finANGLE[i]))
-		config.set(laser, 'swapx', str(gstt.swapX[i]))
-		config.set(laser, 'swapy', str(gstt.swapY[i]))
-
-	'''
-	# Legacy mono laser style
-	config.set('laser1', 'centerx', str(gstt.centerx))
-	config.set('laser1', 'centery', str(gstt.centery))
-	config.set('laser1', 'zoomx', str(gstt.zoomx))
-	config.set('laser1', 'zoomy', str(gstt.zoomy))
-	config.set('laser1', 'sizex', str(gstt.sizex))
-	config.set('laser1', 'sizey', str(gstt.sizey))
-	config.set('laser1', 'finangle', str(gstt.finangle))
-	config.set('laser1', 'swapx', str(gstt.swapx))
-	config.set('laser1', 'swapy', str(gstt.swapy))
-	'''
-
-	config.write(open('settings.conf','w'))
-
-
-def ReadSettings(): 
-	
-
-	gstt.Set = config.getint('General', 'set')
-	gstt.Curve = config.getint('General', 'curve')
-	gstt.LaserNumber = config.getint('General', 'lasernumber')
-
-	'''
-	# Legacy mono laser style
-	#gstt.color = config.getint('laser1', 'color')
-	gstt.centerx = config.getint('laser1', 'centerx')
-	gstt.centery = config.getint('laser1', 'centery')
-	gstt.zoomx = config.getfloat('laser1', 'zoomx')
-	gstt.zoomy = config.getfloat('laser1', 'zoomy')
-	gstt.sizex = config.getint('laser1', 'sizex')
-	gstt.sizey = config.getint('laser1', 'sizey')
-	gstt.finangle = config.getfloat('laser1', 'finangle')
-	gstt.swapx = config.getint('laser1', 'swapx')
-	gstt.swapy = config.getint('laser1', 'swapy')
-	'''
-
-	# Multilaser style
-	for i in range(4):
-		laser = 'laser' + str(i)
-		gstt.lasersIPS[i]= config.get(laser, 'ip')
-		gstt.lasersPLS[i] = config.getint(laser, 'PL')
-		#gstt.lasersPLcolor[i] = config.getint(laser, 'color')
-		gstt.centerX[i]= config.getint(laser, 'centerx')
-		gstt.centerY[i] = config.getint(laser, 'centery')
-		gstt.zoomX[i] = config.getfloat(laser, 'zoomx')
-		gstt.zoomY[i] = config.getfloat(laser, 'zoomy')
-		gstt.sizeX[i] = config.getint(laser, 'sizex')
-		gstt.sizeY[i] = config.getint(laser, 'sizey')
-		gstt.finANGLE[i] = config.getfloat(laser, 'finangle')
-		gstt.swapX[i] = config.getint(laser, 'swapx')
-		gstt.swapY[i] = config.getint(laser, 'swapy')
-
-
-config = ConfigParser.ConfigParser()
-config.read("settings.conf")
-
-
-
-ReadSettings()
-
-if gstt.debug > 0:
-	print ""
-	print "Set : ", gstt.Set
-	print "Curve : ", gstt.Curve
-	print "Lasers number : ", gstt.LaserNumber
-	print ""
-	print "Lasers parameters..."
-	print "IPs ", gstt.lasersIPS
-	print "PLs : ", gstt.lasersPLS
-	print "center X : ", gstt.centerX
-	print "center Y : ",gstt.centerY
-	print "zoom X : ", gstt.zoomX
-	print "zoom Y : ", gstt.zoomY
-	print "size X : ", gstt.sizeX
-	print "size Y : ", gstt.sizeY
-	print "Rotation : ", gstt.finANGLE
-	print "swap X : ", gstt.swapX
-	print "swap Y : ", gstt.swapY
-
+settings.Read()
 
 cli.handle()
 
-WriteSettings()
+settings.Write()
 
 #raw_input("Hit Enter To Continue!")
 
@@ -155,13 +54,14 @@ import set0
 import set1
 import setllstr
 import orbits
+import align
 
 midi.InConfig()
 midi.OutConfig()
 
-#dots = []
-
 x = 0
+
+# Curves Jump tables
 
 settables =  {					# Set 0
         0: set0.Sine,
@@ -264,138 +164,35 @@ def dac_thread3():
                 print "\n"
             pass
 
-def DrawTestPattern(f):
-	l,h = screen_size
-	L_SLOPE = 30
-	
-	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.simuPL)
-	f.LineTo((l, h), 0xFFFFFF, gstt.simuPL)
-	f.LineTo((0, h), 0xFFFFFF, gstt.simuPL)
-	f.LineTo((0, 0), 0xFFFFFF, gstt.simuPL)
-	
-	f.LineTo((2*L_SLOPE, h), 0, gstt.simuPL)
-	for i in xrange(1,7):
-		c = (0xFF0000 if i & 1 else 0) | (0xFF00 if i & 2 else 0) | (0xFF if i & 4 else 0)
-		f.LineTo(((2 * i + 1) * L_SLOPE, 0), c, gstt.simuPL)
-		f.LineTo(((2 * i + 2) * L_SLOPE, h), c, gstt.simuPL)
-	f.Line((l*.5, h*.5), (l*.75, -h*.5), 0xFF00FF, gstt.simuPL)
-	f.LineTo((l*1.5, h*.5), 0xFF00FF, gstt.simuPL)
-	f.LineTo((l*.75, h*1.5), 0xFF00FF, gstt.simuPL)
-	f.LineTo((l*.5, h*.5), 0xFF00FF, gstt.simuPL)
-
-def Align(f):
-	l,h = screen_size
-	L_SLOPE = 30
-	
-	'''
-	Mono laser style
-	f.Line((0, 0), (l, 0), 0xFFFFFF, gstt.Laser)
-	f.LineTo((l, h), 0xFFFFFF, gstt.Laser)
-	f.LineTo((0, h), 0xFFFFFF, gstt.Laser)
-	f.LineTo((0, 0), 0xFFFFFF, gstt.Laser)
-	'''
-	
-	#laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
-
-	f.Line((0,0),(l,0),  c=0xFFFFFF, PL=gstt.Laser)
-	f.LineTo((l,h),  c=0xFFFFFF, PL=gstt.Laser)	
-	f.LineTo((0,h),  c=0xFFFFFF, PL=gstt.Laser)	
-	f.LineTo((0,0),  c=0xFFFFFF, PL=gstt.Laser)	
-	config.write(open('settings.conf','w'))
-
-	#print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
-
-
-
-def alignjump():
-	
-	if keystates[pygame.K_p]:
-		DrawTestPattern(fwork)
-		
-	if keystates[pygame.K_x]:
-		Align(fwork)
-		
-	if keystates[pygame.K_r]:
-		gstt.centerX[gstt.Laser] -= 20
-		Align(fwork)
-
-	if keystates[pygame.K_t]:
-		gstt.centerX[gstt.Laser] += 20
-		Align(fwork)
-		
-	if keystates[pygame.K_y]:
-		gstt.centerY[gstt.Laser] -= 20
-		Align(fwork)
-
-	if keystates[pygame.K_u]:
-		gstt.centerY[gstt.Laser] += 20
-		Align(fwork)
-
-	if keystates[pygame.K_f]:
-		gstt.zoomX[gstt.Laser]-= 0.1
-		Align(fwork)
-
-	if keystates[pygame.K_g]:
-		gstt.zoomX[gstt.Laser] += 0.1
-		Align(fwork)
-		
-	if keystates[pygame.K_h]:
-		gstt.zoomY[gstt.Laser] -= 0.1
-		Align(fwork)
-
-	if keystates[pygame.K_j]:
-		gstt.zoomY[gstt.Laser] += 0.1
-		Align(fwork)
-	
-	if keystates[pygame.K_c]:
-		gstt.sizeX[gstt.Laser] -= 50
-		Align(fwork)
-		
-	if keystates[pygame.K_v]:
-		gstt.sizeX[gstt.Laser] += 50
-		Align(fwork)
-		
-	if keystates[pygame.K_b]:
-		gstt.sizeY[gstt.Laser] -= 50
-		Align(fwork)
-		
-	if keystates[pygame.K_n]:
-		gstt.sizeY[gstt.Laser] += 50
-		Align(fwork)
-		
-	if keystates[pygame.K_l]:
-		gstt.finANGLE[gstt.Laser] -= 0.001
-		Align(fwork)
-		
-	if keystates[pygame.K_m]:
-		gstt.finANGLE[gstt.Laser] += 0.001
-		Align(fwork)
-
 
 
 # Inits
 
-# Check if all required etherdream are actually on the network..
+# Check if all required etherdreams are actually on the network if gstt.debug > 0
 print ""
 print "Settings require", gstt.LaserNumber, "lasers." 
 
-
+# Ping check if debug > 0
 if gstt.debug > 0:
 	for lasercheck in xrange(gstt.LaserNumber):
 
 		print ""
+
 		print "Checking... ", gstt.lasersIPS[lasercheck]
+		d0.ping()
 		if os.system("ping -c 1 -i 0.5 -q  " + gstt.lasersIPS[lasercheck]) != 0:
 			print ""
 			print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
 		else:
 			print ""
 			print gstt.lasersIPS[lasercheck], "IS OK"
+
+
 else:
 	print "Checking is available with debug mode : -v 1 or 2"
 
-
 print ""
+
 app_path = os.path.dirname(os.path.realpath(__file__))
 
 pygame.init()
@@ -403,7 +200,10 @@ screen = pygame.display.set_mode(screen_size)
 
 
 pygame.display.set_caption("Laser Master")
-	
+
+
+# Joypads check 	
+
 print ""
 gstt.Nbpads = pygame.joystick.get_count()
 print "Joypads : ", str(gstt.Nbpads)
@@ -463,6 +263,8 @@ print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.la
 '''
 print ""
 
+
+
 update_screen = False
 keystates = pygame.key.get_pressed()
 (SCREEN_W, SCREEN_H) = screen_size
@@ -475,10 +277,12 @@ print ""
 print "Simulator displays point list : ", str(gstt.simuPL)
 
 
-WriteSettings()
+settings.Write()
 
 print ""
 print "Starting Main Loop..."
+
+
 
 # Main loop
 
@@ -498,8 +302,8 @@ while True:
 	screen.fill(0)
 	fwork = frame.Frame()
 	
-	# align mode ?
-	alignjump()
+	# align handler
+	align.Jump(fwork,keystates)
 
 	# Colorify
 	colorify.jump()

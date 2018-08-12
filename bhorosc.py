@@ -264,7 +264,7 @@ def status(text):
 	if oscdevice == 1:
 		sendosc("/status", text)
 	else:
-		print text, " but no device with status UI connected."
+		print text
 
 
 
@@ -282,7 +282,7 @@ def osc_frame():
 def noteon(path, tags, args, source):
     user = ''.join(path.split("/"))
     print ""
-    print user,path,args
+    print path,args
     #print "note : ", args[0]
     #print "velocity : 127"
     
@@ -292,8 +292,6 @@ def noteon(path, tags, args, source):
 
     else:
     	noteupdate(int(args[0]))
-
-    status(''.join((str(args[0])," on Laser ",str(gstt.Laser))))
 
 
 # /noteoff number 
@@ -318,24 +316,26 @@ def noteupdate(note):
 
 	if note < 8:
 		gstt.Curve = note
-		print "New Curve : ",gstt.Curve
+		status(''.join(("New Curve : ",str(gstt.Curve))))
 	
 	if note > 7 and note < 16:
 		gstt.Set = note - 8
-		print "New Set : ", gstt.Set
+		status(''.join(("New Set : ",str(gstt.Set))))
 
 	if  note > 15 and note < 24:
 		gstt.Laser = note -13
-		print "New Destination Laser  : ",gstt.Laser
+		status(''.join(("New Laser : ",str(gstt.Laser))))
 
 	if  note > 23 and note < 32:
 		gstt.simuPL = note - 24
-		print "New Simu PL  : ", gstt.simuPL
+		status(''.join(("New Simu PL : ",str(gstt.SimuPL))))
 
 	if note == 57 or note == 58:
 		gstt.colormode = note- 56
-		print "New Color mode : ",gstt.colormode
+		status(''.join(("New Color Mode : ",str(gstt.colormode))))
 
+	if note > 58:
+		status(''.join((str(args[0])," on Laser ",str(gstt.Laser))))
 
 # Update Laser cc
 def ccupdate(cc,value):
