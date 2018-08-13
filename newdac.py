@@ -245,6 +245,7 @@ class DAC(object):
 		return self.readresp("?")
 
 	def play_stream(self):
+
 		# First, prepare the stream
 		if self.last_status.playback_state == 2:
 			raise Exception("already playing?!")
@@ -258,7 +259,7 @@ class DAC(object):
 			#pdb.set_trace()
 			# How much room?
 			cap = 1799 - self.last_status.fullness
-			print ping()
+
 
 			points = self.GetPoints(cap)
 			if cap < 100:
@@ -266,9 +267,9 @@ class DAC(object):
 				cap += 150
 
 #			print "Writing %d points" % (cap, )
-			t0 = time.time()
+			#t0 = time.time()
 			self.write(points)
-			t1 = time.time()
+			#t1 = time.time()
 #			print "Took %f" % (t1 - t0, )
 
 			if not started:

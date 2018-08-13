@@ -3,9 +3,12 @@
 # -*- mode: Python -*-
 
 '''
-Laser Jaying
+LJay v0.6.2
 
 LICENCE : CC
+Sam Neurohack, Loloster, 
+
+
 '''
 #from __future__ import print_function 
 import pygame
@@ -70,8 +73,9 @@ settables =  {					# Set 0
         3: set0.Dot,
         4: set0.Circle,
         5: set0.CC,
-        6: set0.Orbits,
-        7: set0.Astro
+        6: set0.Mapping,
+        7: set0.Astro,
+        8: set0.Text
     }, {						# Set 1
         0: set1.LineX,
         1: set1.Sine,
@@ -170,7 +174,7 @@ def dac_thread3():
 
 # Check if all required etherdreams are actually on the network if gstt.debug > 0
 print ""
-print "Settings require", gstt.LaserNumber, "lasers." 
+print "Settings require", gstt.LaserNumber, "lasers v0.6.2" 
 
 # Ping check if debug > 0
 if gstt.debug > 0:
@@ -179,7 +183,6 @@ if gstt.debug > 0:
 		print ""
 
 		print "Checking... ", gstt.lasersIPS[lasercheck]
-		d0.ping()
 		if os.system("ping -c 1 -i 0.5 -q  " + gstt.lasersIPS[lasercheck]) != 0:
 			print ""
 			print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
@@ -199,7 +202,7 @@ pygame.init()
 screen = pygame.display.set_mode(screen_size)
 
 
-pygame.display.set_caption("Laser Master")
+pygame.display.set_caption("LJay")
 
 
 # Joypads check 	
@@ -288,47 +291,52 @@ print "Starting Main Loop..."
 
 while True:
 
-    # Pygame 
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			break
+    # Pygame events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            break
 
-	keystates_prev = keystates[:]
-	keystates = pygame.key.get_pressed()[:]
+    gstt.mouse = (pygame.mouse.get_pos(), pygame.mouse.get_pressed())
+    keystates_prev = keystates[:]
+    keystates = pygame.key.get_pressed()[:]
 
-	if keystates[pygame.K_ESCAPE]:
-		break
+    if keystates[pygame.K_ESCAPE]:
+        break
 
-	screen.fill(0)
-	fwork = frame.Frame()
+    screen.fill(0)
+    fwork = frame.Frame()
 	
-	# align handler
-	align.Jump(fwork,keystates)
+    # align handler
+    align.Jump(fwork,keystates)
 
-	# Colorify
-	colorify.jump()
+    # Colorify
+    colorify.jump()
 
-	# Select and call the Curve to generate points
+    # Select and call the Curve to generate points
 	
-	gstt.jumptable = settables[gstt.Set]
-	doit = gstt.jumptable.get(gstt.Curve)
-	doit(fwork)
+    gstt.jumptable = settables[gstt.Set]
+    doit = gstt.jumptable.get(gstt.Curve)
+    #print pygame.mouse.get_pos(), pygame.mouse.get_pressed()
+    if gstt.Curve == 6 and gstt.Set == 0:
+	   doit(fwork, keystates, keystates_prev)
+    else:
+        doit(fwork)
 
-	# pending osc message ?
-	bhorosc.osc_frame()
+    # pending osc message ?
+    bhorosc.osc_frame()
 
 
-	fwork_holder.f = fwork
+    fwork_holder.f = fwork
 
-	if update_screen:
-		update_screen = False
-		fwork.RenderScreen(screen)
-		pygame.display.flip()
-	else:
-		update_screen = True
+    if update_screen:
+    	update_screen = False
+    	fwork.RenderScreen(screen)
+    	pygame.display.flip()
+    else:
+    	update_screen = True
 
-	clock.tick(100)
-	time.sleep(0.0001)
+    clock.tick(60)
+    time.sleep(0.0001)
 
 pygame.quit()
 

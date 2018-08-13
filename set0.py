@@ -2,36 +2,65 @@
 # -*- coding: utf-8 -*-
 # -*- mode: Python -*-
 
+'''
+Laser Jaying
+
+LICENCE : CC
+Sam Neurohack, Loloster, 
+
+set0 collect code examples to make your own generators that use LJay Laser management.
+
+Curve 0 : Sine
+Curve 1 : xPLS how to have different pointlists generators
+Curve 2 : Orbits
+Curve 3 : Dots
+Curve 4 : Circle    
+Curve 5 : CC
+Curve 6 : Mapping introduce an editor mode allowing to edit shape position one by one.
+Curve 7 : Astro
+Curve 8 : Text
+
+'''
+
+
 import math
 import gstt
 from globalVars import *
 import bhorosc
 import colorify
-import orbits
 import numpy as np
 import pdb
 import time
 from datetime import datetime
+import settings
+
+
+
+# for Astro()
 from jplephem.spk import SPK
-
 kernel = SPK.open('de430.bsp')
-
 jd = datetime.now()
 gstt.year = jd.year
 gstt.month = jd.month
 gstt.day = jd.day
-
 gstt.JulianDate = 367 * gstt.year - 7 * (gstt.year + (gstt.month + 9)/12)/4 + 275 * gstt.month/9 + gstt.day + 1721014
-
 print ""
 print "For Astro(), today : ", datetime.now().strftime('%Y-%m-%d'), "is in Julian : ", gstt.JulianDate
 
 
+# For Orbits()
+import orbits
 orbits = orbits.Orbits()
+
+# For Mapping()
+# dedicated settings handler is in settings.py
+import pygame
+
 f_sine = 0
 
 
-# Mode 0
+
+# Curve 0
 def Sine(fwork):
     global f_sine
 
@@ -54,47 +83,41 @@ def Sine(fwork):
     f_sine += 0.01
 
 
+
 # Curve 1
 def xPLS(fwork):
     global f_sine
 
 
     # point list "PL" 0 generator (assigned to a laser in gstt.lasersPLS) 
+    # middle horizontal line
+
     PL = 0
     dots = []
-    
-    
-    # middle horizontal line
     x = (int(screen_size[1]) / 2) - 50
     y = (int(screen_size[0])/2)
     dots.append((int(x),int(y)))
     dots.append((int((int(screen_size[1]) / 2) + 50),(int(y))))
-    
-    #gstt.PL[0] = dots
-    #gstt.PLcolor[0] = colorify.rgb2hex(gstt.color)
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    
     gstt.PL[PL] = fwork.LinesPL(PL)
    
     
+
     # PL 1 generator (assigned to a laser in gstt.lasersPLS)
+    # middle vertical line
+
     PL = 1
     dots = []
-    
     #pdb.set_trace()
-    # middle vertical line
     x = int(screen_size[1]) / 2
     y = (int(screen_size[1])/2) -50
     dots.append((int(x),int(y)))
     dots.append((int(x),(int(screen_size[1])/2)+50))
-    
-    #gstt.PL[1] = dots
-    #gstt.PLcolor[1] = colorify.rgb2hex(gstt.color)
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
-    
     gstt.PL[PL] = fwork.LinesPL(PL)
     
   
+
     # PL 2 generator (assigned to a laser in gstt.lasersPLS)
     PL = 2
     dots = []     
@@ -104,12 +127,7 @@ def xPLS(fwork):
         y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
-
-    #gstt.PL[PL] = dots
-    #gstt.PLcolor[PL] = colorify.rgb2hex(gstt.color)
-    
     fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
-    
     gstt.PL[PL] = fwork.LinesPL(PL)
     
     if f_sine > 24:
@@ -117,10 +135,14 @@ def xPLS(fwork):
     f_sine += 0.01
 
 
-# Curve 2
-def Orbits(fwork):
 
+
+# Curve 2
+
+def Orbits(fwork):
     orbits.Draw(fwork)
+
+
 
 # Curve 3	
 def Dot(fwork):
@@ -138,6 +160,9 @@ def Dot(fwork):
       
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     gstt.PL[PL] = fwork.LinesPL(PL)
+
+
+
 
 # Curve 4
 def Circle(fwork):
@@ -179,21 +204,138 @@ def CC(fwork):
     gstt.PL[PL] = fwork.LinesPL(PL)
 
 
+
+
 # Curve 6
-def Slave(fwork):
+
+
+
+def MappingConf():
+    global mouse_prev
+
+    gstt.EditStep = 0
+    gstt.CurrentWindow = -1
+    gstt.CurrentCorner = 0
+    gstt.CurrentSection = 0
+    mouse_prev = ((405, 325), (0, 0, 0))
+    # Get all windows points in set0.conf
+    gstt.Windows = [] 
+    sections = settings.MappingSections()
+
+    print "Sections : ", sections
+
+    print "Reading Section : ", sections[0]
+    print "Laser : ", settings.MappingRead([sections[0],'laser'])
+
+    for Window in xrange(settings.Mapping(sections[0])-1):
+        print "Reading option :  ", str(Window)
+        shape = [sections[0], str(Window)]
+        WindowPoints = settings.MappingRead(shape)
+        gstt.Windows.append(WindowPoints)
+
+    print ""
+    print "Windows points : " ,gstt.Windows
+
+
+print ""
+print "For Mapping(), reading Architecture Points from set0.conf"
+
+MappingConf()
+
+
+def Mapping(fwork, keystates, keystates_prev):
+    global mouse_prev
+
+    PL = 0
+    dots = []
+    #print gstt.mouse
+
+    #switch to edit mode Key E ?
+    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e] and gstt.EditStep == 0:
+            print "Switching to Edit Mode"
+            gstt.EditStep = 1
+            gstt.CurrentWindow = 0
+            gstt.CurrentCorner = 0
+
+    # Back to normal if ENTER key is pressed ?
+    if keystates[pygame.K_RETURN] and gstt.EditStep == 1:    
+            
+            print "Switching to Run Mode"
+            gstt.EditStep =0
+
+
+
+    # EDIT MODE : cycle windows if press e key to adjust corner position 
+    # Escape edit mode with enter key
+    if gstt.EditStep >0:
+
+        dots = []
+        CurrentWindowPoints = gstt.Windows[gstt.CurrentWindow]
+
+        # Draw all windows points
+        for corner in xrange(len(CurrentWindowPoints)):   
+            dots.append(proj(int(CurrentWindowPoints[corner][0]),int(CurrentWindowPoints[corner][1]),0))
+        fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
+
+        # Left mouse is clicked, modify current point coordinate
+        if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
+            deltax = gstt.mouse[0][0]-mouse_prev[0][0]
+            deltay = gstt.mouse[0][1]-mouse_prev[0][1]
+            CurrentWindowPoints[gstt.CurrentCorner][0] += (deltax *2)
+            CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
+
+        # Change corner if Z key is pressed.
+        if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
+            if gstt.CurrentCorner < settings.Mapping('Windows') - 1:
+                gstt.CurrentCorner += 1
+                print "Corner : ", gstt.CurrentCorner
+
+        # Press E : Next window ?
+        if keystates[pygame.K_e] and not keystates_prev[pygame.K_e]:
+
+            # Save current Window and switch to the next one.
+            if gstt.CurrentWindow < settings.Mapping('Windows') -1:
+                print "saving ", gstt.CurrentWindow
+                print ""
+                settings.MappingWrite(str(gstt.CurrentWindow),CurrentWindowPoints)
+                gstt.CurrentWindow += 1
+                gstt.CurrentCorner = -1
+                if gstt.CurrentWindow == settings.Mapping('Windows') -1:
+                    gstt.EditStep == 0
+                    gstt.CurrentWindow = 0
+                               
+                print "Editing ", gstt.CurrentWindow
+
+            # Last window
+  
+
+
+        mouse_prev = gstt.mouse
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
+    # RUN MODE
+    if gstt.EditStep == 0:
+        
+        # Add all windows to PL for display
+        for Window in gstt.Windows:  
+
+            dots = []
+            for corner in xrange(len(Window)):   
+                #print "Editing : ", WindowPoints[corner]
+                #print Window[corner][0]
+                dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
+            
+            fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL,closed = False  )
     
-    fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
 
 # Curve 7
 
 def Astro(fwork):
 
-    #print gstt.JulianDate
     PlanetsPositions = []
     dots = []
-    #gstt.PL[0] = []
-    #gstt.PL[1] = []
-
     amp = 0.8
 
     # get solar planet positions
@@ -204,12 +346,8 @@ def Astro(fwork):
 
     # first 5 planets goes to PL 0
     PL = 0
-
     for planet in xrange(5):
-
-        #print "0 ", planet
         x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
-
         x,y = proj(int(x),int(y),int(z))
         x = x * amp 
         y = y * amp + 60
@@ -220,14 +358,12 @@ def Astro(fwork):
     gstt.PL[PL] = fwork.LinesPL(PL)
 
 
-    # Last planet goes to PL 1
+    # Last planets goes to PL 1
     PL = 1
 
     for planet in range(5,9):
-
         #print "1 ", planet
         x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
-
         x,y = proj(int(x),int(y),int(z))
         x = x * amp 
         y = y * amp + 60
@@ -235,13 +371,21 @@ def Astro(fwork):
         #dots.append((int(x)-295,int(y)+205))
         fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=1 )
 
-
     gstt.PL[PL] = fwork.LinesPL(PL)
 
-    #time.sleep(0.001)
 
+    #time.sleep(0.001)
     gstt.JulianDate +=1
 
+
+# Curve 8
+def Text(fwork):
+    
+    fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
+
+
+
+# examples to generate arrays of different types i.e for Lissajoux point lists generators.
 def ssawtooth(samples,freq,phase):
 
 	t = np.linspace(0+phase, 1+phase, samples)

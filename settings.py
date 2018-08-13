@@ -13,14 +13,12 @@ import gstt
 
 def Write(): 
 
-
 	config.set('General', 'set', str(gstt.Set))
 	config.set('General', 'curve', str(gstt.Curve))
 	config.set('General', 'lasernumber', str(gstt.LaserNumber))
 
 	for i in range(gstt.LaserNumber):
 		laser = 'laser' + str(i)
-		config.set
 		config.set(laser, 'centerx', str(gstt.centerX[i]))
 		config.set(laser, 'centery', str(gstt.centerY[i]))
 		config.set(laser, 'zoomx', str(gstt.zoomX[i]))
@@ -31,13 +29,12 @@ def Write():
 		config.set(laser, 'swapx', str(gstt.swapX[i]))
 		config.set(laser, 'swapy', str(gstt.swapY[i]))
 
-
 	config.write(open('settings.conf','w'))
+
 
 
 def Read(): 
 	
-
 	gstt.Set = config.getint('General', 'set')
 	gstt.Curve = config.getint('General', 'curve')
 	gstt.LaserNumber = config.getint('General', 'lasernumber')
@@ -80,3 +77,37 @@ if gstt.debug > 0:
 	print "Rotation : ", gstt.finANGLE
 	print "swap X : ", gstt.swapX
 	print "swap Y : ", gstt.swapY
+
+
+
+# For Mapping()
+import ast
+
+# Save all points for a given "shape" (=['Windows','0']) shapecoord is a list.
+def MappingWrite(shape, shapecoord): 
+
+	shapestr = " ".join(str(x) for x in shapecoord)
+	configmapping.set('Windows', shape, shapestr.replace("] [","],["))
+	configmapping.write(open('set0.conf','w'))
+
+
+# Get a list of allpoints for a given "shape" like ['Windows','0'] 
+def MappingRead(shape): 
+
+	#print shape[0], shape[1]
+	#print configmapping.get(shape[0], shape[1])
+	archi = ast.literal_eval(configmapping.get(shape[0], shape[1]))
+	return archi
+
+
+# Get shape numbers (of windows in Windows section)
+def Mapping(shape):
+	return len(configmapping.options(shape))
+
+def MappingSections():
+	return configmapping.sections()
+
+
+configmapping = ConfigParser.ConfigParser()
+configmapping.read("set0.conf")
+
