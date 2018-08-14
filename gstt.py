@@ -9,7 +9,6 @@ from globalVars import *
 # How many lasers are connected. Different that "currentlaser" used by bhorosc
 LaserNumber = 2
 
-#MyLaser = 0
 
 # gstt.Laser select to what laser modifcation will occur.
 # Can be changed with /noteon 16-23

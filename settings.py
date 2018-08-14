@@ -83,27 +83,26 @@ if gstt.debug > 0:
 # For Mapping()
 import ast
 
-# Save all points for a given "shape" (=['Windows','0']) shapecoord is a list.
-def MappingWrite(shape, shapecoord): 
+# Save all points for a given "shape" (=['Windows','0']) shapecoord is a list 
+# in any section of the mapping conf file
+def MappingWrite(sections,shape, shapecoord): 
 
 	shapestr = " ".join(str(x) for x in shapecoord)
-	configmapping.set('Windows', shape, shapestr.replace("] [","],["))
+	configmapping.set(sections[gstt.CurrentSection], shape, shapestr.replace("] [","],["))
 	configmapping.write(open('set0.conf','w'))
 
 
-# Get a list of allpoints for a given "shape" like ['Windows','0'] 
+# Get a list of all points (="Corners") for a given "shape"  = [section,option] like ['Windows','0'] 
 def MappingRead(shape): 
-
-	#print shape[0], shape[1]
-	#print configmapping.get(shape[0], shape[1])
 	archi = ast.literal_eval(configmapping.get(shape[0], shape[1]))
 	return archi
 
 
-# Get shape numbers (of windows in Windows section)
+# Get shape numbers (i.e of windows in Windows section)
 def Mapping(shape):
 	return len(configmapping.options(shape))
 
+# Get a list of all sections
 def MappingSections():
 	return configmapping.sections()
 
