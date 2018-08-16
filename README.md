@@ -65,7 +65,6 @@ python main.py
 - Tags for automatic laser load/ balancing
 - Texts : multilasers support, more fonts (See setai/composer )
 - New UI and simulator : web, livecode ?
-- Unified settings file, one per set.
 
 
 

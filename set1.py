@@ -1,6 +1,10 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 # -*- mode: Python -*-
+'''
+Curve 0 : Mapping introduce an editor mode allowing to odify all points one by one.
+Curve 1 : LineX
+'''
 
 import math
 import gstt
@@ -8,10 +12,145 @@ from globalVars import *
 import bhorosc
 import colorify
 import orbits
+import settings
+import pygame
 
 f_sine = 0
 
 # Curve 0
+
+def MappingConf(section):
+    global mouse_prev, sections
+
+    gstt.EditStep = 0
+    gstt.CurrentWindow = -1
+    gstt.CurrentCorner = 0
+    gstt.CurrentSection = section
+    mouse_prev = ((405, 325), (0, 0, 0))
+
+    # Get all shapes points (="corners") for the given section of the conf file -> gstt.Windows 
+    gstt.Windows = [] 
+    sections = settings.MappingSections()
+
+    print ""
+    #print "Sections : ", sections
+    print "Reading Section : ", sections[gstt.CurrentSection]
+
+    gstt.Laser = settings.MappingRead([sections[gstt.CurrentSection],'laser'])
+    print "Laser : ", gstt.Laser
+    gstt.simuPL = gstt.Laser
+
+    for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
+        print "Reading option :  ", str(Window)
+        shape = [sections[gstt.CurrentSection], str(Window)]
+        WindowPoints = settings.MappingRead(shape)
+        gstt.Windows.append(WindowPoints)
+
+    print "Section points : " ,gstt.Windows
+
+
+print ""
+print "For Mapping(), reading Architecture Points from set0.conf"
+
+MappingConf(1)
+
+
+def Mapping(fwork, keystates, keystates_prev):
+    global mouse_prev, sections
+
+    PL = gstt.Laser
+    dots = []
+
+    #switch to edit mode Key E ?
+    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e] and gstt.EditStep == 0:
+            print "Switching to Edit Mode"
+            gstt.EditStep = 1
+            gstt.CurrentWindow = 0
+            gstt.CurrentCorner = 0
+
+    # Back to normal if ENTER key is pressed ?
+    if keystates[pygame.K_RETURN] and gstt.EditStep == 1:    
+            
+            print "Switching to Run Mode"
+            gstt.EditStep =0
+
+
+
+    # EDIT MODE : cycle windows if press e key to adjust corner position 
+    # Escape edit mode with enter key
+    if gstt.EditStep >0:
+
+        dots = []
+        CurrentWindowPoints = gstt.Windows[gstt.CurrentWindow]
+
+        # Draw all windows points or "corners"
+        for corner in xrange(len(CurrentWindowPoints)):   
+            dots.append(proj(int(CurrentWindowPoints[corner][0]),int(CurrentWindowPoints[corner][1]),0))
+        fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
+
+        # Left mouse is clicked, modify current Corner coordinate
+        if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
+            deltax = gstt.mouse[0][0]-mouse_prev[0][0]
+            deltay = gstt.mouse[0][1]-mouse_prev[0][1]
+            CurrentWindowPoints[gstt.CurrentCorner][0] += (deltax *2)
+            CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
+
+        # Change corner if Z key is pressed.
+        if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
+            if gstt.CurrentCorner < settings.Mapping(sections[gstt.CurrentSection]) - 1:
+                gstt.CurrentCorner += 1
+                print "Corner : ", gstt.CurrentCorner
+
+        # Press E inside Edit mode : Next window 
+        if keystates[pygame.K_e] and not keystates_prev[pygame.K_e]:
+
+            # Save current Window and switch to the next one.
+            if gstt.CurrentWindow < settings.Mapping(sections[gstt.CurrentSection]) -1:
+                print "saving "
+                settings.MappingWrite(sections,str(gstt.CurrentWindow),CurrentWindowPoints)
+                gstt.CurrentWindow += 1
+                gstt.CurrentCorner = -1
+                if gstt.CurrentWindow == settings.Mapping(sections[gstt.CurrentSection]) -1:
+                    gstt.EditStep == 0
+                    gstt.CurrentWindow = 0              
+                print "Now Editing window ", gstt.CurrentWindow
+
+        mouse_prev = gstt.mouse
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
+    # Press A : Next section ?
+    if keystates[pygame.K_a] and not keystates_prev[pygame.K_a]: 
+            
+        if gstt.CurrentSection < len(sections)-1:
+        
+            gstt.CurrentSection += 1
+        else:
+             gstt.CurrentSection = 0
+        print ""
+        print "switching to section ", sections[gstt.CurrentSection]
+        MappingConf(gstt.CurrentSection)
+
+
+    # RUN MODE
+    if gstt.EditStep == 0:
+        
+        # Add all windows to PL for display
+        for Window in gstt.Windows:  
+
+            dots = []
+            for corner in xrange(len(Window)):   
+                #print "Editing : ", WindowPoints[corner]
+                #print Window[corner][0]
+                dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
+            
+            fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False  )
+    
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
+
+
+
+# Curve 1
 def LineX(fwork):
 
     joypads()
@@ -32,88 +171,6 @@ def LineX(fwork):
     dots.append((int(screen_size[0]),int(y)))
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color))
 
-
-
-# Curve 1
-def Sine(fwork):
-    global f_sine
-
-    dots = []
-        
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
-
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color)  )
-    
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
-
-# Curve 2
-def Orbits(fwork):
-
-    orbits.Orbits.Draw(fwork)
-   
-
-# Curve 3	
-def Dot(fwork):
-
-    dots = []
-    x = cc2scrX(gstt.cc[1])
-    y = cc2scrY(gstt.cc[2])
-    #x = xy_center[0] + gstt.cc[1]*amp    
-    #y = xy_center[1] + gstt.cc[2]*amp
-    print x,y,proj(int(x),int(y),0)
-    dots.append(proj(int(x),int(y),0))
-    dots.append(proj(int(x)+5,int(y)+5,0))
-    
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color)  )
-
-# Curve 4
-def Circle(fwork):
-    global f_sine
-
-    dots = []
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2* PI * f_sine *(float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2* PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
-
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
-    
-    #print f_sine
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
-		
-
-# Curve 5
-def CC(fwork):
-
-    dots = []
-        
-    amp = 200
-    nb_point = 60
-    for t in range(0, nb_point+1):
-        y = 1 - amp*math.sin(2*PI*cc2range(gstt.cc[5],0,24)*(float(t)/float(nb_point)))
-        x = 1 - amp*math.cos(2*PI*cc2range(gstt.cc[6],0,24)*(float(t)/float(nb_point))) 
-        #bhorosc.send5("/point", [proj(int(x),int(y),0),colorify.rgb2hex(gstt.color)])       
-        dots.append(proj(int(x),int(y),0))
-        
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color) )
-
-
-
-# Curve 6
-def Slave(fwork):
-    
-    fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
 
 
 

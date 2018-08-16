@@ -32,13 +32,14 @@ PL = [[],[],[],[]]
 
 # gstt.Set select what to Curve Set to display. 
 # Can be changed with /noteon 8-15
-Set = 1 #nozoid loloster.py
+Set = 0 #nozoid loloster.py
 
 
 # gstt.Curve select what curve to use in . 
 # Can be changed with /noteon 0-7
-Curve = 0 #nozmod
+Curve = 1 #nozmod
 
+ConfigName = "set0.conf"
 
 maxCurvesByLaser = 4
 

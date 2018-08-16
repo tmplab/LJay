@@ -10,13 +10,13 @@ Sam Neurohack, Loloster,
 
 set0 collect code examples to make your own generators that use LJay Laser management.
 
-Curve 0 : Sine
+Curve 0 : Mapping introduce an editor mode allowing to odify all points one by one.
 Curve 1 : xPLS how to have different pointlists generators
 Curve 2 : Orbits
 Curve 3 : Dots
 Curve 4 : Circle    
 Curve 5 : CC
-Curve 6 : Mapping introduce an editor mode allowing to odify all points one by one.
+Curve 6 : Sine
 Curve 7 : Astro
 Curve 8 : Text
 
@@ -61,26 +61,140 @@ f_sine = 0
 
 
 # Curve 0
-def Sine(fwork):
-    global f_sine
+# Edit shape mode / Run Mode
 
-    PL = 0
+def MappingConf(section):
+    global mouse_prev, sections
+
+    gstt.EditStep = 0
+    gstt.CurrentWindow = -1
+    gstt.CurrentCorner = 0
+    gstt.CurrentSection = section
+    mouse_prev = ((405, 325), (0, 0, 0))
+
+    # Get all shapes points (="corners") for the given section of the conf file -> gstt.Windows 
+    gstt.Windows = [] 
+    sections = settings.MappingSections()
+
+    print ""
+    #print "Sections : ", sections
+    print "Reading Section : ", sections[gstt.CurrentSection]
+
+    gstt.Laser = settings.MappingRead([sections[gstt.CurrentSection],'laser'])
+    print "Laser : ", gstt.Laser
+    gstt.simuPL = gstt.Laser
+
+    for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
+        print "Reading option :  ", str(Window)
+        shape = [sections[gstt.CurrentSection], str(Window)]
+        WindowPoints = settings.MappingRead(shape)
+        gstt.Windows.append(WindowPoints)
+
+    print "Section points : " ,gstt.Windows
+
+
+print ""
+print "For Mapping(), reading Architecture Points from set0.conf"
+
+# section 0 is "General", then first screen shapes in section 1
+# Todo : Should search automatically first screen in settings file sections.
+MappingConf(1)
+
+
+def Mapping(fwork, keystates, keystates_prev):
+    global mouse_prev, sections
+
+    PL = gstt.Laser
     dots = []
-    etherlaser = 2
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  PL, closed = False)
+    #switch to edit mode Key E ?
+    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e] and gstt.EditStep == 0:
+            print "Switching to Edit Mode"
+            gstt.EditStep = 1
+            gstt.CurrentWindow = 0
+            gstt.CurrentCorner = 0
+
+    # Back to normal if ENTER key is pressed ?
+    if keystates[pygame.K_RETURN] and gstt.EditStep == 1:    
+            
+            print "Switching to Run Mode"
+            gstt.EditStep =0
+
+
+
+    # EDIT MODE : cycle windows if press e key to adjust corner position 
+    # Escape edit mode with enter key
+    if gstt.EditStep >0:
+
+        dots = []
+        CurrentWindowPoints = gstt.Windows[gstt.CurrentWindow]
+
+        # Draw all windows points or "corners"
+        for corner in xrange(len(CurrentWindowPoints)):   
+            dots.append(proj(int(CurrentWindowPoints[corner][0]),int(CurrentWindowPoints[corner][1]),0))
+        fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
+
+        # Left mouse is clicked, modify current Corner coordinate
+        if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
+            deltax = gstt.mouse[0][0]-mouse_prev[0][0]
+            deltay = gstt.mouse[0][1]-mouse_prev[0][1]
+            CurrentWindowPoints[gstt.CurrentCorner][0] += (deltax *2)
+            CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
+
+        # Change corner if Z key is pressed.
+        if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
+            if gstt.CurrentCorner < settings.Mapping(sections[gstt.CurrentSection]) - 1:
+                gstt.CurrentCorner += 1
+                print "Corner : ", gstt.CurrentCorner
+
+        # Press E inside Edit mode : Next window 
+        if keystates[pygame.K_e] and not keystates_prev[pygame.K_e]:
+
+            # Save current Window and switch to the next one.
+            if gstt.CurrentWindow < settings.Mapping(sections[gstt.CurrentSection]) -1:
+                print "saving "
+                settings.MappingWrite(sections,str(gstt.CurrentWindow),CurrentWindowPoints)
+                gstt.CurrentWindow += 1
+                gstt.CurrentCorner = -1
+                if gstt.CurrentWindow == settings.Mapping(sections[gstt.CurrentSection]) -1:
+                    gstt.EditStep == 0
+                    gstt.CurrentWindow = 0              
+                print "Now Editing window ", gstt.CurrentWindow
+
+        mouse_prev = gstt.mouse
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
+    # Press A : Next section ?
+    if keystates[pygame.K_a] and not keystates_prev[pygame.K_a]: 
+            
+        print "current section : ", gstt.CurrentSection
+        if gstt.CurrentSection < len(sections)-1:
+            gstt.CurrentSection += 1
+            print "Next section name is ", sections[gstt.CurrentSection]
+            if "screen" in sections[gstt.CurrentSection]:
+                print ""
+                print "switching to section ", gstt.CurrentSection, " ", sections[gstt.CurrentSection]
+                MappingConf(gstt.CurrentSection)
+        else:
+             gstt.CurrentSection = -1
+        
+
+    # RUN MODE
+    if gstt.EditStep == 0:
+        
+        # Add all windows to PL for display
+        for Window in gstt.Windows:  
+
+            dots = []
+            for corner in xrange(len(Window)):   
+                #print "Editing : ", WindowPoints[corner]
+                #print Window[corner][0]
+                dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
+            
+            fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False  )
     
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
 
 
 
@@ -208,133 +322,26 @@ def CC(fwork):
 
 # Curve 6
 
-def MappingConf(section):
-    global mouse_prev, sections
+def Sine(fwork):
+    global f_sine
 
-    gstt.EditStep = 0
-    gstt.CurrentWindow = -1
-    gstt.CurrentCorner = 0
-    gstt.CurrentSection = section
-    mouse_prev = ((405, 325), (0, 0, 0))
-
-    # Get all shapes points (="corners") for the given section of the conf file -> gstt.Windows 
-    gstt.Windows = [] 
-    sections = settings.MappingSections()
-
-    print ""
-    #print "Sections : ", sections
-    print "Reading Section : ", sections[gstt.CurrentSection]
-
-    gstt.Laser = settings.MappingRead([sections[gstt.CurrentSection],'laser'])
-    print "Laser : ", gstt.Laser
-    gstt.simuPL = gstt.Laser
-
-    for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
-        print "Reading option :  ", str(Window)
-        shape = [sections[gstt.CurrentSection], str(Window)]
-        WindowPoints = settings.MappingRead(shape)
-        gstt.Windows.append(WindowPoints)
-
-    print "Section points : " ,gstt.Windows
-
-
-print ""
-print "For Mapping(), reading Architecture Points from set0.conf"
-
-MappingConf(0)
-
-
-def Mapping(fwork, keystates, keystates_prev):
-    global mouse_prev, sections
-
-    PL = gstt.Laser
+    PL = 0
     dots = []
+    etherlaser = 2
+    amp = 200
+    nb_point = 40
+    for t in range(0, nb_point+1):
+        y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
+        x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
+        dots.append(proj(int(x),int(y),0))
 
-    #switch to edit mode Key E ?
-    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e] and gstt.EditStep == 0:
-            print "Switching to Edit Mode"
-            gstt.EditStep = 1
-            gstt.CurrentWindow = 0
-            gstt.CurrentCorner = 0
-
-    # Back to normal if ENTER key is pressed ?
-    if keystates[pygame.K_RETURN] and gstt.EditStep == 1:    
-            
-            print "Switching to Run Mode"
-            gstt.EditStep =0
-
-
-
-    # EDIT MODE : cycle windows if press e key to adjust corner position 
-    # Escape edit mode with enter key
-    if gstt.EditStep >0:
-
-        dots = []
-        CurrentWindowPoints = gstt.Windows[gstt.CurrentWindow]
-
-        # Draw all windows points or "corners"
-        for corner in xrange(len(CurrentWindowPoints)):   
-            dots.append(proj(int(CurrentWindowPoints[corner][0]),int(CurrentWindowPoints[corner][1]),0))
-        fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
-
-        # Left mouse is clicked, modify current Corner coordinate
-        if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
-            deltax = gstt.mouse[0][0]-mouse_prev[0][0]
-            deltay = gstt.mouse[0][1]-mouse_prev[0][1]
-            CurrentWindowPoints[gstt.CurrentCorner][0] += (deltax *2)
-            CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
-
-        # Change corner if Z key is pressed.
-        if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
-            if gstt.CurrentCorner < settings.Mapping(sections[gstt.CurrentSection]) - 1:
-                gstt.CurrentCorner += 1
-                print "Corner : ", gstt.CurrentCorner
-
-        # Press E inside Edit mode : Next window 
-        if keystates[pygame.K_e] and not keystates_prev[pygame.K_e]:
-
-            # Save current Window and switch to the next one.
-            if gstt.CurrentWindow < settings.Mapping(sections[gstt.CurrentSection]) -1:
-                print "saving "
-                settings.MappingWrite(sections,str(gstt.CurrentWindow),CurrentWindowPoints)
-                gstt.CurrentWindow += 1
-                gstt.CurrentCorner = -1
-                if gstt.CurrentWindow == settings.Mapping(sections[gstt.CurrentSection]) -1:
-                    gstt.EditStep == 0
-                    gstt.CurrentWindow = 0              
-                print "Now Editing window ", gstt.CurrentWindow
-
-        mouse_prev = gstt.mouse
-        gstt.PL[PL] = fwork.LinesPL(PL)
-
-    # Press A : Next section ?
-    if keystates[pygame.K_a] and not keystates_prev[pygame.K_a]: 
-            
-        if gstt.CurrentSection < len(sections)-1:
-        
-            gstt.CurrentSection += 1
-        else:
-             gstt.CurrentSection = 0
-        print ""
-        print "switching to section ", sections[gstt.CurrentSection]
-        MappingConf(gstt.CurrentSection)
-
-
-    # RUN MODE
-    if gstt.EditStep == 0:
-        
-        # Add all windows to PL for display
-        for Window in gstt.Windows:  
-
-            dots = []
-            for corner in xrange(len(Window)):   
-                #print "Editing : ", WindowPoints[corner]
-                #print Window[corner][0]
-                dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
-            
-            fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False  )
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  PL, closed = False)
     
-        gstt.PL[PL] = fwork.LinesPL(PL)
+    gstt.PL[PL] = fwork.LinesPL(PL)
+    
+    if f_sine > 24:
+        f_sine = 0
+    f_sine += 0.01
 
 
 # Curve 7
@@ -461,36 +468,49 @@ def planet2screen(planetx, planety, planetz):
 # 3D rotation and 2D projection for a given 3D point
 def proj(x,y,z):
 
-    gstt.angleX += cc2range(gstt.cc[29],0,0.1)
-    gstt.angleY += cc2range(gstt.cc[30],0,0.1)
-    gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
-    
-    rad = gstt.angleX * PI / 180
-    cosa = math.cos(rad)
-    sina = math.sin(rad)
+    # Skip trigo update if angleX didn't change 
+    # TODO : gstt.prev_cc29 == -1 is useful only the first time to create cosa and sina values
+
+    if gstt.prev_cc29 != gstt.cc[29] or gstt.prev_cc29 == -1: 
+        gstt.angleX += cc2range(gstt.cc[29],0,0.1)    
+        rad = gstt.angleX * PI / 180
+        cosaX = math.cos(rad)
+        sinaX = math.sin(rad)
+        prev_cc29 = gstt.cc[29]
+
     y2 = y
-    y = y2 * cosa - z * sina
-    z = y2 * sina + z * cosa
+    y = y2 * cosaX - z * sinaX
+    z = y2 * sinaX + z * cosaX
 
-    rad = gstt.angleY * PI / 180
-    cosa = math.cos(rad)
-    sina = math.sin(rad)
+    # Skip trigo update if angleY didn't change 
+    if gstt.prev_cc30 != gstt.cc[30]: 
+        gstt.angleY += cc2range(gstt.cc[30],0,0.1)
+        rad = gstt.angleY * PI / 180
+        cosaY = math.cos(rad)
+        sinaY = math.sin(rad)
+        prev_cc30 = gstt.cc[30]
+
     z2 = z
-    z = z2 * cosa - x * sina
-    x = z2 * sina + x * cosa
+    z = z2 * cosaY - x * sinaY
+    x = z2 * sinaY + x * cosaY
 
-    rad = gstt.angleZ * PI / 180
-    cosa = math.cos(rad)
-    sina = math.sin(rad)
+
+    # Skip trigo update if angleZ didn't change 
+    if gstt.prev_cc31 != gstt.cc[31]: 
+        gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
+        rad = gstt.angleZ * PI / 180
+        cosZ = math.cos(rad)
+        sinZ = math.sin(rad)
+        
     x2 = x
-    x = x2 * cosa - y * sina
-    y = x2 * sina + y * cosa
+    x = x2 * cosZ - y * sinZ
+    y = x2 * sinZ + y * cosZ
 
     # 3D to 2D projection
     factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
     x = x * factor + xy_center [0] 
     y = - y * factor + xy_center [1] 
-
+    
     return x,y
 
 

@@ -10,6 +10,8 @@ LICENCE : CC
 
 import ConfigParser
 import gstt
+import ast
+
 
 def Write(): 
 
@@ -29,7 +31,7 @@ def Write():
 		config.set(laser, 'swapx', str(gstt.swapX[i]))
 		config.set(laser, 'swapy', str(gstt.swapY[i]))
 
-	config.write(open('settings.conf','w'))
+	config.write(open(gstt.ConfigName,'w'))
 
 
 
@@ -56,7 +58,7 @@ def Read():
 
 
 config = ConfigParser.ConfigParser()
-config.read("settings.conf")
+config.read(gstt.ConfigName)
 
 
 if gstt.debug > 0:
@@ -81,7 +83,35 @@ if gstt.debug > 0:
 
 
 # For Mapping()
-import ast
+
+
+# Save all points for a given "shape" (=['Windows','0']) shapecoord is a list 
+# in any section of the mapping conf file
+def MappingWrite(sections,shape, shapecoord): 
+
+	shapestr = " ".join(str(x) for x in shapecoord)
+	config.set(sections[gstt.CurrentSection], shape, shapestr.replace("] [","],["))
+	config.write(open('set0.conf','w'))
+
+
+# Get a list of all points (="Corners") for a given "shape"  = [section,option] like ['Windows','0'] 
+def MappingRead(shape): 
+	archi = ast.literal_eval(config.get(shape[0], shape[1]))
+	return archi
+
+
+# Get shape numbers (i.e of windows in Windows section)
+def Mapping(shape):
+	return len(config.options(shape))
+
+# Get a list of all sections
+def MappingSections():
+	return config.sections()
+
+'''
+
+# For Mapping()
+
 
 # Save all points for a given "shape" (=['Windows','0']) shapecoord is a list 
 # in any section of the mapping conf file
@@ -110,3 +140,4 @@ def MappingSections():
 configmapping = ConfigParser.ConfigParser()
 configmapping.read("set0.conf")
 
+'''

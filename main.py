@@ -67,23 +67,18 @@ x = 0
 # Curves Jump tables
 
 settables =  {					# Set 0
-        0: set0.Sine,
+        0: set0.Mapping,
         1: set0.xPLS,
         2: set0.Orbits,
         3: set0.Dot,
         4: set0.Circle,
         5: set0.CC,
-        6: set0.Mapping,
+        6: set0.Sine,
         7: set0.Astro,
         8: set0.Text
     }, {						# Set 1
-        0: set1.LineX,
-        1: set1.Sine,
-        2: set1.Orbits,
-        3: set1.Dot,
-        4: set1.Circle,
-        5: set1.CC,
-        6: set1.Slave
+        0: set1.Mapping,
+        1: set1.LineX
     }, {						# setllstr
         0: setllstr.NozMode,
         1: setllstr.NozMode2,
@@ -317,7 +312,7 @@ while True:
     gstt.jumptable = settables[gstt.Set]
     doit = gstt.jumptable.get(gstt.Curve)
     #print pygame.mouse.get_pos(), pygame.mouse.get_pressed()
-    if gstt.Curve == 6 and gstt.Set == 0:
+    if gstt.Curve == 0:
 	   doit(fwork, keystates, keystates_prev)
     else:
         doit(fwork)
