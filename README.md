@@ -54,6 +54,22 @@ python main.py
 
 
 #
+# Todo
+#
+
+(Doc in Progress)
+
+
+- Interactive trapezoidal correction via homography matrices for each laser, stored in settings file.
+- Smaller cpu footprint (compute only when something has changed,...)
+- Tags for automatic laser load/ balancing
+- Texts : multilasers support, more fonts (See setai/composer )
+- New UI and simulator : web, livecode ?
+- Unified settings file, one per set.
+
+
+
+#
 # External devices 
 #
 
@@ -65,12 +81,26 @@ Joypads : Xbox style controllers. Joypads are detected and read by pygame, you n
 
 
 #
-# Make your own curve generator
+# Make your own set.
 #
 
 (Doc in progress)
 
+A "Curve" is actually more a mode, wich can generate different pointlists, be an interactive shape modifier,...
+
+A "Set" is a collection of curves
+
+Curve 0 is reserved for interactive settings modifications i.e trapezoidal corrections,...
+
+
+
 Duplicate and rename a set file like set0.py (import it in main.py).
+
+Add your set and curves in settables (main.py)
+
+Use command line arguments (-s setnumber -c curvenumber) or modify in gstt Set and Curve.
+
+
 
 Program your own "curve" :
  
@@ -83,10 +113,6 @@ If you need to receive data externally :
 
 use /nozoid/osc/number value : Store a new value in gstt.osc[number] (number : 0-255)
 or program your own OSC commands in bhorosc.py
-
-Add your set and curve in settables (main.py)
-
-Use command line arguments (-s setnumber -c curvenumber) or modify in gstt Set and Curve.
 
 
 
