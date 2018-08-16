@@ -142,8 +142,8 @@ X = [0] * maxCurvesByLaser
 Y = [0] * maxCurvesByLaser
 
 # No rotation X (cc 29) Y (cc 30) Z (cc 31)  at first
-cc[29] = cc[30] = cc[31] =  0
-
+cc[29] = cc[30] = cc[31] = prev_cc29 = 0
+prev_cc29 = prev_cc30 = prev_cc31 = -1
 
 angleX = 0 
 angleY = 0

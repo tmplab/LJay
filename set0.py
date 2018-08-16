@@ -461,36 +461,49 @@ def planet2screen(planetx, planety, planetz):
 # 3D rotation and 2D projection for a given 3D point
 def proj(x,y,z):
 
-    gstt.angleX += cc2range(gstt.cc[29],0,0.1)
-    gstt.angleY += cc2range(gstt.cc[30],0,0.1)
-    gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
-    
-    rad = gstt.angleX * PI / 180
-    cosa = math.cos(rad)
-    sina = math.sin(rad)
+    # Skip trigo update if angleX didn't change 
+    # TODO : gstt.prev_cc29 == -1 is useful only the first time to create cosa and sina values
+
+    if gstt.prev_cc29 != gstt.cc[29] or gstt.prev_cc29 == -1: 
+        gstt.angleX += cc2range(gstt.cc[29],0,0.1)    
+        rad = gstt.angleX * PI / 180
+        cosaX = math.cos(rad)
+        sinaX = math.sin(rad)
+        prev_cc29 = gstt.cc[29]
+
     y2 = y
-    y = y2 * cosa - z * sina
-    z = y2 * sina + z * cosa
+    y = y2 * cosaX - z * sinaX
+    z = y2 * sinaX + z * cosaX
 
-    rad = gstt.angleY * PI / 180
-    cosa = math.cos(rad)
-    sina = math.sin(rad)
+    # Skip trigo update if angleY didn't change 
+    if gstt.prev_cc30 != gstt.cc[30]: 
+        gstt.angleY += cc2range(gstt.cc[30],0,0.1)
+        rad = gstt.angleY * PI / 180
+        cosaY = math.cos(rad)
+        sinaY = math.sin(rad)
+        prev_cc30 = gstt.cc[30]
+
     z2 = z
-    z = z2 * cosa - x * sina
-    x = z2 * sina + x * cosa
+    z = z2 * cosaY - x * sinaY
+    x = z2 * sinaY + x * cosaY
 
-    rad = gstt.angleZ * PI / 180
-    cosa = math.cos(rad)
-    sina = math.sin(rad)
+
+    # Skip trigo update if angleZ didn't change 
+    if gstt.prev_cc31 != gstt.cc[31]: 
+        gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
+        rad = gstt.angleZ * PI / 180
+        cosZ = math.cos(rad)
+        sinZ = math.sin(rad)
+        
     x2 = x
-    x = x2 * cosa - y * sina
-    y = x2 * sina + y * cosa
+    x = x2 * cosZ - y * sinZ
+    y = x2 * sinZ + y * cosZ
 
     # 3D to 2D projection
     factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
     x = x * factor + xy_center [0] 
     y = - y * factor + xy_center [1] 
-
+    
     return x,y
 
 
