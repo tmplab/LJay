@@ -85,17 +85,13 @@ if gstt.debug > 0:
 	print "warpdest : ", gstt.warpdest
 
 
-
-# For Mapping()
-
-
 # Save all points for a given "shape" (=['Windows','0']) shapecoord is a list 
 # in any section of the mapping conf file
 def MappingWrite(sections,shape, shapecoord): 
 
 	shapestr = " ".join(str(x) for x in shapecoord)
 	config.set(sections[gstt.CurrentSection], shape, shapestr.replace("] [","],["))
-	config.write(open('set0.conf','w'))
+	config.write(open(gstt.ConfigName,'w'))
 
 
 # Get a list of all points (="Corners") for a given "shape"  = [section,option] like ['Windows','0'] 

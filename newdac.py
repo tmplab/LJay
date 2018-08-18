@@ -153,7 +153,7 @@ class DAC(object):
 
 		'''
 		Wich one is faster ??
-		
+
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2
