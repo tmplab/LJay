@@ -32,14 +32,14 @@ PL = [[],[],[],[]]
 
 # gstt.Set select what to Curve Set to display. 
 # Can be changed with /noteon 8-15
-Set = 0 #nozoid loloster.py
+Set = 1 #nozoid loloster.py
 
 
 # gstt.Curve select what curve to use in . 
 # Can be changed with /noteon 0-7
-Curve = 1 #nozmod
+Curve = 0 #nozmod
 
-ConfigName = "set0.conf"
+ConfigName = "set1.conf"
 
 maxCurvesByLaser = 4
 
@@ -184,6 +184,11 @@ sizeY = [LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y]
 finANGLE = [LASER_ANGLE, LASER_ANGLE, LASER_ANGLE, LASER_ANGLE]
 swapX = [1,1,1,1]
 swapY = [1,1,1,1]
+warpdest = [[[-10000,-10000],[10000,-10000],[10000,10000],[-10000,10000]],
+[[-10000,-10000],[10000,-10000],[10000,10000],[-10000,10000]],
+[[-10000,-10000],[10000,-10000],[10000,10000],[-10000,10000]],
+[[-10000,-10000],[10000,-10000],[10000,10000],[-10000,10000]]
+]
 
 # Etat global général
 app_path = ""

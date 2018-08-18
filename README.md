@@ -60,6 +60,9 @@ python main.py
 (Doc in Progress)
 
 
+- find 3D rotations matrices and 2 projections, test speed / normal algo with algotest.
+- compute homography for warp with destinations points modifications from mouse.
+- algotest computation is not correct / readme
 - Interactive trapezoidal correction via homography matrices for each laser, stored in settings file.
 - Smaller cpu footprint (compute only when something has changed,...)
 - Tags for automatic laser load/ balancing
@@ -330,5 +333,27 @@ This program suppose that the ether dream is configured in a certain way especia
 About hardware setup, especially if you have several lasers : ILDA cables are insanely expensive. You may consider the Power Over Ethernet 'POE' option. Buy a very small ILDA cable, a POE splitter and connect everything to the ether dream fixed near your laser. You can have then a simple and very long network cable and use a Power Over Ethernet injector or switch closed to the driving computer. Beware some vendors use 24V POE Injector : POE injectors and splitters must match.
 
 
+#
+# Coordinates if you use the proj function
+#
+
+3D reference has 0,0,0 in the middle
+Given a square centered around origin and size 200 (z =0 is added automatically)
+([-200, -200, 0], [200, -200, 0], [200, 200, 0], [-200, 200, 0], [-200, -200, 0])
+
+Pygame screen points are 2D. 0,0 is top left.
+with no 3D rotations + 3D -> 2D Projection  + translation to top left:
+[(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.0), (300.0, 400.0)]
 
 
+Pygame points with color is fed to laser renderer
+[(300.0, 400.0, 0), (500.0, 400.0, 16776960), (500.0, 200.0, 16776960), (300.0, 200.0, 16776960), (300.0, 400.0, 16776960)]
+
+x = (screen_size[0]/2 + ((XX * math.cos(gstt.finANGLE[self.PL])) - (YY * math.sin(gstt.finANGLE[self.PL]))) - screen_size[0]/2) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
+y = (screen_size[1]/2 + ((XX * math.sin(gstt.finANGLE[self.PL])) + (YY * math.cos(gstt.finANGLE[self.PL]))) - screen_size[1]/2) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
+		
+Laser points traced
+5 [(1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0)]
+8 [(1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0)]
+8 [(-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0)]
+16 [(-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0)]

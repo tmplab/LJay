@@ -229,6 +229,17 @@ if gstt.Nbpads > 0:
 	print "Buttons : " , str(numButtons)
 
 
+if gstt.Set == 0 and gstt.Curve == 0:
+
+    # section 0 is "General", then first screen shapes in section 1
+    # Todo : Should search automatically first screen in settings file sections.
+    set0.MappingConf(1)
+
+if gstt.Set == 1 and gstt.Curve == 0:
+
+    # section 0 is "General", then first screen shapes in section 1
+    # Todo : Should search automatically first screen in settings file sections.
+    set1.MappingConf(1)
 
 clock = pygame.time.Clock()
 

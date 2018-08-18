@@ -56,7 +56,7 @@ Use the :
 import numpy as np
 from scipy.linalg import svd,lstsq
 
-def find_homography(points1,points2):
+def find(points1,points2):
 	if points1.shape[0] != points2.shape[0] : raise ValueError("The number of input and output points mismatches")
 	if points1.shape[1] == 2 :
 		p1 = np.ones((len(points1),3),'float64')
@@ -94,7 +94,7 @@ def find_homography(points1,points2):
 	H = h.reshape(3,3)
 	return H
 
-def find_affine_homography(points1,points2):
+def find_affine(points1,points2):
 	if points1.shape[0] != points2.shape[0] : raise ValueError("The number of input and output points mismatches")
 	if points1.shape[1] == 2 :
 		p1 = np.ones((len(points1),3),'float64')
@@ -133,7 +133,7 @@ def find_affine_homography(points1,points2):
 	H[2,2] = 1
 	return H
 
-def apply_homography(H,points):
+def apply(H,points):
 	p = np.ones((len(points),3),'float64')
 	p[:,:2] = points
 	pp = np.dot(p,H.T)

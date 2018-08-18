@@ -64,7 +64,7 @@ f_sine = 0
 # Edit shape mode / Warp Mode
 
 def MappingConf(section):
-    global mouse_prev, sections
+    global mouse_prev, sections, warpd
 
     gstt.EditStep = 0
     gstt.CurrentWindow = -1
@@ -83,9 +83,11 @@ def MappingConf(section):
     gstt.Laser = settings.MappingRead([sections[gstt.CurrentSection],'laser'])
     print "Laser : ", gstt.Laser
     gstt.simuPL = gstt.Laser
+    warpd = np.array(gstt.warpdest[gstt.Laser])
 
     for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
-        print "Reading option :  ", str(Window)
+        if gstt.debug > 0:
+            print "Reading option :  ", str(Window)
         shape = [sections[gstt.CurrentSection], str(Window)]
         WindowPoints = settings.MappingRead(shape)
         gstt.Windows.append(WindowPoints)
@@ -93,16 +95,9 @@ def MappingConf(section):
     print "Section points : " ,gstt.Windows
 
 
-print ""
-print "WARP mode to edit trapezoidal correction"
-
-# section 0 is "General", then first screen shapes in section 1
-# Todo : Should search automatically first screen in settings file sections.
-MappingConf(1)
-
 
 def Mapping(fwork, keystates, keystates_prev):
-    global mouse_prev, sections
+    global mouse_prev, sections, warpd
 
     PL = gstt.Laser
     dots = []
@@ -195,9 +190,12 @@ def Mapping(fwork, keystates, keystates_prev):
             deltay = gstt.mouse[0][1]-mouse_prev[0][1]
             
             print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, "deltax ", deltax, "deltay", deltay
-            #CurrentWindowPoints[gstt.CurrentCorner][0] += (deltax *2)
-            #CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
+            #int(gstt.warpdest[gstt.Laser][gstt.CurrentCorner][0]) += (deltax *20)
+            #int(gstt.warpdest[gstt.Laser][gstt.CurrentCorner][1]) += (deltay * 2)
+            
+            print warpd
 
+            #print int(gstt.warpdest[gstt.Laser][gstt.CurrentCorner][0]) + (deltax * 20)
         # Change corner if Z key is pressed.
         if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
             if gstt.CurrentCorner < 4:

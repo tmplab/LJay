@@ -144,7 +144,6 @@ class DAC(object):
 	
 
 		d = [self.newstream.next() for i in xrange(n)]
-
 		return d
 
 	def EtherPoint(self, xyc):
@@ -152,6 +151,9 @@ class DAC(object):
 		# compute for a given point, actual coordinates with alignment parameters (center, zoom, axis swap,..) 
 		# and rescaled in etherdream coord space
 
+		'''
+		Wich one is faster ??
+		
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2
@@ -159,8 +161,19 @@ class DAC(object):
 		# Multilaser style
 		x = (screen_size[0]/2 + ((XX * math.cos(gstt.finANGLE[self.PL])) - (YY * math.sin(gstt.finANGLE[self.PL]))) - screen_size[0]/2) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
 		y = (screen_size[1]/2 + ((XX * math.sin(gstt.finANGLE[self.PL])) + (YY * math.cos(gstt.finANGLE[self.PL]))) - screen_size[1]/2) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
+		'''
+
+		c = xyc[2]
+		XX = xyc[0] - xy_center[0]
+		YY = xyc[1] - xy_center[1]
+		CosANGLE = math.cos(gstt.finANGLE[self.PL])
+		SinANGLE = math.sin(gstt.finANGLE[self.PL])
+		# Multilaser style
+		x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
+		y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
 		
 		return (x*gstt.swapX[self.PL], y*gstt.swapY[self.PL], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+
 
 	def read(self, l):
 		"""Read exactly length bytes from the connection."""
@@ -262,6 +275,7 @@ class DAC(object):
 
 
 			points = self.GetPoints(cap)
+			#print points
 			if cap < 100:
 				time.sleep(0.005)
 				cap += 150

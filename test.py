@@ -1,4 +1,7 @@
 import time
+from globalVars import *
+import gstt
+
 '''
 from itertools import cycle
 import ConfigParser
@@ -223,36 +226,130 @@ newpoint = numpy.array([10, 20])
 apply_homography(homomap,points)
 
 '''
-from homography import *
 
-points1 = np.array([[ 200, 250 ],
-                     [ 150, 240],
-                     [ 230, 100 ],
-                     [ 150, 210 ]])
+import homography
+import math
+import numpy as np
 
-print points1
- 
-points2 = np.array([[ 50.  , 50. ],
-                    [ 180.  , 50. ],
-                    [ 250., 160. ],
-                    [ 210., 180. ]])
- 
-points3 = np.array([[-100., 50.],
-                     [ 50.,-10.],
-                     [ 80., 140.],
-                     [ 210., 130.]])
+def EDpoint((pygamex,pygamey)):
+
+    XX = pygamex - xy_center[0]
+    YY = pygamey - xy_center[1]
+    CosANGLE = math.cos(gstt.finANGLE[0])
+    SinANGLE = math.sin(gstt.finANGLE[0])
+    # Multilaser style
+    x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[0] + gstt.centerX[0]
+    y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[0] + gstt.centerY[0]
+        
+    return [x*1, y*1]
+
+def test1(repetitions,points):
+
+    t0 = time.time()
+
+    EDpoints = []
+    for point in points:
+        #print point
+        #print EDpoint(poin
+        EDpoints.append(EDpoint(point))
+    #print EDpoints
+
+    H1 = homography.find(points1,np.array(EDpoints))
+    #print "homography from 1 to 2 "
+    #print H1
+
+    for test in xrange(repetitions):
+        tt = homography.apply(H1,points1)
+        #print tt
 
 
-H1 = find_homography(points1,points2)
-print "homography from 1 to 2 "
-print H1
 
-newpoints = apply_homography(H1,points3)
-print newpoints
-print newpoints[0]
+    t1 = time.time()
+    return t1 - t0
+
+def test2(repetitions,points):
+
+    t0 = time.time()
+
+
+    for test in xrange(repetitions):
+        tt = []
+        for point in points:
+            #print point
+            #print EDpoint(poin
+
+            tt.append(EDpoint(point))
+        zz =np.array(tt)
+        #print zz
+
+
+    t1 = time.time()
+    return t1 - t0
+
+#print ""
+#print 'test on '
+
+points1 = np.array([[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200]])
+
+#print points1
+
+for repetitions in xrange(100):
+
+#print ''
+    #print 'homography...'
+
+
+    un = test1(repetitions,points1)
+
+#print ''
+    #print 'direct...'
+
+    deux = test2(repetitions,points1)
+
+    '''
+    if deux > un:
+        pass
+        print repetitions
+        print un, " vs ", deux
+        break
+    '''
+
+print "temps pour  ", repetitions, " : ", un, " vs ", deux
+print "Par call : ", un/repetitions, " vs ", deux/repetitions
+print "un / deux ", (100 * un) / deux, "%"
+
+
 '''
-print apply_homography(H1,points1)
-H2 =  find_affine_homography(points1,points3)
-print H2
-print apply_homography(H2,points1)
-'''
+Rotation matrices
+
+
+angleX = angleX * PI / 180
+angleY = angleY * PI / 180
+angleZ = angleZ * PI / 180
+
+theta = [angleX, angleY, angleZ]
+
+
+def RotationMatrix(theta) :
+     
+    R_x = np.array([[1,         0,                  0                   ],
+                    [0,         math.cos(theta[0]), -math.sin(theta[0]) ],
+                    [0,         math.sin(theta[0]), math.cos(theta[0])  ]
+                    ])
+         
+         
+                     
+    R_y = np.array([[math.cos(theta[1]),    0,      math.sin(theta[1])  ],
+                    [0,                     1,      0                   ],
+                    [-math.sin(theta[1]),   0,      math.cos(theta[1])  ]
+                    ])
+                 
+    R_z = np.array([[math.cos(theta[2]),    -math.sin(theta[2]),    0],
+                    [math.sin(theta[2]),    math.cos(theta[2]),     0],
+                    [0,                     0,                      1]
+                    ])
+                     
+                     
+    R = np.dot(R_z, np.dot( R_y, R_x ))
+ 
+    return R

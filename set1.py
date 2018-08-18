@@ -52,7 +52,7 @@ def MappingConf(section):
 print ""
 print "For Mapping(), reading Architecture Points from set0.conf"
 
-MappingConf(1)
+#MappingConf(1)
 
 
 def Mapping(fwork, keystates, keystates_prev):
@@ -136,7 +136,7 @@ def Mapping(fwork, keystates, keystates_prev):
         
         # Add all windows to PL for display
         for Window in gstt.Windows:  
-
+            #print Window
             dots = []
             for corner in xrange(len(Window)):   
                 #print "Editing : ", WindowPoints[corner]
@@ -144,10 +144,12 @@ def Mapping(fwork, keystates, keystates_prev):
                 dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
             
             fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False  )
-    
+            print dots
+
         gstt.PL[PL] = fwork.LinesPL(PL)
 
-
+        #print gstt.PL[PL]
+        #print ''
 
 
 # Curve 1
@@ -170,7 +172,6 @@ def LineX(fwork):
     dots.append((int(x),int(y)))
     dots.append((int(screen_size[0]),int(y)))
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color))
-
 
 
 
