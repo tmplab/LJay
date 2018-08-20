@@ -14,53 +14,59 @@ import globalVars
 import itertools
 import sys
 import math
-from globalVars import screen_size
+from globalVars import screen_size, xy_center
 import gstt
 import homography
+import ast
+import numpy as np
+
+#newstream = OnePoint()
 
 # Reference points 
-Refpoints = np.array([[-200, -200],[200, -200],[200, 200],[-200, 200]])
+pointsref = np.array([(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.0)])
 
-# Store the homography for each laser.
-EDH = [[], [], [], []]
+def EDpoint(mylaser,(pygamex,pygamey)):
 
-newstream = OnePoint()
-
-# Computer point in EtherDream coordinate with align corrections from proj(3Dpoints) = pygame screen coordinates
-# 4 EDpoints are used to compute the homography matrix that is dramatically faster.
-def EDpoint((pygamex,pygamey)):
-
-	XX = xyc[0] - xy_center[0]
-	YY = xyc[1] - xy_center[1]
-	CosANGLE = math.cos(gstt.finANGLE[self.PL])
-	SinANGLE = math.sin(gstt.finANGLE[self.PL])
+	XX = pygamex - xy_center[0]
+	YY = pygamey - xy_center[1]
+	CosANGLE = math.cos(gstt.finANGLE[mylaser])
+	SinANGLE = math.sin(gstt.finANGLE[mylaser])
 	# Multilaser style
-	x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
-	y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
-		
-	return x*gstt.swapX[self.PL], y*gstt.swapY[self.PL]
-  
-
-
-# get homography from reference points and already computed EtherDream points like in .conf file.
-def newEDH(EDpoints):
-
-    EDH[gstt.Laser] = homography.find(Refpoints, np.array(EDpoints))
+	x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
+	y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
+	return [x*1, y*1]
 
 
 
-# compute for a given point, actual coordinates with alignment parameters (center, zoom, axis swap,..) 
-# and rescaled in etherdream coord space
-def EtherPoint(xyc):
+
+# New total homography from always the same reference points : ED transform + warp transform.
+
+def newEDH(mylaser):
+
+	EDpoints = []
+	for point in xrange(4):
+		EDpoints.append(EDpoint(mylaser,pointsref[point]))
+
+	# H matrix tansform pygame points in Etherdream system with geometric correctio,
+	H = homography.find(pointsref, np.array(EDpoints))
+
+	# Hwarp matrix warp etherdream points (computed with H) 
+	Hwarp = homography.find(np.array(EDpoints), np.array(ast.literal_eval(gstt.warpdest[gstt.Laser])))
+
+	# EDH matrix 
+	gstt.EDH[mylaser] = np.dot(H,Hwarp)
 	
-	c = xyc[2]
-
-	xyc[0] 
-	xyc[1] 
-	x,y = homography.apply(H1,np.array(xyc[0],xyc[1]))
-	return (x, y, ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
-
-
+	if gstt.debug >0:
+		print "laser ", mylaser
+		print "laser ", mylaser, "laser EDpoints :", EDpoints
+		print ""
+		print  "laser ", mylaser, "H :",H
+		print ""
+		print  "laser ", mylaser, "warpd ",ast.literal_eval(gstt.warpdest[gstt.Laser])
+		print  "laser ", mylaser, "Hwarp ", Hwarp
+		print ""
+		print  "laser ", mylaser,"new EDH :",  gstt.EDH[mylaser]
+	
 
 # Pull next point (in the pointlist or intermediate) in ED coordinates 
 def OnePoint():

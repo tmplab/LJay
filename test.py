@@ -231,95 +231,84 @@ import homography
 import math
 import numpy as np
 
+
+pl = 0
+color = -1
+ip = '192.168.1.5'
+centerx = 0
+centery = 0
+zoomx = 15.0
+zoomy = 15.0
+sizex = 32000
+sizey = 32000
+finangle = 0.0
+swapx = 1
+swapy = 1
+
+
 def EDpoint((pygamex,pygamey)):
 
     XX = pygamex - xy_center[0]
     YY = pygamey - xy_center[1]
-    CosANGLE = math.cos(gstt.finANGLE[0])
-    SinANGLE = math.sin(gstt.finANGLE[0])
+    CosANGLE = math.cos(finangle)
+    SinANGLE = math.sin(finangle)
     # Multilaser style
-    x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[0] + gstt.centerX[0]
-    y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[0] + gstt.centerY[0]
+    x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * zoomx + centerx
+    y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * zoomy + centery
         
     return [x*1, y*1]
 
-def test1(repetitions,points):
 
-    t0 = time.time()
+# Reference points 
+pointsref = np.array([(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.0)])
+
+# Store the homography for each laser.
+EDH = [[], [], [], []]
+
+
+# New total homography from always the same reference points : ED transform + warp transform.
+def newEDH():
+
 
     EDpoints = []
-    for point in points:
-        #print point
-        #print EDpoint(poin
-        EDpoints.append(EDpoint(point))
-    #print EDpoints
+    for point in xrange(4):
+        EDpoints.append(EDpoint(pointsref[point]))
+    print ""
+    print "EDpoints :", EDpoints
+   
 
-    H1 = homography.find(points1,np.array(EDpoints))
-    #print "homography from 1 to 2 "
-    #print H1
-
-    for test in xrange(repetitions):
-        tt = homography.apply(H1,points1)
-        #print tt
+    # H matrix tansform pygame points in Etherdream system with geometric correctio,
+    H = homography.find(pointsref, np.array(EDpoints))
+    print ""
+    print "H :",H
 
 
-
-    t1 = time.time()
-    return t1 - t0
-
-def test2(repetitions,points):
-
-    t0 = time.time()
-
-
-    for test in xrange(repetitions):
-        tt = []
-        for point in points:
-            #print point
-            #print EDpoint(poin
-
-            tt.append(EDpoint(point))
-        zz =np.array(tt)
-        #print zz
+    # Hwarp matrix warp etherdream points (computed with H) 
+    Hwarp = homography.find(np.array(EDpoints), np.array(gstt.warpdest[gstt.Laser]))
+    print ""
+    print "warpdest : ", type(gstt.warpdest[gstt.Laser])
+    print  np.array(gstt.warpdest[gstt.Laser])
+    print "Hwarp ", Hwarp
+    
+    
+    # EDH matrix 
+    EDH[gstt.Laser] = np.dot(H,Hwarp)
+    print ""
+    print "new EDH :",  EDH[gstt.Laser]
 
 
-    t1 = time.time()
-    return t1 - t0
+newEDH()
 
-#print ""
-#print 'test on '
-
-points1 = np.array([[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200],[200, -200],[200, 200],[-200, 200],[-200, -200]])
-
-#print points1
-
-for repetitions in xrange(100):
-
-#print ''
-    #print 'homography...'
-
-
-    un = test1(repetitions,points1)
-
-#print ''
-    #print 'direct...'
-
-    deux = test2(repetitions,points1)
-
-    '''
-    if deux > un:
-        pass
-        print repetitions
-        print un, " vs ", deux
-        break
-    '''
-
-print "temps pour  ", repetitions, " : ", un, " vs ", deux
-print "Par call : ", un/repetitions, " vs ", deux/repetitions
-print "un / deux ", (100 * un) / deux, "%"
+final = homography.apply(EDH[gstt.Laser],np.array([(300.0, 400.0)]))
+print final
 
 
 '''
+for test in xrange(repetitions):
+    tt = homography.apply(H1,points1)
+    #print tt
+
+
 Rotation matrices
 
 
@@ -353,3 +342,4 @@ def RotationMatrix(theta) :
     R = np.dot(R_z, np.dot( R_y, R_x ))
  
     return R
+'''

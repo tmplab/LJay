@@ -24,6 +24,10 @@ import math
 from itertools import cycle
 from globalVars import *
 import pdb
+import ast
+
+import homography
+import numpy as np
 
 
 def pack_point(x, y, r, g, b, i = -1, u1 = 0, u2 = 0, flags = 0):
@@ -106,6 +110,7 @@ class BroadcastPacket(object):
 class DAC(object):
 	"""A connection to a DAC."""
 
+
 	# "Laser point List" Point generator
 	# points are yielded : Getpoints() call n times OnePoint()
 	
@@ -146,33 +151,33 @@ class DAC(object):
 		d = [self.newstream.next() for i in xrange(n)]
 		return d
 
+	'''
+	# Etherpoint Legacy style
 	def EtherPoint(self, xyc):
 		
 		# compute for a given point, actual coordinates with alignment parameters (center, zoom, axis swap,..) 
 		# and rescaled in etherdream coord space
 
-		'''
-		Wich one is faster ??
-
-		c = xyc[2]
-		XX = xyc[0] - screen_size[0]/2
-		YY = xyc[1] - screen_size[1]/2
-
-		# Multilaser style
-		x = (screen_size[0]/2 + ((XX * math.cos(gstt.finANGLE[self.PL])) - (YY * math.sin(gstt.finANGLE[self.PL]))) - screen_size[0]/2) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
-		y = (screen_size[1]/2 + ((XX * math.sin(gstt.finANGLE[self.PL])) + (YY * math.cos(gstt.finANGLE[self.PL]))) - screen_size[1]/2) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
-		'''
-
 		c = xyc[2]
 		XX = xyc[0] - xy_center[0]
 		YY = xyc[1] - xy_center[1]
-		CosANGLE = math.cos(gstt.finANGLE[self.PL])
-		SinANGLE = math.sin(gstt.finANGLE[self.PL])
+		CosANGLE = math.cos(gstt.finANGLE[self.mylaser])
+		SinANGLE = math.sin(gstt.finANGLE[self.mylaser])
 		# Multilaser style
-		x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
-		y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
+		x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[self.mylaser] + gstt.centerX[self.mylaser]
+		y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[self.mylaser] + gstt.centerY[self.mylaser]
 		
-		return (x*gstt.swapX[self.PL], y*gstt.swapY[self.PL], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+		return (x*gstt.swapX[self.mylaser], y*gstt.swapY[self.mylaser], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+	'''
+
+	# Etherpoint all transform in one matrix, with warp !!
+
+	def EtherPoint(self,xyc):
+	
+		c = xyc[2]
+		position = homography.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
+		return (position[0][0], position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+
 
 
 	def read(self, l):
@@ -204,19 +209,23 @@ class DAC(object):
 		self.last_status = status
 		return status
 
-	def __init__(self, host, PL, port = 7765):
+	def __init__(self, mylaser, PL, port = 7765):
 		"""Connect to the DAC over TCP."""
 		conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		conn.connect((host, port))
+		conn.connect((gstt.lasersIPS[mylaser], port))
 		self.conn = conn
 		self.buf = ""
 		self.PL = PL
+		self.mylaser = mylaser
 		self.xyrgb = self.xyrgb_prev = (0,0,0,0,0)
 		self.newstream = self.OnePoint()
-
+		# Reference points 
+		
 		# Read the "hello" message
 		first_status = self.readresp("?")
 		first_status.dump()
+		position = []
+
 
 	def begin(self, lwm, rate):
 		cmd = struct.pack("<cHI", "b", lwm, rate)

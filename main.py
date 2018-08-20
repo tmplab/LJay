@@ -23,6 +23,7 @@ import frame
 import renderer
 import dac
 import newdac
+import newrenderer
 import settings
 from globalVars import *
 
@@ -95,7 +96,7 @@ settables =  {					# Set 0
 def dac_thread0():
     while True:
         try:
-            d0 = newdac.DAC(gstt.lasersIPS[0],gstt.lasersPLS[0])
+            d0 = newdac.DAC(0,gstt.lasersPLS[0])
             d0.play_stream()
         except Exception as e:
 
@@ -112,7 +113,7 @@ def dac_thread1():
     while True:
         try:
 
-            d1 = newdac.DAC(gstt.lasersIPS[1],gstt.lasersPLS[1])
+            d1 = newdac.DAC(1,gstt.lasersPLS[1])
             d1.play_stream()
 
             # Legacy style
@@ -133,7 +134,7 @@ def dac_thread1():
 def dac_thread2():
     while True:
         try:
-            d2 = newdac.DAC(gstt.lasersIPS[2],gstt.lasersPLS[2])
+            d2 = newdac.DAC(2,gstt.lasersPLS[2])
             d2.play_stream()
         except Exception as e:
 
@@ -150,7 +151,7 @@ def dac_thread2():
 def dac_thread3():
     while True:
         try:
-            d3 = dac.DAC(gstt.lasersIPS[3],gstt.lasersPLS[3])
+            d3 = dac.DAC(3,gstt.lasersPLS[3])
             d3.play_stream(laser)
         except Exception as e:
 
@@ -169,7 +170,12 @@ def dac_thread3():
 
 # Check if all required etherdreams are actually on the network if gstt.debug > 0
 print ""
-print "Settings require", gstt.LaserNumber, "lasers v0.6.2" 
+print "Settings require", gstt.LaserNumber, "lasers..." 
+print "Generating homographies..."
+for laser in xrange(gstt.LaserNumber):
+    newrenderer.newEDH(laser)
+    print "laser"+str(laser)
+    print gstt.EDH[laser]
 
 # Ping check if debug > 0
 if gstt.debug > 0:
