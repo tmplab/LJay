@@ -43,13 +43,15 @@ python main.py
 - Automatic Midi devices IN & OUT detection (must be seen by OS)
 - Automatic USB enttec PRO DMX interface detection
 
-
 - OSC to midi bridge (see /note and /cc/number)
 - OSC to DMX bridge (see /cc/number)
 - Bhoreal and Launchpad device start animation
 - Control all leds of Bhoreal and Launchpad
+- Much more Command line options : python main.py --help
+- Multi laser needs more configuration parameters. 
 - A multi laser example : display solar planet position is provided see Astro() (set 0 Curve 7). You need python module jplephem and to download de430.bsp : http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
-- Edit Shapes with mouse
+- Interactive (mouse style) warp correction (set 1 curve 1)
+- Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file.
 
 
 
@@ -59,15 +61,11 @@ python main.py
 
 (Doc in Progress)
 
-
 - find 3D rotations matrices and 2 projections, test speed / normal algo with algotest.
-- compute homography for warp with destinations points modifications from mouse.
-- Interactive trapezoidal correction via homography matrices for each laser, stored in settings file.
 - Smaller cpu footprint (compute only when something has changed,...)
 - Tags for automatic laser load/ balancing
 - Texts : multilasers support, more fonts (See setai/composer )
 - New UI and simulator : web, livecode ?
-
 
 
 #
@@ -348,15 +346,8 @@ with no 3D rotations + 3D -> 2D Projection  + translation to top left:
 Pygame points with color is fed to laser renderer
 [(300.0, 400.0, 0), (500.0, 400.0, 16776960), (500.0, 200.0, 16776960), (300.0, 200.0, 16776960), (300.0, 400.0, 16776960)]
 
-x = (screen_size[0]/2 + ((XX * math.cos(gstt.finANGLE[self.PL])) - (YY * math.sin(gstt.finANGLE[self.PL]))) - screen_size[0]/2) * gstt.zoomX[self.PL] + gstt.centerX[self.PL]
-y = (screen_size[1]/2 + ((XX * math.sin(gstt.finANGLE[self.PL])) + (YY * math.cos(gstt.finANGLE[self.PL]))) - screen_size[1]/2) * gstt.zoomY[self.PL] + gstt.centerY[self.PL]
-		
-Laser points traced
-5 [(1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0), (1110.0, 700.0, 65280, 65280, 0)]
-8 [(1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0), (1110.0, -700.0, 65280, 65280, 0)]
-8 [(-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0), (-1110.0, -700.0, 65280, 65280, 0)]
-16 [(-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 65280, 65280, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0), (-1110.0, 700.0, 0, 0, 0)]
 
+Laser points traced
 
 16 (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0)
 8 (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0)

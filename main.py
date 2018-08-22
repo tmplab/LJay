@@ -78,8 +78,9 @@ settables =  {					# Set 0
         7: set0.Astro,
         8: set0.Text
     }, {						# Set 1
-        0: set1.Mapping,
-        1: set1.LineX
+        0: set1.Shapes,
+        1: set1.Warp,
+        2: set1.LineX
     }, {						# setllstr
         0: setllstr.NozMode,
         1: setllstr.NozMode2,
@@ -213,7 +214,6 @@ gstt.Nbpads = pygame.joystick.get_count()
 print "Joypads : ", str(gstt.Nbpads)
 
 if gstt.Nbpads > 1:
-
 	gstt.pad2 = pygame.joystick.Joystick(1)
 	gstt.pad2.init()
 
@@ -222,14 +222,12 @@ if gstt.Nbpads > 1:
 	numButtons = gstt.pad2.get_numbuttons()
 	print "Buttons : " , str(numButtons)
 
-if gstt.Nbpads > 0:
 
+if gstt.Nbpads > 0:
 	gstt.pad1 = pygame.joystick.Joystick(0)
 	gstt.pad1.init()
 
 	print gstt.pad1.get_name()
-
-
 	print "Axis : ", str(gstt.pad1.get_numaxes())
 	numButtons = gstt.pad1.get_numbuttons()
 	print "Buttons : " , str(numButtons)
@@ -325,11 +323,9 @@ while True:
     colorify.jump()
 
     # Select and call the Curve to generate points
-	
     gstt.jumptable = settables[gstt.Set]
     doit = gstt.jumptable.get(gstt.Curve)
-    #print pygame.mouse.get_pos(), pygame.mouse.get_pressed()
-    if gstt.Curve == 0:
+    if gstt.Set == 1:
 	   doit(fwork, keystates, keystates_prev)
     else:
         doit(fwork)
