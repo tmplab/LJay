@@ -76,7 +76,8 @@ settables =  {					# Set 0
         5: set0.CC,
         6: set0.Sine,
         7: set0.Astro,
-        8: set0.Text
+        8: set0.Text,
+        9: set0.Pose
     }, {						# Set 1
         0: set1.Shapes,
         1: set1.Warp,

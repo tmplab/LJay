@@ -420,6 +420,54 @@ def Text(fwork):
     
     fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
 
+# Curve 9
+import json
+gstt.CurrentPose = 1
+
+def getCOCO(d,posepoints):
+    dots = []
+    #
+    #print d
+    #print posepoints 
+    for dot in posepoints:
+        if len(d['part_candidates'][0][str(dot)]) != 0:
+            dots.append((d['part_candidates'][0][str(dot)][0], d['part_candidates'][0][str(dot)][1]))
+    return dots
+
+def bodyCOCO(d):
+    bodypoints = [10,9,8,1,11,12,13]
+    return getCOCO(d,bodypoints)
+
+def armCOCO(d):
+    armpoints = [7,6,5,1,2,3,4]
+    return getCOCO(d,armpoints)
+
+def headCOCO(d):
+    headpoints = [1,0]
+    return getCOCO(d,headpoints)
+
+
+#def Pose(fwork):
+def Pose(fwork):
+
+    PL = 0
+    dots = []
+    posename ='poses/snap/COCOface/snap_00000000'+str("%04d"%gstt.CurrentPose)+'_keypoints.json'
+    posefile = open(posename , 'r')
+    print ""
+    print gstt.CurrentPose
+    posedatas = posefile.read()
+    pose = json.loads(posedatas)
+    fwork.PolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    
+    gstt.PL[PL] = fwork.LinesPL(PL)
+
+    gstt.CurrentPose += 1
+    if gstt.CurrentPose > 3000:
+        gstt.CurrentPose = 1
+    time.sleep(0.033)
 
 
 # examples to generate arrays of different types i.e for Lissajoux point lists generators.
