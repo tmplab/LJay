@@ -29,7 +29,7 @@ import mydmx
 #import oscdefault
 #import runmode
 
-oscIPin = socket.gethostbyname(socket.gethostname())
+oscIPin = socket.gethostbyname("")
 #oscIPin = "192.168.1.10"
 #oscPORTin = 8001
 oscPORTin = gstt.iport

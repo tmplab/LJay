@@ -281,6 +281,8 @@ print ""
 
 update_screen = False
 keystates = pygame.key.get_pressed()
+gstt.keystates = pygame.key.get_pressed()
+
 (SCREEN_W, SCREEN_H) = screen_size
 
 
@@ -309,7 +311,10 @@ while True:
 
     gstt.mouse = (pygame.mouse.get_pos(), pygame.mouse.get_pressed())
     keystates_prev = keystates[:]
+    gstt.keystates_prev = gstt.keystates[:]
     keystates = pygame.key.get_pressed()[:]
+    gstt.keystates = pygame.key.get_pressed()[:]
+
 
     if keystates[pygame.K_ESCAPE]:
         break

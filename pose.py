@@ -43,7 +43,7 @@ def Pose(frame):
 	
 
 
-Pose(531)
+Pose(320)
 
 
 '''

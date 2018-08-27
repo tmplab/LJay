@@ -26,7 +26,7 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 
 # gstt.laserPLS : What point list is sent to what laser. 
 # ** Will be overridden by settings.conf values **
-lasersPLS = [1,1,0,0]
+lasersPLS = [0,0,0,0]
 PL = [[],[],[],[]]
 
 

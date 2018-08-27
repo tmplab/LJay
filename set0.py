@@ -446,16 +446,21 @@ def headCOCO(d):
     headpoints = [1,0]
     return getCOCO(d,headpoints)
 
+import os
 
-#def Pose(fwork):
+def selectPOSE():
+    dir_name = '/Users/leduc/Desktop/LJay/poses/snap/COCOface'
+    numfiles = sum(1 for f in os.listdir(dir_name) if os.path.isfile(os.path.join(dir_name, f)) and f[0] != '.')
+    print numfiles
+
+
 def Pose(fwork):
 
     PL = 0
     dots = []
     posename ='poses/snap/COCOface/snap_00000000'+str("%04d"%gstt.CurrentPose)+'_keypoints.json'
     posefile = open(posename , 'r')
-    print ""
-    print gstt.CurrentPose
+
     posedatas = posefile.read()
     pose = json.loads(posedatas)
     fwork.PolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
@@ -463,11 +468,20 @@ def Pose(fwork):
     fwork.PolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     
     gstt.PL[PL] = fwork.LinesPL(PL)
+    
+    if gstt.keystates[pygame.K_w]: # and not gstt.keystates_prev[pygame.K_w]:
+        gstt.CurrentPose -= 1
+        if gstt.CurrentPose < 2:
+            gstt.CurrentPose = 3000
+        time.sleep(0.033) 
+        print "Frame : ",gstt.CurrentPose 
 
-    gstt.CurrentPose += 1
-    if gstt.CurrentPose > 3000:
-        gstt.CurrentPose = 1
-    time.sleep(0.033)
+    if gstt.keystates[pygame.K_x]: # and not gstt.keystates_prev[pygame.K_x]:
+        gstt.CurrentPose += 1
+        if gstt.CurrentPose > 3000:
+            gstt.CurrentPose = 1
+        time.sleep(0.033)
+        print "Frame : ",gstt.CurrentPose 
 
 
 # examples to generate arrays of different types i.e for Lissajoux point lists generators.

@@ -1,4 +1,4 @@
-#N canvas 189 212 740 721 10;
+#N canvas 921 143 740 721 10;
 #X obj 237 567 sendOSC;
 #X floatatom 237 594 5 0 0 0 - - -;
 #X floatatom 291 596 5 0 0 0 - - -;
@@ -275,7 +275,7 @@
 #X text 306 -5 llstr;
 #X text 344 -4 AI;
 #X msg 29 558 connect 172.16.107.135 8001;
-#X msg 28 539 connect 192.168.1.52 8001;
+#X msg 28 539 connect 192.168.1.10 8001;
 #X connect 0 0 1 0;
 #X connect 0 1 2 0;
 #X connect 4 0 153 0;
