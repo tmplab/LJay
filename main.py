@@ -81,7 +81,8 @@ settables =  {					# Set 0
     }, {						# Set 1
         0: set1.Shapes,
         1: set1.Warp,
-        2: set1.LineX
+        2: set1.Pose,
+        3: set1.LineX
     }, {						# setllstr
         0: setllstr.NozMode,
         1: setllstr.NozMode2,
@@ -248,6 +249,9 @@ if gstt.Set == 1 and gstt.Curve == 0:
 
 clock = pygame.time.Clock()
 
+gstt.PoseDir = '/Volumes/Data/openpose/snap/COCOface/'
+#gstt.PoseDir = '/Volumes/shared/openpose-1.3.0-win64-gpu-binaries/HeavyRain/2/json/'
+set0.selectPOSE()
 
 fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
@@ -292,12 +296,10 @@ gstt.jumptable = settables[gstt.Set]
 print ""
 print "Simulator displays point list : ", str(gstt.simuPL)
 
-
 settings.Write()
 
 print ""
 print "Starting Main Loop..."
-
 
 
 # Main loop
@@ -323,7 +325,7 @@ while True:
     fwork = frame.Frame()
 	
     # align handler
-    align.Jump(fwork,keystates)
+    align.Jump(fwork)
 
     # Colorify
     colorify.jump()
@@ -331,10 +333,7 @@ while True:
     # Select and call the Curve to generate points
     gstt.jumptable = settables[gstt.Set]
     doit = gstt.jumptable.get(gstt.Curve)
-    if gstt.Set == 1:
-	   doit(fwork, keystates, keystates_prev)
-    else:
-        doit(fwork)
+    doit(fwork)
 
     # pending osc message ?
     bhorosc.osc_frame()

@@ -47,67 +47,67 @@ def Display(f):
 
 
 
-def Jump(fwork,keystates):
+def Jump(fwork):
 	
-	if keystates[pygame.K_p]:
+	if gstt.keystates[pygame.K_p]:
 		DrawTestPattern(fwork)
 		
-	if keystates[pygame.K_x]:
+	if gstt.keystates[pygame.K_x]:
 		Display(fwork)
 		
-	if keystates[pygame.K_r]:
+	if gstt.keystates[pygame.K_r]:
 		gstt.centerX[gstt.Laser] -= 20
 		Display(fwork)
 
-	if keystates[pygame.K_t]:
+	if gstt.keystates[pygame.K_t]:
 		gstt.centerX[gstt.Laser] += 20
 		Display(fwork)
 		
-	if keystates[pygame.K_y]:
+	if gstt.keystates[pygame.K_y]:
 		gstt.centerY[gstt.Laser] -= 20
 		Display(fwork)
 
-	if keystates[pygame.K_u]:
+	if gstt.keystates[pygame.K_u]:
 		gstt.centerY[gstt.Laser] += 20
 		Display(fwork)
 
-	if keystates[pygame.K_f]:
+	if gstt.keystates[pygame.K_f]:
 		gstt.zoomX[gstt.Laser]-= 0.1
 		Display(fwork)
 
-	if keystates[pygame.K_g]:
+	if gstt.keystates[pygame.K_g]:
 		gstt.zoomX[gstt.Laser] += 0.1
 		Display(fwork)
 		
-	if keystates[pygame.K_h]:
+	if gstt.keystates[pygame.K_h]:
 		gstt.zoomY[gstt.Laser] -= 0.1
 		Display(fwork)
 
-	if keystates[pygame.K_j]:
+	if gstt.keystates[pygame.K_j]:
 		gstt.zoomY[gstt.Laser] += 0.1
 		Display(fwork)
 	
-	if keystates[pygame.K_c]:
+	if gstt.keystates[pygame.K_c]:
 		gstt.sizeX[gstt.Laser] -= 50
 		Display(fwork)
 		
-	if keystates[pygame.K_v]:
+	if gstt.keystates[pygame.K_v]:
 		gstt.sizeX[gstt.Laser] += 50
 		Display(fwork)
 		
-	if keystates[pygame.K_b]:
+	if gstt.keystates[pygame.K_b]:
 		gstt.sizeY[gstt.Laser] -= 50
 		Display(fwork)
 		
-	if keystates[pygame.K_n]:
+	if gstt.keystates[pygame.K_n]:
 		gstt.sizeY[gstt.Laser] += 50
 		Display(fwork)
 		
-	if keystates[pygame.K_l]:
+	if gstt.keystates[pygame.K_l]:
 		gstt.finANGLE[gstt.Laser] -= 0.001
 		Display(fwork)
 		
-	if keystates[pygame.K_m]:
+	if gstt.keystates[pygame.K_m]:
 		gstt.finANGLE[gstt.Laser] += 0.001
 		Display(fwork)
 

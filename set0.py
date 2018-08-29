@@ -425,63 +425,140 @@ import json
 gstt.CurrentPose = 1
 
 def getCOCO(d,posepoints):
+    
     dots = []
-    #
-    #print d
-    #print posepoints 
     for dot in posepoints:
         if len(d['part_candidates'][0][str(dot)]) != 0:
             dots.append((d['part_candidates'][0][str(dot)][0], d['part_candidates'][0][str(dot)][1]))
     return dots
 
+
+def getFACE(d,posepoints):
+
+    dots = []
+    for dot in posepoints:
+
+        if len(d['people'][0]['face_keypoints']) != 0:
+            #print dot, d['people'][0]['face_keypoints'][dot * 3], d['people'][0]['face_keypoints'][(dot * 3)+1]
+            dots.append((d['people'][0]['face_keypoints'][dot * 3]-800, d['people'][0]['face_keypoints'][(dot * 3)+1]-200))
+    return dots
+
+
+# Body parts
 def bodyCOCO(d):
-    bodypoints = [10,9,8,1,11,12,13]
-    return getCOCO(d,bodypoints)
+    posepoints = [10,9,8,1,11,12,13]
+    return getCOCO(d,posepoints)
 
 def armCOCO(d):
-    armpoints = [7,6,5,1,2,3,4]
-    return getCOCO(d,armpoints)
+    posepoints = [7,6,5,1,2,3,4]
+    return getCOCO(d,posepoints)
 
 def headCOCO(d):
-    headpoints = [1,0]
-    return getCOCO(d,headpoints)
+    posepoints = [1,0]
+    return getCOCO(d,posepoints)
 
-import os
 
+# Face keypoints
+def face(d):
+    posepoints = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    return getFACE(d,posepoints)
+
+def browL(d):
+    posepoints = [26,25,24,23,22]
+    return getFACE(d,posepoints)
+
+def browR(d):
+    posepoints = [21,20,19,18,17]
+    return getFACE(d,posepoints)
+
+def eyeR(d):
+    posepoints = [36,37,38,39,40,41,36]
+    return getFACE(d,posepoints)
+
+def eyeL(d):
+    posepoints = [42,43,44,45,46,47,42]
+    return getFACE(d,posepoints)
+
+def nose(d):
+    posepoints = [27,28,29,30]
+    return getFACE(d,posepoints)
+
+def mouth(d):
+    posepoints = [48,59,58,57,56,55,54,53,52,51,50,49,48,60,67,66,65,64,63,62,61,60]
+    return getFACE(d,posepoints)
+
+
+# best order face : face browL browr eyeR eyeL nose mouth
+
+import os 
+
+# Get frame number for pose path describe in gstt.PoseDir 
 def selectPOSE():
-    dir_name = '/Users/leduc/Desktop/LJay/poses/snap/COCOface'
-    numfiles = sum(1 for f in os.listdir(dir_name) if os.path.isfile(os.path.join(dir_name, f)) and f[0] != '.')
-    print numfiles
+    gstt.numfiles = sum(1 for f in os.listdir(gstt.PoseDir) if os.path.isfile(os.path.join(gstt.PoseDir, f)) and f[0] != '.')
+    print "Pose : ", gstt.PoseDir, gstt.numfiles, "images"
 
 
+# display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
 
     PL = 0
     dots = []
-    posename ='poses/snap/COCOface/snap_00000000'+str("%04d"%gstt.CurrentPose)+'_keypoints.json'
-    posefile = open(posename , 'r')
+    posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
+    
+    while os.path.getsize(posename) == 159 or os.path.getsize(posename) == 430:
+        posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
+        if gstt.keystates[pygame.K_w]:
+            gstt.CurrentPose -= 1
+        if gstt.keystates[pygame.K_x]:
+            gstt.CurrentPose += 1
 
+    posefile = open(posename , 'r') 
     posedatas = posefile.read()
     pose = json.loads(posedatas)
+
+    # Body
+    print ""
+    print "Frame : ",gstt.CurrentPose
+    print "body :", bodyCOCO(pose)
+    print "arm :", armCOCO(pose)
+    print 'head :', headCOCO(pose) 
+
+    print "eyeR :", eyeR(pose)
+    print "eyeL :", eyeL(pose)
+    print "mouth :", mouth(pose) 
     fwork.PolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     fwork.PolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     fwork.PolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     
+    # Face
+    #fwork.PolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(browR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(eyeR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)  
+    fwork.PolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+
     gstt.PL[PL] = fwork.LinesPL(PL)
     
+    # decrease current frame 
     if gstt.keystates[pygame.K_w]: # and not gstt.keystates_prev[pygame.K_w]:
         gstt.CurrentPose -= 1
         if gstt.CurrentPose < 2:
-            gstt.CurrentPose = 3000
+            gstt.CurrentPose = gstt.numfiles -1
         time.sleep(0.033) 
         print "Frame : ",gstt.CurrentPose 
 
+    # increaser current frame
     if gstt.keystates[pygame.K_x]: # and not gstt.keystates_prev[pygame.K_x]:
         gstt.CurrentPose += 1
-        if gstt.CurrentPose > 3000:
+        if gstt.CurrentPose > gstt.numfiles -1:
             gstt.CurrentPose = 1
         time.sleep(0.033)
         print "Frame : ",gstt.CurrentPose 
+
+
+
 
 
 # examples to generate arrays of different types i.e for Lissajoux point lists generators.

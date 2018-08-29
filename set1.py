@@ -77,7 +77,7 @@ MappingConf(1)
 # ENTER : Display all shapes
 # A     : change "Screen"
 
-def Shapes(fwork, keystates, keystates_prev):
+def Shapes(fwork):
     global mouse_prev, sections, warpd
 
     PL = gstt.Laser
@@ -87,7 +87,7 @@ def Shapes(fwork, keystates, keystates_prev):
 
 
     #switch to SHAPE mode Key E ?
-    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e] and gstt.EditStep == 1:
+    if gstt.keystates[pygame.K_e] and not gstt.keystates_prev[pygame.K_e] and gstt.EditStep == 1:
             
             print "SHAPE Mode."
             gstt.EditStep = 0
@@ -95,7 +95,7 @@ def Shapes(fwork, keystates, keystates_prev):
             gstt.CurrentCorner = 0
 
     # ENTER : Display all shapes 
-    if keystates[pygame.K_RETURN] and gstt.EditStep == 0:    
+    if gstt.keystates[pygame.K_RETURN] and gstt.EditStep == 0:    
             
             print "Display all Mode."
             gstt.EditStep =1
@@ -118,14 +118,14 @@ def Shapes(fwork, keystates, keystates_prev):
         CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
 
     # Change corner if Z key is pressed.
-    if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
+    if gstt.keystates[pygame.K_z] and not gstt.keystates_prev[pygame.K_z]:
         
         if gstt.CurrentCorner < settings.Mapping(sections[gstt.CurrentSection]) - 1:
             gstt.CurrentCorner += 1
             print "Corner : ", gstt.CurrentCorner
 
     # Press E inside shape mode : Next window 
-    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e]:
+    if gstt.keystates[pygame.K_e] and not gstt.keystates_prev[pygame.K_e]:
 
         # Save current Window and switch to the next one.
         if gstt.CurrentWindow < settings.Mapping(sections[gstt.CurrentSection]) -1:
@@ -144,7 +144,7 @@ def Shapes(fwork, keystates, keystates_prev):
     gstt.PL[PL] = fwork.LinesPL(PL)
 
     # Press A : Next screen. Press until current section is a screen section with shapes.
-    if keystates[pygame.K_a] and not keystates_prev[pygame.K_a]: 
+    if gstt.keystates[pygame.K_a] and not gstt.keystates_prev[pygame.K_a]: 
             
         if gstt.CurrentSection < len(sections)-1:
             gstt.CurrentSection += 1
@@ -182,7 +182,7 @@ def Shapes(fwork, keystates, keystates_prev):
 #Curve 1
 # Interactive edition for trapezoid correction 
 
-def Warp(fwork, keystates, keystates_prev):
+def Warp(fwork):
     global mouse_prev, sections, warpd
 
     # Left mouse is clicked, modify current corner warp coordinate
@@ -198,7 +198,7 @@ def Warp(fwork, keystates, keystates_prev):
         print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, warpd
 
     # Change corner if Z key is pressed.
-    if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
+    if gstt.keystates[pygame.K_z] and not gstt.keystates_prev[pygame.K_z]:
 
         if gstt.CurrentCorner < 3:
             print "saving..."
@@ -228,7 +228,7 @@ def Warp(fwork, keystates, keystates_prev):
 
     # Press A : Next Laser. Press until current section is a screen section with shapes.
             # Press A : Next Laser.
-    if keystates[pygame.K_a] and not keystates_prev[pygame.K_a]: 
+    if gstt.keystates[pygame.K_a] and not gstt.keystates_prev[pygame.K_a]: 
             
         if gstt.Laser < gstt.LaserNumber:
             gstt.Laser += 1
@@ -242,8 +242,106 @@ def Warp(fwork, keystates, keystates_prev):
         print warpd
 
 
+# Curve 2 : align all poses
 
-# Curve 2
+import json, os
+gstt.CurrentPose = 0
+mouse_prev = ((405, 325), (0, 0, 0))
+
+def getCOCO(d,posepoints):
+    dots = []
+    #
+    #print d
+    #print posepoints 
+    for dot in posepoints:
+        if len(d['part_candidates'][0][str(dot)]) != 0:
+            dots.append((d['part_candidates'][0][str(dot)][0] + deltax, d['part_candidates'][0][str(dot)][1]) + deltay)
+    return dots
+
+def bodyCOCO(d):
+    bodypoints = [10,9,8,1,11,12,13]
+    return getCOCO(d,bodypoints)
+
+def armCOCO(d):
+    armpoints = [7,6,5,1,2,3,4]
+    return getCOCO(d,armpoints)
+
+def headCOCO(d):
+    headpoints = [1,0]
+    return getCOCO(d,headpoints)
+
+
+# Get frame number for pose path describe in gstt.PoseDir 
+def selectPOSE():
+    gstt.numfiles = sum(1 for f in os.listdir(gstt.PoseDir) if os.path.isfile(os.path.join(gstt.PoseDir, f)) and f[0] != '.')
+    print "Pose : ", gstt.PoseDir, gstt.numfiles, "images"
+
+def Pose(fwork):
+    global mouse_prev
+
+    # Left mouse is clicked, modify current corner warp coordinate
+    if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
+        
+
+        deltax += gstt.mouse[0][0] * 2
+        deltay -= gstt.mouse[0][1] * 2
+ 
+        print "Deltas ", deltax, deltay
+
+    # Next pose if Z key is pressed.
+    if gstt.keystates[pygame.K_z] and not gstt.keystates_prev[pygame.K_z]:
+
+        if gstt.CurrentPose < 3:
+            gstt.CurrentPose += 1
+
+
+
+    # Press A : Next Laser. Press until current section is a screen section with shapes.
+            # Press A : Next Laser.
+    if gstt.keystates[pygame.K_a] and not gstt.keystates_prev[pygame.K_a]: 
+        pass
+    
+
+    # decrease current frame
+    if gstt.keystates[pygame.K_w]: # and not gstt.keystates_prev[pygame.K_w]:
+        gstt.CurrentPose -= 1
+        if gstt.CurrentPose < 2:
+            gstt.CurrentPose = gstt.numfiles -1
+        time.sleep(0.033) 
+        print "Frame : ",gstt.CurrentPose 
+
+    # increase current frame
+    if gstt.keystates[pygame.K_x]: # and not gstt.keystates_prev[pygame.K_x]:
+        gstt.CurrentPose += 1
+        if gstt.CurrentPose > gstt.numfiles -1:
+            gstt.CurrentPose = 1
+        time.sleep(0.033)
+        print "Frame : ",gstt.CurrentPose
+
+
+    PL = 0
+    dots = []
+    posename =gstt.PoseDir+'snap_00000000'+str("%04d"%gstt.CurrentPose)+'_keypoints.json'
+    posefile = open(posename , 'r')
+
+    posedatas = posefile.read()
+    pose = json.loads(posedatas)
+    print ""
+    print "Frame : ",gstt.CurrentPose
+    print "body :", bodyCOCO(pose)
+    print "arm :", armCOCO(pose)
+    print 'head :', headCOCO(pose) 
+    fwork.PolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    fwork.PolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
+    
+    gstt.PL[PL] = fwork.LinesPL(PL)
+    mouse_prev = gstt.mouse
+
+
+
+
+# Curve 3
 def LineX(fwork):
 
     joypads()
