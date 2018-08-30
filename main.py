@@ -249,7 +249,7 @@ if gstt.Set == 1 and gstt.Curve == 0:
 
 clock = pygame.time.Clock()
 
-gstt.PoseDir = '/Volumes/Data/openpose/snap/COCOface/'
+gstt.PoseDir = 'poses/window1/'
 #gstt.PoseDir = '/Volumes/shared/openpose-1.3.0-win64-gpu-binaries/HeavyRain/2/json/'
 set0.selectPOSE()
 

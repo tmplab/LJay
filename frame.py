@@ -45,12 +45,61 @@ class Frame(object):
 		for xy in xy_list:
 			if xy0 is None:
 				xy0 = xy
+				#print xy0
 				self.LineTo(xy0,0, PL)
 			else:
 				self.LineTo(xy,c, PL)
 		if closed:
 			self.LineTo(xy0,c, PL)
 	
+	def Pointransf( xy, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
+
+			x = xy[0] * resize
+			y = xy[1] * resize
+			z = 0
+
+			rad = rotx * PI / 180
+			cosaX = math.cos(rad)
+			sinaX = math.sin(rad)
+
+			y2 = y
+			y = y2 * cosaX - z * sinaX
+			z = y2 * sinaX + z * cosaX
+
+			rad = roty * PI / 180
+			cosaY = math.cos(rad)
+			sinaY = math.sin(rad)
+
+			z2 = z
+			z = z2 * cosaY - x * sinaY
+			x = z2 * sinaY + x * cosaY
+
+			rad = rotz * PI / 180
+			cosZ = math.cos(rad)
+			sinZ = math.sin(rad)
+
+			x2 = x
+			x = x2 * cosZ - y * sinZ
+			y = x2 * sinZ + y * cosZ
+
+			
+			# 3D to 2D projection
+			factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
+			return (x * factor + xpos,  - y * factor + ypos )
+
+	
+	# Send 2D point list around 0,0 with 3D rotation resizing and reposition around xpos ypos
+	def rPolyLineOneColor(self, xy_list, c, PL , closed, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
+		xy0 = None		
+		for xy in xy_list:
+			if xy0 is None:
+				xy0 = xy
+				#print xy0
+				self.LineTo(Pointransf(xy0, xpos, ypos, resize, rotx, roty, rotz),0, PL)
+			else:
+				self.LineTo(Pointransf(xy, xpos, ypos, resize, rotx, roty, rotz),c, PL)
+		if closed:
+			self.LineTo(Pointransf(xy0, xpos, ypos, resize, rotx, roty, rotz),c, PL)
 
 
 	def LinesPL(self, PL):

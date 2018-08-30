@@ -31,8 +31,8 @@ def getBODY(d,posepoints):
 	for dot in posepoints:
 
 		if len(d['people'][0]['pose_keypoints_2d']) != 0:
-			#print dot, d['people'][0]['face_keypoints'][dot * 3], d['people'][0]['face_keypoints'][(dot * 3)+1]
-			dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+			print dot, d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]
+			#dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
 	return dots
 
 
@@ -51,7 +51,8 @@ def getFACE(d,posepoints):
 # body parts
 def bodyCOCO(d):
 	bodypoints = [10,9,8,1,11,12,13]
-	return getCOCO(d,bodypoints)
+	#return getCOCO(d,bodypoints)
+	return getBODY(d,bodypoints)
 
 def armCOCO(d):
 	armpoints = [7,6,5,1,2,3,4]

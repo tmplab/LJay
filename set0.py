@@ -503,10 +503,12 @@ def Pose(fwork):
 
     PL = 0
     dots = []
-    posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
-    
+    #posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
+    pose_dir = 'window1'
+    posename = 'poses/' + pose_dir + '/' + pose_dir +'-'+str("%05d"%gstt.CurrentPose)+'.json'
+
     while os.path.getsize(posename) == 159 or os.path.getsize(posename) == 430:
-        posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
+        posename = 'poses/' + pose_dir + '/' + pose_dir +'-'+str("%05d"%gstt.CurrentPose)+'.json'
         if gstt.keystates[pygame.K_w]:
             gstt.CurrentPose -= 1
         if gstt.keystates[pygame.K_x]:
@@ -522,14 +524,15 @@ def Pose(fwork):
     print "body :", bodyCOCO(pose)
     print "arm :", armCOCO(pose)
     print 'head :', headCOCO(pose) 
-
+    '''
     print "eyeR :", eyeR(pose)
     print "eyeL :", eyeL(pose)
     print "mouth :", mouth(pose) 
+    '''
     fwork.PolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     fwork.PolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     fwork.PolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    
+    '''
     # Face
     #fwork.PolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     fwork.PolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
@@ -538,7 +541,7 @@ def Pose(fwork):
     fwork.PolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     fwork.PolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)  
     fwork.PolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-
+    '''
     gstt.PL[PL] = fwork.LinesPL(PL)
     
     # decrease current frame 
