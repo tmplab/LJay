@@ -35,23 +35,6 @@ from datetime import datetime
 import settings
 
 
-
-# for Astro()
-from jplephem.spk import SPK
-kernel = SPK.open('de430.bsp')
-jd = datetime.now()
-gstt.year = jd.year
-gstt.month = jd.month
-gstt.day = jd.day
-gstt.JulianDate = 367 * gstt.year - 7 * (gstt.year + (gstt.month + 9)/12)/4 + 275 * gstt.month/9 + gstt.day + 1721014
-print ""
-print "For Astro(), today : ", datetime.now().strftime('%Y-%m-%d'), "is in Julian : ", gstt.JulianDate
-
-
-# For Orbits()
-import orbits
-orbits = orbits.Orbits()
-
 # For Mapping()
 # dedicated settings handler is in settings.py
 import pygame
@@ -198,466 +181,167 @@ def Mapping(fwork, keystates, keystates_prev):
 
 
 
+
+
 # Curve 1
-def xPLS(fwork):
-    global f_sine
+import json
+gstt.CurrentPose = 1
 
-
-    # point list "PL" 0 generator (assigned to a laser in gstt.lasersPLS) 
-    # middle horizontal line
-
-    PL = 0
+# get absolute body position points
+def getCOCO(d,posepoints):
+    
     dots = []
-    x = (int(screen_size[1]) / 2) - 50
-    y = (int(screen_size[0])/2)
-    dots.append((int(x),int(y)))
-    dots.append((int((int(screen_size[1]) / 2) + 50),(int(y))))
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    gstt.PL[PL] = fwork.LinesPL(PL)
+    for dot in posepoints:
+        if len(d['part_candidates'][0][str(dot)]) != 0:
+            dots.append((d['part_candidates'][0][str(dot)][0], d['part_candidates'][0][str(dot)][1]))
+    return dots
+
+
+# get relative (-1 0 1) body position points. a position -1, -1 means doesn't exist
+def getBODY(d,posepoints):
+
+    dots = []
+    for dot in posepoints:
+
+        if len(d['people'][0]['pose_keypoints_2d']) != 0:
+            if d['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+    return dots
+
+
+# get absolute face position points 
+def getFACE(d,posepoints):
+
+    dots = []
+    for dot in posepoints:
+
+        if len(d['people'][0]['face_keypoints_2d']) != 0:
+            if d['people'][0]['face_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['face_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((d['people'][0]['face_keypoints_2d'][dot * 3], d['people'][0]['face_keypoints_2d'][(dot * 3)+1]))
+    return dots
+
+
+# Body parts
+def bodyCOCO(d):
+    posepoints = [10,9,8,1,11,12,13]
+    return getBODY(d,posepoints)
+
+def armCOCO(d):
+    posepoints = [7,6,5,1,2,3,4]
+    return getBODY(d,posepoints)
+
+def headCOCO(d):
+    posepoints = [1,0]
+    return getBODY(d,posepoints)
+
+
+# Face keypoints
+def face(d):
+    posepoints = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    return getFACE(d,posepoints)
+
+def browL(d):
+    posepoints = [26,25,24,23,22]
+    return getFACE(d,posepoints)
+
+def browR(d):
+    posepoints = [21,20,19,18,17]
+    return getFACE(d,posepoints)
+
+def eyeR(d):
+    posepoints = [36,37,38,39,40,41,36]
+    return getFACE(d,posepoints)
+
+def eyeL(d):
+    posepoints = [42,43,44,45,46,47,42]
+    return getFACE(d,posepoints)
+
+def nose(d):
+    posepoints = [27,28,29,30]
+    return getFACE(d,posepoints)
+
+def mouth(d):
+    posepoints = [48,59,58,57,56,55,54,53,52,51,50,49,48,60,67,66,65,64,63,62,61,60]
+    return getFACE(d,posepoints)
+
+
+# best order face : face browL browr eyeR eyeL nose mouth
+
+import os 
+
+
+# Get frame number for pose path describe in gstt.PoseDir 
+def selectPOSE(pose_dir):
+
+    print "Check directory ",'poses/' + pose_dir + '/'
+    numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
+    print "Pose : ", pose_dir, numfiles, "images"
+    return numfiles
+
+
+def preparePOSE():
+
+
+    # anim format (name, xpos,ypos, resize, currentframe, totalframe)
+    # total frame is fetched from directory file count
+    
+    anims1 = [['snap', 400,200, 50,0,0],['window1',100,200,100,0,0]]
+    anims2 = [['window1', 400,200, 200,0,0],['snap',100,200,50,0,0]]
+    
+    for anim in anims1:
+        anim[5]= selectPOSE(anim[0])
+    gstt.anims0 = anims1
+
+# display the pose animation describe in gstt.PoseDir
+def Pose(fwork):
    
-    
-
-    # PL 1 generator (assigned to a laser in gstt.lasersPLS)
-    # middle vertical line
-
-    PL = 1
-    dots = []
-    #pdb.set_trace()
-    x = int(screen_size[1]) / 2
-    y = (int(screen_size[1])/2) -50
-    dots.append((int(x),int(y)))
-    dots.append((int(x),(int(screen_size[1])/2)+50))
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
-  
-
-    # PL 2 generator (assigned to a laser in gstt.lasersPLS)
-    PL = 2
-    dots = []     
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
-
-
-
-
-# Curve 2
-
-def Orbits(fwork):
-    orbits.Draw(fwork)
-
-
-
-# Curve 3	
-def Dot(fwork):
-
-    
-    PL = 0
-    dots = []
-    x = cc2scrX(gstt.cc[5])
-    y = cc2scrY(gstt.cc[6])
-    #x = xy_center[0] + gstt.cc[5]*amp    
-    #y = xy_center[1] + gstt.cc[6]*amp
-    #print x,y,proj(int(x),int(y),0)
-    dots.append(proj(int(x),int(y),0))
-    dots.append(proj(int(x)+5,int(y)+5,0))
-      
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    gstt.PL[PL] = fwork.LinesPL(PL)
-
-
-
-
-# Curve 4
-def Circle(fwork):
-    global f_sine
-
-    PL = 0
-    dots = []
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2* PI * f_sine *(float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2* PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
-
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
-    #print f_sine
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
-		
-
-# Curve 5
-def CC(fwork):
-
-    PL = 0
-    dots = []
-        
-    amp = 200
-    nb_point = 60
-    for t in range(0, nb_point+1):
-        y = 1 - amp*math.sin(2*PI*cc2range(gstt.cc[5],0,24)*(float(t)/float(nb_point)))
-        x = 1 - amp*math.cos(2*PI*cc2range(gstt.cc[6],0,24)*(float(t)/float(nb_point))) 
-        #bhorosc.send5("/point", [proj(int(x),int(y),0),colorify.rgb2hex(gstt.color)])       
-        dots.append(proj(int(x),int(y),0))
-        
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
-    gstt.PL[PL] = fwork.LinesPL(PL)
-
-
-
-
-# Curve 6
-
-def Sine(fwork):
-    global f_sine
-
-    PL = 0
-    dots = []
-    etherlaser = 2
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
-
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  PL, closed = False)
-    
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
-
-
-# Curve 7
-
-def Astro(fwork):
-
-    PlanetsPositions = []
-    dots = []
-    amp = 0.8
-
-    # get solar planet positions
-    for planet in xrange(9):
-        PlanetsPositions.append(kernel[0,planet+1].compute(gstt.JulianDate))
-
-
-
-    # first 5 planets goes to PL 0
-    PL = 0
-    for planet in xrange(5):
-        x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
-        x,y = proj(int(x),int(y),int(z))
-        x = x * amp 
-        y = y * amp + 60
-        #dots.append((int(x)-300,int(y)+200))
-        #dots.append((int(x)-295,int(y)+205))
-        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=0 )
-
-    gstt.PL[PL] = fwork.LinesPL(PL)
-
-
-    # Last planets goes to PL 1
-    PL = 1
-
-    for planet in range(5,9):
-        #print "1 ", planet
-        x,y,z = planet2screen(PlanetsPositions[planet][0], PlanetsPositions[planet][1], PlanetsPositions[planet][2])
-        x,y = proj(int(x),int(y),int(z))
-        x = x * amp 
-        y = y * amp + 60
-        #dots.append((int(x)-300,int(y)+200))
-        #dots.append((int(x)-295,int(y)+205))
-        fwork.Line((x,y),(x+2,y+2),  c=colorify.rgb2hex(gstt.color), PL=1 )
-
-    gstt.PL[PL] = fwork.LinesPL(PL)
-
-
-    #time.sleep(0.001)
-    gstt.JulianDate +=1
-
-
-# Curve 8
-def Text(fwork):
-    
-    fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
-
-
-
-# examples to generate arrays of different types i.e for Lissajoux point lists generators.
-def ssawtooth(samples,freq,phase):
-
-	t = np.linspace(0+phase, 1+phase, samples)
-	for ww in range(samples):
-		samparray[ww] = signal.sawtooth(2 * np.pi * freq * t[ww])
-	return samparray
-
-def ssquare(samples,freq,phase):
-
-	t = np.linspace(0+phase, 1+phase, samples)
-	for ww in range(samples):
-		samparray[ww] = signal.square(2 * np.pi * freq * t[ww])
-	return samparray
-
-def ssine(samples,freq,phase):
-
-	t = np.linspace(0+phase, 1+phase, samples)
-	for ww in range(samples):
-		samparray[ww] = np.sin(2 * np.pi * freq  * t[ww])
-	return samparray
-
-
-# Remap values in different scales i.e CC value in screen position.
-def cc2scrX(s):
-    a1, a2 = 0,127  
-    b1, b2 = -screen_size[0]/2, screen_size[0]/2
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def cc2scrY(s):
-    a1, a2 = 0,127  
-    b1, b2 = -screen_size[1]/2, screen_size[1]/2
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def cc2range(s,min,max):
-    a1, a2 = 0,127  
-    b1, b2 = min, max
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def extracc2scrX(s):
-    a1, a2 = -66000,66000  
-    b1, b2 = 0, screen_size[0]
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def extracc2scrY(s):
-    a1, a2 = -66000,66000 
-    b1, b2 = 0, screen_size[1]
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def extracc2range(s,min,max):
-    a1, a2 = -66000,66000  
-    b1, b2 = min, max
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def planet2screen(planetx, planety, planetz):
-    #screen_size = [800,600]
-    a1, a2 = -1e+9,1e+9  
-    b1, b2 = 0, screen_size[1]
-    x = b1 + ((planetx - a1) * (b2 - b1) / (a2 - a1))
-    b1, b2 = 0, screen_size[1]
-    y = b1 + ((planety - a1) * (b2 - b1) / (a2 - a1))
-    b1, b2 = 0, screen_size[1]
-    z = b1 + ((planetz - a1) * (b2 - b1) / (a2 - a1))
-    return x,y,z
-
-
-# 3D rotation and 2D projection for a given 3D point
-def proj(x,y,z):
-
-    # Skip trigo update if angleX didn't change 
-    # TODO : gstt.prev_cc29 == -1 is useful only the first time to create cosa and sina values
-
-    if gstt.prev_cc29 != gstt.cc[29] or gstt.prev_cc29 == -1: 
-        gstt.angleX += cc2range(gstt.cc[29],0,0.1)    
-        rad = gstt.angleX * PI / 180
-        cosaX = math.cos(rad)
-        sinaX = math.sin(rad)
-        prev_cc29 = gstt.cc[29]
-
-    y2 = y
-    y = y2 * cosaX - z * sinaX
-    z = y2 * sinaX + z * cosaX
-
-    # Skip trigo update if angleY didn't change 
-    if gstt.prev_cc30 != gstt.cc[30]: 
-        gstt.angleY += cc2range(gstt.cc[30],0,0.1)
-        rad = gstt.angleY * PI / 180
-        cosaY = math.cos(rad)
-        sinaY = math.sin(rad)
-        prev_cc30 = gstt.cc[30]
-
-    z2 = z
-    z = z2 * cosaY - x * sinaY
-    x = z2 * sinaY + x * cosaY
-
-
-    # Skip trigo update if angleZ didn't change 
-    if gstt.prev_cc31 != gstt.cc[31]: 
-        gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
-        rad = gstt.angleZ * PI / 180
-        cosZ = math.cos(rad)
-        sinZ = math.sin(rad)
-        
-    x2 = x
-    x = x2 * cosZ - y * sinZ
-    y = x2 * sinZ + y * cosZ
-
-    # 3D to 2D projection
-    factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
-    x = x * factor + xy_center [0] 
-    y = - y * factor + xy_center [1] 
-    
-    return x,y
-
-
-def joypads():
-
-    if gstt.Nbpads > 0:
-        
-        # Champi gauche
-        # Move center on X axis according to pad
-        if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
-            gstt.cc[1] += gstt.pad1.get_axis(2) * 2
-
-        # Move center on Y axis according to pad
-        if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
-            gstt.cc[2] += gstt.pad1.get_axis(3) * 2
-
-        # Champi droite
+    for anim in gstt.anims0:
+        PL = 0
+        dots = []
+
+        posename = 'poses/' + anim[0] + '/' + anim[0] +'-'+str("%05d"%anim[4])+'.json'
+        posefile = open(posename , 'r') 
+        posedatas = posefile.read()
+        pose = json.loads(posedatas)
+
+        fwork.rPolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+
+        # Face
         '''
-        # Change FOV according to joypad
-        if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
-            gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
-
-        # Change dist according to pad
-        if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
-            gstt.cc[22] += gstt.pad1.get_axis(1) * 2
-        ''' 
-        # "1" pygame 0
-        # "2" pygame 1
-        # "3" pygame 2
-        # "4" pygame 3
-        # "L1" pygame 4
-        # "L2" pygame 6
-        # "R1" pygame 5
-        # "R2" pygame 7
-            
-        # Hat gauche gstt.pad1.get_hat(0)[0] = -1
-        # Hat droit  gstt.pad1.get_hat(0)[0] = 1
-
-        # Hat bas gstt.pad1.get_hat(0)[1] = -1
-        # Hat haut  gstt.pad1.get_hat(0)[1] = 1
-        
-                
-        #Bouton "3" 1 : surprise ON
-        
-        if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
-            gstt.surprise = 1
-            gstt.cc[21] = 21    #FOV
-            gstt.cc[22] = gstt.surpriseon   #Distance
-            gstt.cc[2] +=  gstt.surprisey
-            gstt.cc[1] +=  gstt.surprisex
-            print "Surprise ON"
-        
-        #Bouton "3" 0 : surprise OFF
-        
-        if gstt.pad1.get_button(2) == 0:
-            gstt.surprise = 0
-            gstt.cc[21] = 21    #FOV
-            gstt.cc[22] = gstt.surpriseoff  #Distance
-            
-        #Bouton "4". cycle couleur
-        
-        #if gstt.pad1.get_button(3) == 1:
-        #   print "3", str(gstt.pad1.get_button(3))
-        '''
-        if gstt.pad1.get_button(3) == 1:
-            newcolor = random.randint(0,2)
-            print newcolor
-            
-            if gstt.color[newcolor] == 0:
-                gstt.color[newcolor] = 1
-                
-            else:
-                gstt.color[newcolor] = 0
-                
-            print "Newcolor  : ",str(gstt.newcolor), " ", str(gstt.color[newcolor])
-        
-        '''
-                
-        '''
-        #Bouton "3" : diminue Vitesse des planetes
-        if gstt.pad1.get_button(2) == 1:
-            print "2", str(gstt.pad1.get_button(2))
-        if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
-            gstt.cc[5] -=1
-            print "X Curve : ",str(gstt.cc[5])
-            
-            
-        #Bouton "1" : augmente Vitesse des planetes
-        if gstt.pad1.get_button(0) == 1:
-            print "0", str(gstt.pad1.get_button(0))
-        if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
-            gstt.cc[5] +=1
-            print "X Curve : ",str(gstt.cc[5])
-            
-            
-        #Bouton "4". diminue Nombre de planetes
-        if gstt.pad1.get_button(3) == 1:
-            print "3", str(gstt.pad1.get_button(3))
-        if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
-            gstt.cc[6] -=1
-            print "Y Curve : ",str(gstt.cc[6])
-        
-        
-        
-        #Bouton "2" augmente Nombre de planetes
-        if gstt.pad1.get_button(1) == 1:
-            print "1", str(gstt.pad1.get_button(1))
-        if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
-            gstt.cc[6] +=1
-            print "Y Curve : ",str(gstt.cc[6])
-        
+        #fwork.rPolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(browR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(eyeR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])  
+        fwork.rPolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
         '''
 
+        gstt.PL[PL] = fwork.LinesPL(PL)
 
-        # Hat bas : diminue Vitesse des planetes
-        #if gstt.pad1.get_hat(0)[1] == -1:
-            #print "2", str(gstt.pad1.get_hat(0)[1])
-        if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
-            gstt.cc[5] -=1
-            print "X Curve/vitesse planete : ",str(gstt.cc[5])
-            
-            
-        #Hat haut : augmente Vitesse des planetes
-        #if gstt.pad1.get_hat(0)[1] == 1:
-            #print "0", str(gstt.pad1.get_hat(0)[1])
-        if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
-            gstt.cc[5] +=1
-            print "X Curve/Vitesse planete : ",str(gstt.cc[5])
-            
-            
-        # hat Gauche. diminue Nombre de planetes
-        #if gstt.pad1.get_hat(0)[0] == -1:
-            #print "3", str(gstt.pad1.get_hat(0)[0])
-        if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
-            gstt.cc[6] -=1
-            print "Y Curve/ nombre planete : ",str(gstt.cc[6])
-        
-        
-        
-        # hat droit augmente Nombre de planetes
-        #if gstt.pad1.get_hat(0)[0] == 1:
-            #print "1", str(gstt.pad1.get_hat(0)[0])
-        if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
-            gstt.cc[6] +=1
-            print "Y Curve/nb de planetes : ",str(gstt.cc[6])
-        
-        #print "hat : ", str(gstt.pad1.get_hat(0)[1])
+        # increase current frame and compare to total frame 
+        anim[4] += 1
+        if anim[4] == anim[5]:
+            anim[4] = 0
+    
+    time.sleep(0.02)
+    '''
+    # decrease current frame 
+    if gstt.keystates[pygame.K_w]: # and not gstt.keystates_prev[pygame.K_w]:
+        gstt.CurrentPose -= 1
+        if gstt.CurrentPose < 2:
+            gstt.CurrentPose = gstt.numfiles -1
+        #time.sleep(0.033) 
+        print "Frame : ",gstt.CurrentPose 
 
-        
+    # increaser current frame
+    if gstt.keystates[pygame.K_x]: # and not gstt.keystates_prev[pygame.K_x]:
+        gstt.CurrentPose += 1
+        if gstt.CurrentPose > gstt.numfiles -1:
+            gstt.CurrentPose = 1
+        #time.sleep(0.033)
+        print "Frame : ",gstt.CurrentPose 
+    '''
 

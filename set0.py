@@ -420,10 +420,13 @@ def Text(fwork):
     
     fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
 
+
+
 # Curve 9
 import json
 gstt.CurrentPose = 1
 
+# get absolute body position points
 def getCOCO(d,posepoints):
     
     dots = []
@@ -433,29 +436,42 @@ def getCOCO(d,posepoints):
     return dots
 
 
+# get relative (-1 0 1) body position points. a position -1, -1 means doesn't exist
+def getBODY(d,posepoints):
+
+    dots = []
+    for dot in posepoints:
+
+        if len(d['people'][0]['pose_keypoints_2d']) != 0:
+            if d['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+    return dots
+
+
+# get absolute face position points 
 def getFACE(d,posepoints):
 
     dots = []
     for dot in posepoints:
 
-        if len(d['people'][0]['face_keypoints']) != 0:
-            #print dot, d['people'][0]['face_keypoints'][dot * 3], d['people'][0]['face_keypoints'][(dot * 3)+1]
-            dots.append((d['people'][0]['face_keypoints'][dot * 3]-800, d['people'][0]['face_keypoints'][(dot * 3)+1]-200))
+        if len(d['people'][0]['face_keypoints_2d']) != 0:
+            if d['people'][0]['face_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['face_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((d['people'][0]['face_keypoints_2d'][dot * 3], d['people'][0]['face_keypoints_2d'][(dot * 3)+1]))
     return dots
 
 
 # Body parts
 def bodyCOCO(d):
     posepoints = [10,9,8,1,11,12,13]
-    return getCOCO(d,posepoints)
+    return getBODY(d,posepoints)
 
 def armCOCO(d):
     posepoints = [7,6,5,1,2,3,4]
-    return getCOCO(d,posepoints)
+    return getBODY(d,posepoints)
 
 def headCOCO(d):
     posepoints = [1,0]
-    return getCOCO(d,posepoints)
+    return getBODY(d,posepoints)
 
 
 # Face keypoints
@@ -493,10 +509,14 @@ def mouth(d):
 import os 
 
 # Get frame number for pose path describe in gstt.PoseDir 
-def selectPOSE():
-    gstt.numfiles = sum(1 for f in os.listdir(gstt.PoseDir) if os.path.isfile(os.path.join(gstt.PoseDir, f)) and f[0] != '.')
-    print "Pose : ", gstt.PoseDir, gstt.numfiles, "images"
+def selectPOSE(pose_dir):
 
+    gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
+    print "Pose : ", pose_dir, gstt.numfiles, "images"
+    print "Check directory ",'poses/' + pose_dir + '/'
+
+
+selectPOSE('snap')
 
 # display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
@@ -504,9 +524,14 @@ def Pose(fwork):
     PL = 0
     dots = []
     #posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
-    pose_dir = 'window1'
+    pose_dir = 'snap'
+
+
+    gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
+    #print "Pose : ", pose_dir, gstt.numfiles, "images"
     posename = 'poses/' + pose_dir + '/' + pose_dir +'-'+str("%05d"%gstt.CurrentPose)+'.json'
 
+    # skip empty filed
     while os.path.getsize(posename) == 159 or os.path.getsize(posename) == 430:
         posename = 'poses/' + pose_dir + '/' + pose_dir +'-'+str("%05d"%gstt.CurrentPose)+'.json'
         if gstt.keystates[pygame.K_w]:
@@ -519,29 +544,29 @@ def Pose(fwork):
     pose = json.loads(posedatas)
 
     # Body
+    '''
     print ""
     print "Frame : ",gstt.CurrentPose
     print "body :", bodyCOCO(pose)
     print "arm :", armCOCO(pose)
     print 'head :', headCOCO(pose) 
-    '''
     print "eyeR :", eyeR(pose)
     print "eyeL :", eyeL(pose)
     print "mouth :", mouth(pose) 
     '''
-    fwork.PolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    '''
+    fwork.rPolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    #fwork.rPolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+
     # Face
-    #fwork.PolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(browR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(eyeR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    fwork.PolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)  
-    fwork.PolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
-    '''
+    #fwork.rPolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(browR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(eyeR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)  
+    fwork.rPolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+
     gstt.PL[PL] = fwork.LinesPL(PL)
     
     # decrease current frame 
@@ -549,7 +574,7 @@ def Pose(fwork):
         gstt.CurrentPose -= 1
         if gstt.CurrentPose < 2:
             gstt.CurrentPose = gstt.numfiles -1
-        time.sleep(0.033) 
+        #time.sleep(0.033) 
         print "Frame : ",gstt.CurrentPose 
 
     # increaser current frame
@@ -557,7 +582,7 @@ def Pose(fwork):
         gstt.CurrentPose += 1
         if gstt.CurrentPose > gstt.numfiles -1:
             gstt.CurrentPose = 1
-        time.sleep(0.033)
+        #time.sleep(0.033)
         print "Frame : ",gstt.CurrentPose 
 
 

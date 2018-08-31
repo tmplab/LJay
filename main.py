@@ -57,6 +57,7 @@ import bhorosc
 import set0
 import set1
 import setllstr
+import setamiral
 import orbits
 import align
 
@@ -91,9 +92,11 @@ settables =  {					# Set 0
         4: setllstr.Circle,
         5: setllstr.CC,
         6: setllstr.Slave
+    }, {                        # setllstr
+        0: setamiral.Mapping,
+        1: setamiral.Pose,
+        2: setamiral.Pose
     }
-
-
 
        
 def dac_thread0():
@@ -249,9 +252,12 @@ if gstt.Set == 1 and gstt.Curve == 0:
 
 clock = pygame.time.Clock()
 
-gstt.PoseDir = 'poses/window1/'
+# For Amiral
+setamiral.preparePOSE()
+
+
 #gstt.PoseDir = '/Volumes/shared/openpose-1.3.0-win64-gpu-binaries/HeavyRain/2/json/'
-set0.selectPOSE()
+#set0.selectPOSE('window1')
 
 fwork_holder = frame.FrameHolder()
 laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)

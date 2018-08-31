@@ -25,14 +25,14 @@ def getCOCO(d,posepoints):
     return dots
 
 # get relative (-1 1) face position points
-def getBODY(d,posepoints):
+def getrBODY(d,posepoints):
 
 	dots = []
 	for dot in posepoints:
 
 		if len(d['people'][0]['pose_keypoints_2d']) != 0:
-			print dot, d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]
-			#dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+			if d['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and d['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
+				dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
 	return dots
 
 
@@ -52,7 +52,7 @@ def getFACE(d,posepoints):
 def bodyCOCO(d):
 	bodypoints = [10,9,8,1,11,12,13]
 	#return getCOCO(d,bodypoints)
-	return getBODY(d,bodypoints)
+	return getrBODY(d,bodypoints)
 
 def armCOCO(d):
 	armpoints = [7,6,5,1,2,3,4]

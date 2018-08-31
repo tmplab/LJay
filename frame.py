@@ -8,6 +8,8 @@ Created on 11 nov. 2014
 
 import pygame
 import gstt
+import numpy as np
+import math
 
 class Frame(object):
 	'''
@@ -52,13 +54,13 @@ class Frame(object):
 		if closed:
 			self.LineTo(xy0,c, PL)
 	
-	def Pointransf( xy, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
+	def Pointransf( self, xy, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
 
 			x = xy[0] * resize
 			y = xy[1] * resize
 			z = 0
 
-			rad = rotx * PI / 180
+			rad = rotx * np.pi / 180
 			cosaX = math.cos(rad)
 			sinaX = math.sin(rad)
 
@@ -66,7 +68,7 @@ class Frame(object):
 			y = y2 * cosaX - z * sinaX
 			z = y2 * sinaX + z * cosaX
 
-			rad = roty * PI / 180
+			rad = roty * np.pi / 180
 			cosaY = math.cos(rad)
 			sinaY = math.sin(rad)
 
@@ -74,7 +76,7 @@ class Frame(object):
 			z = z2 * cosaY - x * sinaY
 			x = z2 * sinaY + x * cosaY
 
-			rad = rotz * PI / 180
+			rad = rotz * np.pi / 180
 			cosZ = math.cos(rad)
 			sinZ = math.sin(rad)
 
@@ -82,11 +84,16 @@ class Frame(object):
 			x = x2 * cosZ - y * sinZ
 			y = x2 * sinZ + y * cosZ
 
+			#print xy, (x + xpos,y+ ypos)
+			return (x + xpos,y+ ypos)
+			'''
+			to understand why it get negative Y
 			
 			# 3D to 2D projection
 			factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
+			print xy, (x * factor + xpos,  - y * factor + ypos )
 			return (x * factor + xpos,  - y * factor + ypos )
-
+			'''
 	
 	# Send 2D point list around 0,0 with 3D rotation resizing and reposition around xpos ypos
 	def rPolyLineOneColor(self, xy_list, c, PL , closed, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
@@ -94,12 +101,11 @@ class Frame(object):
 		for xy in xy_list:
 			if xy0 is None:
 				xy0 = xy
-				#print xy0
-				self.LineTo(Pointransf(xy0, xpos, ypos, resize, rotx, roty, rotz),0, PL)
+				self.LineTo(self.Pointransf(xy0, xpos, ypos, resize, rotx, roty, rotz),0, PL)
 			else:
-				self.LineTo(Pointransf(xy, xpos, ypos, resize, rotx, roty, rotz),c, PL)
+				self.LineTo(self.Pointransf(xy, xpos, ypos, resize, rotx, roty, rotz),c, PL)
 		if closed:
-			self.LineTo(Pointransf(xy0, xpos, ypos, resize, rotx, roty, rotz),c, PL)
+			self.LineTo(self.Pointransf(xy0, xpos, ypos, resize, rotx, roty, rotz),c, PL)
 
 
 	def LinesPL(self, PL):

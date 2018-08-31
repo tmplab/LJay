@@ -48,10 +48,13 @@ python main.py
 - Bhoreal and Launchpad device start animation
 - Control all leds of Bhoreal and Launchpad
 - Much more Command line options : python main.py --help
-- Multi laser needs more configuration parameters. 
+- Multi laser. 
 - A multi laser example : display solar planet position is provided see Astro() (set 0 Curve 7). You need python module jplephem and to download de430.bsp : http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
-- Interactive (mouse style) warp correction (set 1 curve 1)
-- Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file.
+- Interactive (mouse style) warp correction (set 1 curve 1) for each laser.
+- Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file example : set0.conf
+- rPolyline draw function with integrated rotation, projection and recenter.
+- Support openpose json ! display human skeleton animation set 0 Curve 9
+- Early multiple openpose animation  
 
 
 
