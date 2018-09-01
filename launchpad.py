@@ -169,7 +169,6 @@ def LaunchMidinProcess(launchqueue):
                 print "Pad Matrix : ", msg[1],msg[2]
                 midi.NoteOn(msg[1],msg[2])         
                 time.sleep(0.1)
-                midi.NoteOff(msg[1])
 
             if x == 9:
                 print "Right Button : ", y
@@ -187,10 +186,11 @@ def LaunchMidinProcess(launchqueue):
 class LaunchAddQueue(object):
     def __init__(self, port):
         self.port = port
+        print "LaunchAddQueue", self.port
         self._wallclock = time.time()
 
     def __call__(self, event, data=None):
         message, deltatime = event
         self._wallclock += deltatime
-        #print("[%s] @%0.6f %r" % (self.port, self._wallclock, message))
+        print("[%s] @%0.6f %r" % (self.port, self._wallclock, message))
         launchqueue.put(message)
