@@ -151,6 +151,15 @@ class DAC(object):
 		d = [self.newstream.next() for i in xrange(n)]
 		return d
 
+
+	# Etherpoint all transform in one matrix, with warp !!
+	def EtherPoint(self,xyc):
+	
+		c = xyc[2]
+		position = homography.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
+		return (position[0][0], position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+
+
 	'''
 	# Etherpoint Legacy style
 	def EtherPoint(self, xyc):
@@ -170,13 +179,6 @@ class DAC(object):
 		return (x*gstt.swapX[self.mylaser], y*gstt.swapY[self.mylaser], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
 	'''
 
-	# Etherpoint all transform in one matrix, with warp !!
-
-	def EtherPoint(self,xyc):
-	
-		c = xyc[2]
-		position = homography.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
-		return (position[0][0], position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
 
 
 

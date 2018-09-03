@@ -8,17 +8,7 @@ Laser Jaying
 LICENCE : CC
 Sam Neurohack, Loloster, 
 
-set0 collect code examples to make your own generators that use LJay Laser management.
-
-Curve 0 : Mapping introduce an editor mode allowing to odify all points one by one.
-Curve 1 : xPLS how to have different pointlists generators
-Curve 2 : Orbits
-Curve 3 : Dots
-Curve 4 : Circle    
-Curve 5 : CC
-Curve 6 : Sine
-Curve 7 : Astro
-Curve 8 : Text
+Set for amiral castle
 
 '''
 
@@ -59,7 +49,7 @@ def MappingConf(section):
     gstt.Windows = [] 
     sections = settings.MappingSections()
 
-    print ""
+    print "" 
     #print "Sections : ", sections
     print "Reading Section : ", sections[gstt.CurrentSection]
 
@@ -282,15 +272,15 @@ def selectPOSE(pose_dir):
 def preparePOSE():
 
 
-    # anim format (name, xpos,ypos, resize, currentframe, totalframe)
+    # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
     # total frame is fetched from directory file count
     
-    anims1 = [['snap', 400,200, 50,0,0],['window1',100,200,100,0,0]]
-    anims2 = [['window1', 400,200, 200,0,0],['snap',100,200,50,0,0]]
+    anims1 = [['window1', 400,200, 50,0,0,0,5],['window2',100,200,100,0,0,0,5]]
+    anims2 = [['window5', 400,200, 200,0,0,0,2],['window6',100,200,50,0,0,0,2]]
     
-    for anim in anims1:
+    for anim in anims2:
         anim[5]= selectPOSE(anim[0])
-    gstt.anims0 = anims1
+    gstt.anims0 = anims2
 
 # display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
@@ -298,6 +288,17 @@ def Pose(fwork):
     for anim in gstt.anims0:
         PL = 0
         dots = []
+
+        # repeat anim[8] time the same frame
+        anim[6] +=1
+        if anim[6] == anim[7]:
+
+            anim[6] = 0
+            # increase current frame and compare to total frame 
+            anim[4] += 1
+            if anim[4] == anim[5]:
+                anim[4] = 0
+
 
         posename = 'poses/' + anim[0] + '/' + anim[0] +'-'+str("%05d"%anim[4])+'.json'
         posefile = open(posename , 'r') 
@@ -321,10 +322,7 @@ def Pose(fwork):
 
         gstt.PL[PL] = fwork.LinesPL(PL)
 
-        # increase current frame and compare to total frame 
-        anim[4] += 1
-        if anim[4] == anim[5]:
-            anim[4] = 0
+
     
     time.sleep(0.02)
     '''

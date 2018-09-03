@@ -12,12 +12,10 @@ LaserNumber = 2
 
 # gstt.Laser select to what laser modifcation will occur.
 # Can be changed with /noteon 16-23
-
 Laser = 0
 
 # gstt.simuPL select what point list number to display in pygame simulator
 # Can be changed with /noteon 24-31
-
 simuPL = 2
 
 # gstt.laserIPS. Will be overridden by settings.conf values
@@ -27,10 +25,16 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 # gstt.laserPLS : What point list is sent to what laser. 
 # ** Will be overridden by settings.conf values **
 lasersPLS = [0,0,0,0]
+
+
+# with 4 laser available, 4 PL only are necessary
 PL = [[],[],[],[]]
 
 
+# Transformation Matrix for each laser 
 EDH = [[], [], [], []]
+
+
 
 # gstt.Set select what to Curve Set to display. 
 # Can be changed with /noteon 8-15
@@ -152,7 +156,7 @@ angleX = 0
 angleY = 0
 angleZ = 0
 
-tomidi = False
+tomidi = True
 todmx = False
 toled = False
 tolaser = True
