@@ -298,7 +298,7 @@ class DAC(object):
 #			print "Took %f" % (t1 - t0, )
 
 			if not started:
-				self.begin(0, 30000)
+				self.begin(0, 25000)
 				started = 1
 
 

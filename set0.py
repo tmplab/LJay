@@ -524,7 +524,7 @@ def Pose(fwork):
     PL = 0
     dots = []
     #posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
-    pose_dir = 'snap'
+    pose_dir = 'window1'
 
 
     gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
