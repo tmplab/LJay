@@ -313,22 +313,30 @@ def noteupdate(note):
 		doit = jumplaser.get(gstt.Laser)
 		doit("/noteon",note)
 	'''
-
+	# change Curve
 	if note < 8:
 		gstt.Curve = note
 		status(''.join(("New Curve : ",str(gstt.Curve))))
+		bhoreal.UpdateLine(1,gstt.Curve+1)
 	
+	# change Set. Use black curve waiting for new Curve
 	if note > 7 and note < 16:
+		gstt.Curve = -1
 		gstt.Set = note - 8
 		status(''.join(("New Set : ",str(gstt.Set))))
+		bhoreal.UpdateLine(2,gstt.Set +1)
 
+	# change current laser
 	if  note > 15 and note < 24:
 		gstt.Laser = note -13
 		status(''.join(("New Laser : ",str(gstt.Laser))))
+		bhoreal.UpdateLine(3, gstt.Laser +1)
 
+	# change current simulator PL
 	if  note > 23 and note < 32:
 		gstt.simuPL = note - 24
 		status(''.join(("New Simu PL : ",str(gstt.SimuPL))))
+		bhoreal.UpdateLine(4, gstt.simuPL +1)
 
 	if note == 57 or note == 58:
 		gstt.colormode = note- 56

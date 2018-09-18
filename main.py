@@ -92,11 +92,23 @@ settables =  {					# Set 0
         4: setllstr.Circle,
         5: setllstr.CC,
         6: setllstr.Slave
-    }, {                        # setllstr
+    }, {                        # setamiral
         0: setamiral.Mapping,
         1: setamiral.Pose,
         2: setamiral.Pose
     }
+
+# built in black dot when curve = -1. Will be called when set change.
+def black():
+    PL = 0
+    dots = []
+    x = xy_center[0] 
+    y = xy_center[1]
+    dots.append(proj(int(x),int(y),0))
+    dots.append(proj(int(x)+5,int(y)+5,0))
+      
+    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
+    gstt.PL[PL] = fwork.LinesPL(PL)
 
        
 def dac_thread0():
@@ -336,10 +348,14 @@ while True:
     # Colorify
     colorify.jump()
 
-    # Select and call the Curve to generate points
-    gstt.jumptable = settables[gstt.Set]
-    doit = gstt.jumptable.get(gstt.Curve)
-    doit(fwork)
+    # Select and call the Curve to generate points, black() if Curve = -1
+
+    if gstt.Curve != -1:
+        gstt.jumptable = settables[gstt.Set]
+        doit = gstt.jumptable.get(gstt.Curve)
+        doit(fwork)
+    else:
+        black()
 
     # pending osc message ?
     bhorosc.osc_frame()

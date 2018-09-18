@@ -60,6 +60,8 @@ def Cls(port):
         msg = [NOTE_OFF, led, 0]
         midi.send("Bhoreal",msg)
 
+
+
 def StartBhoreal(port):
 
     Cls(port)
@@ -69,6 +71,16 @@ def StartBhoreal(port):
         time.sleep(0.02)
     time.sleep(0.2)
     Cls(port)
+
+
+
+def UpdateLine(line,newval):
+    if bhorosc.device == 1:
+        for led in range(8):
+            NoteOffXY(led,line)
+    
+        NoteOnXY(newval,line,64)
+
 #       
 # Events from Bhoreal handling
 #
