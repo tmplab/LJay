@@ -124,7 +124,7 @@ def NoteOff(note):
 
 def MidiMsg(midimsg):
 
-    print midimsg
+    print "MidiMsg", midimsg
     for port in range(MidInsNumber):
         if midiname[port].find(BhorealMidiName) != 0:
             midiport[port].send_message(midimsg)
@@ -147,18 +147,17 @@ def midinProcess(midiqueue):
     midiqueue_get = midiqueue.get
     while True:
         msg = midiqueue_get()
-        print msg
+        print "midin ", msg
         time.sleep(0.001)
 
-
+# Event from Bhoreal or Launchpad
 def MidinProcess(inqueue):
 
     inqueue_get = inqueue.get
-    print "midiprocess"
     while True:
         time.sleep(0.001)
         msg = inqueue_get()
-        print msg[0]
+        print "Midinproces", msg[0]
         
         # Note On
         if msg[0]==NOTE_ON:
@@ -168,13 +167,14 @@ def MidinProcess(inqueue):
                 
         # Note Off
         if msg[0]==NOTE_OFF:
+            print "noteoff"
             NoteOff(msg[1],msg[2])
             if bhorosc.device == 1:
                 bhorosc.status(''.join(("note ",msg[1]," to ",msg[2])))
                 
         # other midi message          
         if msg[0] == CONTROLLER_CHANGE:
-            print msg[2]
+            print "CC :",msg[2]
             orbits.RotX(msg[2])
 
         if msg[0] != NOTE_OFF and  msg[0] != NOTE_ON:
@@ -188,6 +188,7 @@ def MidinProcess(inqueue):
 class AddQueue(object):
     def __init__(self, port):
         self.port = port
+        print "AddQueue", port
         self._wallclock = time.time()
 
     def __call__(self, event, data=None):
@@ -296,7 +297,7 @@ def InConfig():
             midinputs.append(launchin)
             print "Attaching MIDI in callback handler to Launchpad : ", name
             launchin.set_callback(launchpad.LaunchAddQueue(name))
-            print "Launch",port,port_name
+            #print "Launch",port,port_name
         
         # all other devices
 

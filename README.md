@@ -54,7 +54,7 @@ python main.py
 - Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file example : set0.conf
 - rPolyline draw function with integrated rotation, projection and recenter.
 - Support openpose json ! display human skeleton animation set 0 Curve 9
-- Early multiple openpose animation  
+- Multiple openpose animations  
 
 
 
@@ -64,8 +64,10 @@ python main.py
 
 (Doc in Progress)
 
-- find 3D rotations matrices and 2 projections, test speed / normal algo with algotest.
+- find 3D rotations matrices and 2 projections, test speed / normal algo with algotest.py
 - Smaller cpu footprint (compute only when something has changed,...)
+- kpps live modification
+- Bhoreal & LaunchPad inputs 
 - Tags for automatic laser load/ balancing
 - Texts : multilasers support, more fonts (See setai/composer )
 - New UI and simulator : web, livecode ?

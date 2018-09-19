@@ -17,6 +17,10 @@ sizey = 32000
 finangle = 0.0
 swapx = 1
 swapy = 1
+points1 = np.array([(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.0), (300.0, 400.0)])
+H1 = np.array ([[  1.99999198e-03 ,  1.20310446e-13,  -7.99996793e-01],
+ [  1.20292041e-13 ,  1.99999198e-03,  -5.99997595e-01],
+ [  2.01627140e-16 ,  5.30174862e-17  , 1.33332799e-04]])
 
 def EDpoint((pygamex,pygamey)):
 
@@ -33,7 +37,7 @@ def EDpoint((pygamex,pygamey)):
 def test1(repetitions,points):
 
     t0 = time.time()
-
+    '''
     EDpoints = []
     for point in points:
         #print point
@@ -42,12 +46,13 @@ def test1(repetitions,points):
     #print EDpoints
 
     H1 = homography.find(points1,np.array(EDpoints))
-    #print "homography from 1 to 2 "
-    #print H1
+    print "homography from 1 to 2 "
+    print H1
+    '''
 
     for test in xrange(repetitions):
         tt = homography.apply(H1,points1)
-        print tt
+        #print tt
 
 
 
@@ -67,7 +72,7 @@ def test2(repetitions,points):
 
             tt.append(EDpoint(point))
         zz =np.array(tt)
-        print zz
+        #print zz
 
 
     t1 = time.time()
@@ -88,7 +93,7 @@ points1 = np.array([(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.
 
 
 
-for repetitions in xrange(2):
+for repetitions in xrange(10):
 
 #print ''
     #print 'homography...'
@@ -115,7 +120,7 @@ print "Par call (ms) : ", (1000*un)/repetitions, " vs ", (1000*deux)/repetitions
 print "un / deux ", (100 * un) / deux, "%"
 
 print ""
-repetitions = 20
+repetitions = 1000
 print "Test pour", repetitions,"repetitions" 
 
 
