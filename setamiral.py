@@ -202,7 +202,7 @@ def getBODY(d,posepoints):
 
     dots = []
     for dot in posepoints:
-
+        print posepoints
         if len(d['people'][0]['pose_keypoints_2d']) != 0:
             if d['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
                 dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
@@ -285,7 +285,7 @@ def preparePOSE():
     # anim format (name, xpos,ypos, resize, currentframe, totalframe)
     # total frame is fetched from directory file count
     
-    anims1 = [['snap', 400,200, 50,0,0],['window1',100,200,100,0,0]]
+    anims1 = [['sky',50,400,100,0,0],['snap', 400,200, 50,0,0],['window1',100,200,100,0,0]]
     anims2 = [['window1', 400,200, 200,0,0],['snap',100,200,50,0,0]]
     
     for anim in anims1:

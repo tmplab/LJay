@@ -41,7 +41,7 @@ Set = 1 #nozoid loloster.py
 # Can be changed with /noteon 0-7
 Curve = 0 #nozmod
 
-ConfigName = "set1.conf"
+ConfigName = "setamiral.conf"
 
 maxCurvesByLaser = 4
 

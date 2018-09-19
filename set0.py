@@ -516,7 +516,7 @@ def selectPOSE(pose_dir):
     print "Check directory ",'poses/' + pose_dir + '/'
 
 
-selectPOSE('snap')
+selectPOSE('sky')
 
 # display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
@@ -524,7 +524,7 @@ def Pose(fwork):
     PL = 0
     dots = []
     #posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
-    pose_dir = 'snap'
+    pose_dir = 'sky'
 
 
     gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
