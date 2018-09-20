@@ -178,81 +178,91 @@ import json
 gstt.CurrentPose = 1
 
 # get absolute body position points
-def getCOCO(d,posepoints):
+def getCOCO(pose_json,pose_points):
     
     dots = []
-    for dot in posepoints:
-        if len(d['part_candidates'][0][str(dot)]) != 0:
-            dots.append((d['part_candidates'][0][str(dot)][0], d['part_candidates'][0][str(dot)][1]))
+    for dot in pose_points:
+        if len(pose_json['part_candidates'][0][str(dot)]) != 0:
+            dots.append((pose_json['part_candidates'][0][str(dot)][0], pose_json['part_candidates'][0][str(dot)][1]))
     return dots
 
 
 # get relative (-1 0 1) body position points. a position -1, -1 means doesn't exist
-def getBODY(d,posepoints):
+def getBODY(pose_json,pose_points):
 
     dots = []
-    for dot in posepoints:
-        print posepoints
-        if len(d['people'][0]['pose_keypoints_2d']) != 0:
-            if d['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
-                dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+    for dot in pose_points:
+        #print pose_points
+        if len(pose_json['people'][0]['pose_keypoints_2d']) != 0:
+            #print "people 0"
+            if pose_json['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and  pose_json['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((pose_json['people'][0]['pose_keypoints_2d'][dot * 3], pose_json['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+
+        if len(pose_json['people']) != 1:
+            print "people 1", pose_json['people'][1]['pose_keypoints_2d']
+        #print len(pose_json['people'])
+
     return dots
 
 
 # get absolute face position points 
-def getFACE(d,posepoints):
+def getFACE(pose_json,pose_points):
 
     dots = []
-    for dot in posepoints:
+    for dot in pose_points:
 
-        if len(d['people'][0]['face_keypoints_2d']) != 0:
-            if d['people'][0]['face_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['face_keypoints_2d'][(dot * 3)+1] != -1:
-                dots.append((d['people'][0]['face_keypoints_2d'][dot * 3], d['people'][0]['face_keypoints_2d'][(dot * 3)+1]))
+        if len(pose_json['people'][0]['face_keypoints_2d']) != 0:
+            print "people 0"
+            if pose_json['people'][0]['face_keypoints_2d'][dot * 3] != -1 and  pose_json['people'][0]['face_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((pose_json['people'][0]['face_keypoints_2d'][dot * 3], pose_json['people'][0]['face_keypoints_2d'][(dot * 3)+1]))
+
+        if len(pose_json['people']) != 1:
+            print "people 1", pose_json['people'][1]['face_keypoints_2d']
     return dots
 
 
 # Body parts
-def bodyCOCO(d):
-    posepoints = [10,9,8,1,11,12,13]
-    return getBODY(d,posepoints)
+def bodyCOCO(pose_json):
+    pose_points = [10,9,8,1,11,12,13]
+    return getBODY(pose_json,pose_points)
 
-def armCOCO(d):
-    posepoints = [7,6,5,1,2,3,4]
-    return getBODY(d,posepoints)
+def armCOCO(pose_json):
+    pose_points = [7,6,5,1,2,3,4]
+    return getBODY(pose_json,pose_points)
 
-def headCOCO(d):
-    posepoints = [1,0]
-    return getBODY(d,posepoints)
+def headCOCO(pose_json):
+    pose_points = [1,0]
+    return getBODY(pose_json,pose_points)
 
 
 # Face keypoints
-def face(d):
-    posepoints = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-    return getFACE(d,posepoints)
+def face(pose_json):
+    pose_points = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    return getFACE(pose_json,pose_points)
 
-def browL(d):
-    posepoints = [26,25,24,23,22]
-    return getFACE(d,posepoints)
+def browL(pose_json):
+    pose_points = [26,25,24,23,22]
+    return getFACE(pose_json,pose_points)
 
-def browR(d):
-    posepoints = [21,20,19,18,17]
-    return getFACE(d,posepoints)
+def browR(pose_json):
+    pose_points = [21,20,19,18,17]
+    return getFACE(pose_json,pose_points)
 
-def eyeR(d):
-    posepoints = [36,37,38,39,40,41,36]
-    return getFACE(d,posepoints)
+def eyeR(pose_json):
+    pose_points = [36,37,38,39,40,41,36]
+    return getFACE(pose_json,pose_points)
 
-def eyeL(d):
-    posepoints = [42,43,44,45,46,47,42]
-    return getFACE(d,posepoints)
+def eyeL(pose_json):
+    pose_points = [42,43,44,45,46,47,42]
+    return getFACE(pose_json,pose_points)
 
-def nose(d):
-    posepoints = [27,28,29,30]
-    return getFACE(d,posepoints)
+def nose(pose_json):
+    pose_points = [27,28,29,30]
+    return getFACE(pose_json,pose_points)
 
-def mouth(d):
-    posepoints = [48,59,58,57,56,55,54,53,52,51,50,49,48,60,67,66,65,64,63,62,61,60]
-    return getFACE(d,posepoints)
+def mouth(pose_json):
+    pose_points = [48,59,58,57,56,55,54,53,52,51,50,49,48,60,67,66,65,64,63,62,61,60]
+    return getFACE(pose_json,pose_points)
 
 
 # best order face : face browL browr eyeR eyeL nose mouth
@@ -275,12 +285,12 @@ def preparePOSE():
     # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
     # total frame is fetched from directory file count
     
-    anims1 = [['sky',50,400,100,0,0],['snap', 400,200, 50,0,0],['window1',100,200,100,0,0]]
-    anims2 = [['window1', 400,200, 200,0,0],['snap',100,200,50,0,0]]
+    anims1 = [['sky',50,400,100,0,0,0,1],['snap', 400,200, 50,0,0,0,1],['window1',100,200,100,0,0,0,1]]
+    anims2 = [['window1', 400,200, 200,0,0,0,1],['snap',100,200,50,0,0,0,1]]
     
-    for anim in anims2:
+    for anim in anims1:
         anim[5]= selectPOSE(anim[0])
-    gstt.anims0 = anims2
+    gstt.anims0 = anims1
 
 # display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
@@ -288,8 +298,8 @@ def Pose(fwork):
     for anim in gstt.anims0:
         PL = 0
         dots = []
-
-        # repeat anim[8] time the same frame
+        print anim, anim[5]
+        # repeat anim[7] time the same frame
         anim[6] +=1
         if anim[6] == anim[7]:
 
@@ -303,11 +313,11 @@ def Pose(fwork):
         posename = 'poses/' + anim[0] + '/' + anim[0] +'-'+str("%05d"%anim[4])+'.json'
         posefile = open(posename , 'r') 
         posedatas = posefile.read()
-        pose = json.loads(posedatas)
+        pose_json = json.loads(posedatas)
 
-        fwork.rPolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-        fwork.rPolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-        fwork.rPolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(bodyCOCO(pose_json), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(armCOCO(pose_json), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(headCOCO(pose_json), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
 
         # Face
         '''

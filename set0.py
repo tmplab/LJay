@@ -427,81 +427,91 @@ import json
 gstt.CurrentPose = 1
 
 # get absolute body position points
-def getCOCO(d,posepoints):
+def getCOCO(pose_json,pose_points, people):
     
     dots = []
-    for dot in posepoints:
-        if len(d['part_candidates'][0][str(dot)]) != 0:
-            dots.append((d['part_candidates'][0][str(dot)][0], d['part_candidates'][0][str(dot)][1]))
+    for dot in pose_points:
+        if len(pose_json['part_candidates'][people][str(dot)]) != 0:
+            dots.append((pose_json['part_candidates'][people][str(dot)][0], pose_json['part_candidates'][people][str(dot)][1]))
     return dots
 
 
 # get relative (-1 0 1) body position points. a position -1, -1 means doesn't exist
-def getBODY(d,posepoints):
+def getBODY(pose_json,pose_points, people):
 
     dots = []
-    for dot in posepoints:
+    for dot in pose_points:
+        #print pose_points
+        if len(pose_json['people'][people]['pose_keypoints_2d']) != 0:
+            #print "people 0"
+            if pose_json['people'][people]['pose_keypoints_2d'][dot * 3] != -1 and  pose_json['people'][people]['pose_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((pose_json['people'][people]['pose_keypoints_2d'][dot * 3], pose_json['people'][people]['pose_keypoints_2d'][(dot * 3)+1]))
 
-        if len(d['people'][0]['pose_keypoints_2d']) != 0:
-            if d['people'][0]['pose_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['pose_keypoints_2d'][(dot * 3)+1] != -1:
-                dots.append((d['people'][0]['pose_keypoints_2d'][dot * 3], d['people'][0]['pose_keypoints_2d'][(dot * 3)+1]))
+
     return dots
 
 
 # get absolute face position points 
-def getFACE(d,posepoints):
+def getFACE(pose_json,pose_points, people):
 
     dots = []
-    for dot in posepoints:
+    for dot in pose_points:
 
-        if len(d['people'][0]['face_keypoints_2d']) != 0:
-            if d['people'][0]['face_keypoints_2d'][dot * 3] != -1 and  d['people'][0]['face_keypoints_2d'][(dot * 3)+1] != -1:
-                dots.append((d['people'][0]['face_keypoints_2d'][dot * 3], d['people'][0]['face_keypoints_2d'][(dot * 3)+1]))
+        if len(pose_json['people'][people]['face_keypoints_2d']) != 0:
+            #print "people 0"
+            if pose_json['people'][people]['face_keypoints_2d'][dot * 3] != -1 and  pose_json['people'][people]['face_keypoints_2d'][(dot * 3)+1] != -1:
+                dots.append((pose_json['people'][people]['face_keypoints_2d'][dot * 3], pose_json['people'][people]['face_keypoints_2d'][(dot * 3)+1]))
+        '''
+        if len(pose_json['people']) > 1:
+            print len(pose_json['people']) 
+            print "people 1 face ", pose_json['people'][1]['face_keypoints_2d']
+        '''
+
     return dots
 
 
 # Body parts
-def bodyCOCO(d):
-    posepoints = [10,9,8,1,11,12,13]
-    return getBODY(d,posepoints)
+def bodyCOCO(pose_json, people ):
+    pose_points = [10,9,8,1,11,12,13]
+    return getBODY(pose_json,pose_points, people)
 
-def armCOCO(d):
-    posepoints = [7,6,5,1,2,3,4]
-    return getBODY(d,posepoints)
+def armCOCO(pose_json, people):
+    pose_points = [7,6,5,1,2,3,4]
+    return getBODY(pose_json,pose_points, people)
 
-def headCOCO(d):
-    posepoints = [1,0]
-    return getBODY(d,posepoints)
+def headCOCO(pose_json, people):
+    pose_points = [1,0]
+    return getBODY(pose_json,pose_points)
 
 
 # Face keypoints
-def face(d):
-    posepoints = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-    return getFACE(d,posepoints)
+def face(pose_json, people):
+    pose_points = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    return getFACE(pose_json,pose_points, people)
 
-def browL(d):
-    posepoints = [26,25,24,23,22]
-    return getFACE(d,posepoints)
+def browL(pose_json, people):
+    pose_points = [26,25,24,23,22]
+    return getFACE(pose_json,pose_points, people)
 
-def browR(d):
-    posepoints = [21,20,19,18,17]
-    return getFACE(d,posepoints)
+def browR(pose_json, people):
+    pose_points = [21,20,19,18,17]
+    return getFACE(pose_json,pose_points, people)
 
-def eyeR(d):
-    posepoints = [36,37,38,39,40,41,36]
-    return getFACE(d,posepoints)
+def eyeR(pose_json, people):
+    pose_points = [36,37,38,39,40,41,36]
+    return getFACE(pose_json,pose_points, people)
 
-def eyeL(d):
-    posepoints = [42,43,44,45,46,47,42]
-    return getFACE(d,posepoints)
+def eyeL(pose_json, people):
+    pose_points = [42,43,44,45,46,47,42]
+    return getFACE(pose_json,pose_points, people)
 
-def nose(d):
-    posepoints = [27,28,29,30]
-    return getFACE(d,posepoints)
+def nose(pose_json, people):
+    pose_points = [27,28,29,30]
+    return getFACE(pose_json,pose_points, people)
 
-def mouth(d):
-    posepoints = [48,59,58,57,56,55,54,53,52,51,50,49,48,60,67,66,65,64,63,62,61,60]
-    return getFACE(d,posepoints)
+def mouth(pose_json, people):
+    pose_points = [48,59,58,57,56,55,54,53,52,51,50,49,48,60,67,66,65,64,63,62,61,60]
+    return getFACE(pose_json,pose_points, people)
 
 
 # best order face : face browL browr eyeR eyeL nose mouth
@@ -516,7 +526,7 @@ def selectPOSE(pose_dir):
     print "Check directory ",'poses/' + pose_dir + '/'
 
 
-selectPOSE('sky')
+selectPOSE('snap')
 
 # display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
@@ -524,7 +534,7 @@ def Pose(fwork):
     PL = 0
     dots = []
     #posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
-    pose_dir = 'sky'
+    pose_dir = 'snap'
 
 
     gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
@@ -541,7 +551,7 @@ def Pose(fwork):
 
     posefile = open(posename , 'r') 
     posedatas = posefile.read()
-    pose = json.loads(posedatas)
+    pose_json = json.loads(posedatas)
 
     # Body
     '''
@@ -553,11 +563,11 @@ def Pose(fwork):
     print "eyeR :", eyeR(pose)
     print "eyeL :", eyeL(pose)
     print "mouth :", mouth(pose) 
-    '''
-    fwork.rPolyLineOneColor(bodyCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-    fwork.rPolyLineOneColor(armCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    
+    fwork.rPolyLineOneColor(bodyCOCO(pose_json,0), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    fwork.rPolyLineOneColor(armCOCO(pose_json,0), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
     #fwork.rPolyLineOneColor(headCOCO(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-
+    
     # Face
     #fwork.rPolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
     fwork.rPolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
@@ -567,8 +577,27 @@ def Pose(fwork):
     fwork.rPolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)  
     fwork.rPolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
 
-    gstt.PL[PL] = fwork.LinesPL(PL)
+    if len(pose_json['people']) != 1:
+        print "people 1 pose ", pose_json['people'][1]['pose_keypoints_2d']
+        print len(pose_json['people'])
+        fwork.rPolyLineOneColor(bodyCOCO(pose_json,1), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(armCOCO(pose_json,1), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+    '''
+
+    for people in range(len(pose_json['people'])):
+        fwork.rPolyLineOneColor(bodyCOCO(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(armCOCO(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+
+        fwork.rPolyLineOneColor(browL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(browR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(eyeR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(eyeL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(nose(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)  
+        fwork.rPolyLineOneColor(mouth(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+
     
+    gstt.PL[PL] = fwork.LinesPL(PL)
+
     # decrease current frame 
     if gstt.keystates[pygame.K_w]: # and not gstt.keystates_prev[pygame.K_w]:
         gstt.CurrentPose -= 1
