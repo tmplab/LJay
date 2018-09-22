@@ -526,7 +526,7 @@ def selectPOSE(pose_dir):
     print "Check directory ",'poses/' + pose_dir + '/'
 
 
-selectPOSE('snap')
+selectPOSE('1dancerL')
 
 # display the pose animation describe in gstt.PoseDir
 def Pose(fwork):
@@ -534,7 +534,7 @@ def Pose(fwork):
     PL = 0
     dots = []
     #posename =gstt.PoseDir+'snap_000000000'+str("%03d"%gstt.CurrentPose)+'_keypoints.json'
-    pose_dir = 'snap'
+    pose_dir = '1dancerL'
 
 
     gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
@@ -585,15 +585,15 @@ def Pose(fwork):
     '''
 
     for people in range(len(pose_json['people'])):
-        fwork.rPolyLineOneColor(bodyCOCO(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-        fwork.rPolyLineOneColor(armCOCO(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(bodyCOCO(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
+        fwork.rPolyLineOneColor(armCOCO(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
 
-        fwork.rPolyLineOneColor(browL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-        fwork.rPolyLineOneColor(browR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-        fwork.rPolyLineOneColor(eyeR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-        fwork.rPolyLineOneColor(eyeL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
-        fwork.rPolyLineOneColor(nose(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)  
-        fwork.rPolyLineOneColor(mouth(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 200)
+        fwork.rPolyLineOneColor(browL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
+        fwork.rPolyLineOneColor(browR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
+        fwork.rPolyLineOneColor(eyeR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
+        fwork.rPolyLineOneColor(eyeL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
+        fwork.rPolyLineOneColor(nose(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)  
+        fwork.rPolyLineOneColor(mouth(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = 200, ypos = 200, resize = 50)
 
     
     gstt.PL[PL] = fwork.LinesPL(PL)

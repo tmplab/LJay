@@ -285,7 +285,7 @@ def preparePOSE():
     # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
     # total frame is fetched from directory file count
     
-    anims1 = [['sky',50,400,100,0,0,0,1],['snap', 400,200, 50,0,0,0,1],['window1',100,200,100,0,0,0,1]]
+    anims1 = [['sky',50,400,100,0,0,0,1],['snap', 400,200, 50,0,0,0,1],['1dancer', 400,100, 50,0,0,0,1],['window1',100,200,100,0,0,0,1]]
     anims2 = [['window1', 400,200, 200,0,0,0,1],['snap',100,200,50,0,0,0,1]]
     
     for anim in anims1:
