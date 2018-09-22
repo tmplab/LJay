@@ -272,9 +272,20 @@ def headCOCO(d):
 
 
 # Get frame number for pose path describe in gstt.PoseDir 
+def selectPOSE(pose_dir):
+
+    gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
+    print "Pose : ", pose_dir, gstt.numfiles, "images"
+    print "Check directory ",'poses/' + pose_dir + '/'
+
+
+selectPOSE('anim1')
+
+'''
 def selectPOSE():
     gstt.numfiles = sum(1 for f in os.listdir(gstt.PoseDir) if os.path.isfile(os.path.join(gstt.PoseDir, f)) and f[0] != '.')
     print "Pose : ", gstt.PoseDir, gstt.numfiles, "images"
+'''
 
 def Pose(fwork):
     global mouse_prev
