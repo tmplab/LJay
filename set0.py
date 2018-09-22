@@ -525,7 +525,7 @@ def selectPOSE(pose_dir):
     print "Pose : ", pose_dir, gstt.numfiles, "images"
     print "Check directory ",'poses/' + pose_dir + '/'
 
-pose_dir = 'detroit1'
+pose_dir = '1dancer'
 
 selectPOSE(pose_dir)
 
