@@ -157,7 +157,7 @@ class DAC(object):
 	
 		c = xyc[2]
 		position = homography.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
-		return (position[0][0], position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+		return (-position[0][0], -position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
 
 
 	'''

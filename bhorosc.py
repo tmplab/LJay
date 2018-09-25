@@ -39,6 +39,8 @@ oscIPout = ""
 #oscPORTout = 8002
 oscPORTout = gstt.oport
 
+oscIPresol = 192.168.1.56
+oscPORTresol = 7000
 	
 oscdevice = 0
 
@@ -83,6 +85,8 @@ osclient3 = OSCClient()
 osclient4 = OSCClient()
 osclient5 = OSCClient()
 osclient6 = OSCClient()
+
+osclientresol = OSCClient()
 
 oscmsg = OSCMessage()
 
@@ -191,6 +195,25 @@ def send6(oscaddress,oscargs):
         oscmsg.clearData()
     except:
         print ('Connection to 6 refused')
+        pass
+    #time.sleep(0.001)
+
+# Send to Resolume
+# sendresol(oscaddress, [arg1, arg2,...])
+# sendresol("/noteon",note)
+osclientresol.connect((oscIPresol, oscPORTresol)) 
+def sendresol(oscaddress,oscargs):
+        
+    oscmsg = OSCMessage()
+    oscmsg.setAddress(oscaddress)
+    oscmsg.append(oscargs)
+    
+    print "sending to Resolume : ",oscmsg
+    try:
+        osclientresol.sendto(oscmsg, (oscIPresol, oscPORTresol))
+        oscmsg.clearData()
+    except:
+        print ('Connection to Resolume refused')
         pass
     #time.sleep(0.001)
 

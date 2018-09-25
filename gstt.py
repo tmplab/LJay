@@ -70,7 +70,7 @@ point = [0,0,0]
 
 # gstt.colormode select what to display. Can be changed with /noteon 57-64
 colormode = 0
-color = [255,255,0]
+color = [255,0,0]
 newcolor = 0
 
 surpriseoff = 10
@@ -188,8 +188,8 @@ zoomY = [LASER_ZOOM_Y, LASER_ZOOM_Y, LASER_ZOOM_Y, LASER_ZOOM_Y]
 sizeX = [LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X]
 sizeY = [LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y]
 finANGLE = [LASER_ANGLE, LASER_ANGLE, LASER_ANGLE, LASER_ANGLE]
-swapX = [1,1,1,1]
-swapY = [1,1,1,1]
+swapX = [-1,1,1,1]
+swapY = [-1,1,1,1]
 warpdest = [[[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
 [[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
 [[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],

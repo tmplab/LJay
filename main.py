@@ -95,7 +95,8 @@ settables =  {					# Set 0
     }, {                        # setamiral
         0: setamiral.Mapping,
         1: setamiral.Pose,
-        2: setamiral.Pose
+        2: setamiral.Faces,
+        3: setamiral.Dancers
     }
 
 # built in black dot when curve = -1. Will be called when set change.
@@ -266,6 +267,8 @@ clock = pygame.time.Clock()
 
 # For Amiral
 setamiral.preparePOSE()
+setamiral.prepareFACES()
+setamiral.prepareDANCERS()
 
 
 #gstt.PoseDir = '/Volumes/shared/openpose-1.3.0-win64-gpu-binaries/HeavyRain/2/json/'

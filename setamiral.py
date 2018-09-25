@@ -170,9 +170,6 @@ def Mapping(fwork, keystates, keystates_prev):
 
 
 
-
-
-
 # Curve 1
 import json
 gstt.CurrentPose = 1
@@ -271,7 +268,7 @@ import os
 
 
 # Get frame number for pose path describe in gstt.PoseDir 
-def selectPOSE(pose_dir):
+def lengthPOSE(pose_dir):
 
     print "Check directory ",'poses/' + pose_dir + '/'
     numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
@@ -285,11 +282,11 @@ def preparePOSE():
     # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
     # total frame is fetched from directory file count
     
-    anims1 = [['sky',50,400,100,0,0,0,1],['snap', 400,200, 50,0,0,0,1],['1dancer', 400,100, 50,0,0,0,1],['window1',100,200,100,0,0,0,1]]
-    anims2 = [['window1', 400,200, 200,0,0,0,1],['snap',100,200,50,0,0,0,1]]
+    anims1 = [['sky',50,100,300,0,0,0,1],['snap', 400,100, 300,0,0,0,1],['1dancer', 400,100, 300,0,0,0,1],['window1',100,100,300,0,0,0,1]]
+    anims2 = [['window1', 400,200, 300,0,0,0,1],['snap',100,200,300,0,0,0,1]]
     
     for anim in anims1:
-        anim[5]= selectPOSE(anim[0])
+        anim[5]= lengthPOSE(anim[0])
     gstt.anims0 = anims1
 
 # display the pose animation describe in gstt.PoseDir
@@ -353,3 +350,125 @@ def Pose(fwork):
         print "Frame : ",gstt.CurrentPose 
     '''
 
+# Curve 2 Faces
+import json
+gstt.CurrentPose = 1
+
+def prepareFACE():
+
+
+    # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
+    # total frame is fetched from directory file count
+    
+    anims0 = [['detroit1',50,100,300,0,0,0,1]]
+    anims1 = [['detroit1', 400,200, 300,0,0,0,1]]
+    
+    for anim in anims1:
+        anim[5]= lengthPOSE(anim[0])
+    gstt.anims0 = anims1
+
+# display the face animation describe in gstt.PoseDir
+def Faces(fwork):
+   
+    for anim in gstt.anims0:
+        PL = 0
+        dots = []
+        print anim, anim[5]
+        # repeat anim[7] time the same frame
+        anim[6] +=1
+        if anim[6] == anim[7]:
+
+            anim[6] = 0
+            # increase current frame and compare to total frame 
+            anim[4] += 1
+            if anim[4] == anim[5]:
+                anim[4] = 0
+
+
+        posename = 'poses/' + anim[0] + '/' + anim[0] +'-'+str("%05d"%anim[4])+'.json'
+        posefile = open(posename , 'r') 
+        posedatas = posefile.read()
+        pose_json = json.loads(posedatas)
+
+        # Face
+
+        #fwork.rPolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(browR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(eyeR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])  
+        fwork.rPolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        
+
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
+
+    
+        time.sleep(0.02)
+    
+# Curve 3
+# Dancers
+import json
+gstt.CurrentPose = 1
+
+def prepareDANCERS():
+
+
+    # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
+    # total frame is fetched from directory file count
+    
+    gstt.anims0 = [['1dancer',50,100,300,0,0,0,1],['snap', 400,100, 300,0,0,0,1],['1dancer', 400,100, 300,0,0,0,1],['window1',100,100,300,0,0,0,1]]
+    gstt.anims1 = [['window1', 400,200, 300,0,0,0,1],['snap',100,200,300,0,0,0,1]]
+    gstt.anims2 = [['window1', 400,200, 300,0,0,0,1],['snap',100,200,300,0,0,0,1]]
+    
+    # read anims number of frames from disk.
+    for anim in range(len(gstt.anims0)):
+        gstt.anims0[anim][5]= lengthPOSE(gstt.anims0[anim][0])
+    for anim in range(len(gstt.anims1)):
+        gstt.anims1[anim][5]= lengthPOSE(gstt.anims1[anim][0])
+    for anim in range(len(gstt.anims2)):
+        gstt.anims2[anim][5]= lengthPOSE(gstt.anims2[anim][0])
+
+# display the pose animation describe in gstt.PoseDir
+def Dancers(fwork):
+   
+    for anim in gstt.anims0:
+        PL = 0
+        dots = []
+        print anim, anim[5]
+        # repeat anim[7] time the same frame
+        anim[6] +=1
+        if anim[6] == anim[7]:
+
+            anim[6] = 0
+            # increase current frame and compare to total frame 
+            anim[4] += 1
+            if anim[4] == anim[5]:
+                anim[4] = 0
+
+
+        #bhorosc.sendresol("/layer1/clip1/connect",1)
+        #bhorosc.sendresol("/layer1/clip1/connect",0)
+
+        posename = 'poses/' + anim[0] + '/' + anim[0] +'-'+str("%05d"%anim[4])+'.json'
+        posefile = open(posename , 'r') 
+        posedatas = posefile.read()
+        pose_json = json.loads(posedatas)
+
+        fwork.rPolyLineOneColor(bodyCOCO(pose_json), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(armCOCO(pose_json), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(headCOCO(pose_json), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+
+        # Face
+        '''
+        #fwork.rPolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(browL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(browR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(eyeR(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(eyeL(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        fwork.rPolyLineOneColor(nose(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])  
+        fwork.rPolyLineOneColor(mouth(pose), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+        '''
+
+        gstt.PL[PL] = fwork.LinesPL(PL)
