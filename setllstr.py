@@ -66,7 +66,7 @@ def NozMode(fwork):
         if (gstt.Y[curveNumber] != 0 and dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen == nbplow):
           print "X changing size of dotsocsT[%d][%d] (%d) to %d"%(curveNumber,currentdotsosc[curveNumber],dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen,nbphigh)
           dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbphigh)
-        xT = (((time.time()*50000) % 65536) - 32768)
+        xT = (((time.time()*gstt.XTimeAxe) % 65536) - 32768)
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
 
       # There is a sound curve to draw on Y axis
@@ -83,7 +83,7 @@ def NozMode(fwork):
         if (gstt.X[curveNumber] != 0 and dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen == nbplow):
           print "Y changing size of dotsocsT[%d][%d] (%d) to %d"%(curveNumber,currentdotsosc[curveNumber],dotsoscT[currentdotsosc[curveNumber]][curveNumber].maxlen,nbphigh)
           dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbphigh)
-        yT = (((time.time()*50000) % 65536) - 32768)
+        yT = (((time.time()*gstt.YTimeAxe) % 65536) - 32768)
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
         #print "y:%r,yT:%r" % (y,yT)
 
