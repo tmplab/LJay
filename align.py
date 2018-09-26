@@ -2,6 +2,7 @@ import gstt
 import frame
 import pygame
 import settings
+import newrenderer
 from globalVars import *
 
 def DrawTestPattern(f):
@@ -44,7 +45,7 @@ def Display(f):
 	f.LineTo((0,0),  c=0xFFFFFF, PL=gstt.Laser)	
 	settings.Write()
 	#print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
-
+	newrenderer.newEDH(gstt.Laser)
 
 
 def Jump(fwork):
