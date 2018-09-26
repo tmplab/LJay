@@ -122,7 +122,7 @@ class LaserRenderer(Renderer):
 		# compute for a given point, actual coordinates transformed by alignment parameters (center, zoom, axis swap,....) and rescaled in etherdream coord space
 		# 
 
-		print "xyc " , xyc
+		#print "xyc " , xyc
 		c = xyc[2]
 		XX = xyc[0] - screen_size[0]/2
 		YY = xyc[1] - screen_size[1]/2
