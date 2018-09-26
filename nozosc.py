@@ -85,6 +85,8 @@ oscpathin = ""
 #oscIPout = ""
 #oscIPout = "10.255.255.194"
 oscIPout = socket.gethostbyname(socket.gethostname())
+#oscIPout = "192.168.1.248"
+#oscIPout = "0.0.0.0"
 #bhorosc.py
 #oscPORTout = 8001
 oscPORTout = oport
