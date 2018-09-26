@@ -20,12 +20,12 @@ simuPL = 1
 
 # gstt.laserIPS
 
-lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
+lasersIPS = ['192.168.1.3','192.168.1.6','192.168.1.4','192.168.1.5']
 
 
 # gstt.laserPLS : What point list is sent to what laser.
 
-lasersPLS = [0,1,1,2]
+lasersPLS = [1,1,1,2]
 
 
 # gstt.Set select what to Curve Set to display. Can be changed with /noteon 8-15
@@ -40,6 +40,10 @@ offsetX = [0] * maxCurvesByLaser
 offsetY = [0] * maxCurvesByLaser
 curveNumber = 0
 Curve = curveNumber
+XTimeAxe=50000
+YTimeAxe=50000
+XTimeAxe=30000
+YTimeAxe=30000
 
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser
