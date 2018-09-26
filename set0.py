@@ -525,7 +525,8 @@ def lengthPOSE(pose_dir):
     print "Pose : ", pose_dir, gstt.numfiles, "images"
     print "Check directory ",'poses/' + pose_dir + '/'
 
-pose_dir = 'detroit1'
+#pose_dir = 'detroit1'
+pose_dir = 'snap'
 
 lengthPOSE(pose_dir)
 

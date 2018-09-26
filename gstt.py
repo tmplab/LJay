@@ -5,6 +5,7 @@ Etat global (anciennement singleton de la classe GameState + autres VARIABLES n√
 
 from globalVars import *
 
+anims= [[],[],[],[]]
 
 # How many lasers are connected. Different that "currentlaser" used by bhorosc
 LaserNumber = 2
@@ -24,7 +25,7 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 
 # gstt.laserPLS : What point list is sent to what laser. 
 # ** Will be overridden by settings.conf values **
-lasersPLS = [0,0,0,0]
+lasersPLS = [0,1,2,0]
 
 
 # with 4 laser available, 4 PL only are necessary

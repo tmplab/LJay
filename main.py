@@ -266,9 +266,15 @@ if gstt.Set == 1 and gstt.Curve == 0:
 clock = pygame.time.Clock()
 
 # For Amiral
-setamiral.preparePOSE()
-setamiral.prepareFACES()
-setamiral.prepareDANCERS()
+
+if gstt.Set == 3 and gstt.Curve == 2:
+
+    #setamiral.preparePOSE()
+    setamiral.prepareFACES()
+
+if gstt.Set == 3 and gstt.Curve == 3:
+
+    setamiral.prepareDANCERS()
 
 
 #gstt.PoseDir = '/Volumes/shared/openpose-1.3.0-win64-gpu-binaries/HeavyRain/2/json/'
@@ -290,11 +296,12 @@ thread.start_new_thread(dac_thread1, ())
 print ""
 print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
 
-'''
+
 thread.start_new_thread(dac_thread2, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
 
+'''
 thread.start_new_thread(dac_thread3, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],

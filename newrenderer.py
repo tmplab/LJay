@@ -54,7 +54,9 @@ def newEDH(mylaser):
 	Hwarp = homography.find(np.array(EDpoints), np.array(ast.literal_eval(gstt.warpdest[gstt.Laser])))
 
 	# EDH matrix 
-	gstt.EDH[mylaser] = np.dot(H,Hwarp)
+	gstt.EDH[mylaser] = H
+	# EDH matrix with warp
+	#gstt.EDH[mylaser] = np.dot(H,Hwarp)
 	
 	if gstt.debug >0:
 		print "laser ", mylaser
