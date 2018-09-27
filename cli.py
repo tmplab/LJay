@@ -83,6 +83,7 @@ def handle():
 	# Point list number used by simulator
 	if args.display  != None:
 		gstt.simuPL = args.display
+		print "Display : " + str(gstt.simuPL)
 
 
 

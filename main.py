@@ -51,13 +51,18 @@ cli.handle()
 settings.Write()
 
 #raw_input("Hit Enter To Continue!")
+#print "Simulator displays point list : ", str(gstt.simuPL)
 
 import midi
+
 import bhorosc
+
 import set0
+
 import set1
 import setllstr
 import setamiral
+
 import orbits
 import align
 
@@ -322,7 +327,6 @@ gstt.jumptable = settables[gstt.Set]
 
 
 print ""
-print "Simulator displays point list : ", str(gstt.simuPL)
 
 settings.Write()
 

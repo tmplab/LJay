@@ -39,6 +39,8 @@ f_sine = 0
 def MappingConf(section):
     global mouse_prev, sections
 
+	print ""
+	print "For Mapping(), reading Architecture Points"
     gstt.EditStep = 0
     gstt.CurrentWindow = -1
     gstt.CurrentCorner = 0
@@ -66,12 +68,11 @@ def MappingConf(section):
     print "Section points : " ,gstt.Windows
 
 
-print ""
-print "For Mapping(), reading Architecture Points from set0.conf"
+
 
 # section 0 is "General", then first screen shapes in section 1
 # Todo : Should search automatically first screen in settings file sections.
-MappingConf(1)
+# MappingConf(1) should be call only if curve 0 is selected 
 
 
 def Mapping(fwork, keystates, keystates_prev):
@@ -492,12 +493,12 @@ def Faces(fwork):
         for people in range(len(pose_json['people'])):
 
             #fwork.rPolyLineOneColor(face(pose), c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-            fwork.rPolyLineOneColor(browL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-            fwork.rPolyLineOneColor(browR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-            fwork.rPolyLineOneColor(eyeR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-            fwork.rPolyLineOneColor(eyeL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
-            fwork.rPolyLineOneColor(nose(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])  
-            fwork.rPolyLineOneColor(mouth(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = 0, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+            fwork.rPolyLineOneColor(browL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = laseranims, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+            fwork.rPolyLineOneColor(browR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = laseranims, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+            fwork.rPolyLineOneColor(eyeR(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = laseranims, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+            fwork.rPolyLineOneColor(eyeL(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = laseranims, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
+            fwork.rPolyLineOneColor(nose(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = laseranims, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])  
+            fwork.rPolyLineOneColor(mouth(pose_json, people), c=colorify.rgb2hex(gstt.color), PL = laseranims, closed = False, xpos = anim[1], ypos = anim[2], resize = anim[3])
         
 
         gstt.PL[PL] = fwork.LinesPL(PL)

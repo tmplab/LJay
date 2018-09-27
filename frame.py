@@ -118,6 +118,7 @@ class Frame(object):
 				
 	def RenderScreen(self, surface):
 		if len(self.pl[gstt.simuPL]):
+			#print gstt.simuPL
 			xyc_prev = self.pl[gstt.simuPL][0]
 			#pygame.draw.line(surface,self.black_hole_color,(x_bh_cur, y_bh_cur), (x_bh_next, y_bh_next))
 			#pygame.draw.line(surface,self.spoke_color,(x_bh_cur, y_bh_cur), (x_area_cur, y_area_cur))

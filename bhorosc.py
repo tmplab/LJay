@@ -19,6 +19,8 @@ import launchpad
 import orbits
 from globalVars import *
 import gstt
+print "Simulator displays point list : ", str(gstt.simuPL)
+
 import midi
 import socket
 import colorify

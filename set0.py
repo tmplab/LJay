@@ -517,6 +517,7 @@ def mouth(pose_json, people):
 # best order face : face browL browr eyeR eyeL nose mouth
 
 import os 
+print "Simulator displays point list : ", gstt.simuPL
 anim = ['anim1',50,400,100,0,0,0,1]
 # Get frame number for pose path describe in gstt.PoseDir 
 def lengthPOSE(pose_dir):

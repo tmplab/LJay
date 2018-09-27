@@ -65,10 +65,12 @@ def MappingConf(section):
     warpd = ast.literal_eval(gstt.warpdest[gstt.Laser])
     print "warpd", warpd
 
+'''
 print ""
 print "For Mapping(), reading Architecture Points from set0.conf"
 
 MappingConf(1)
+'''
 
 # Curve0 
 # Interactive edition of shapes corners

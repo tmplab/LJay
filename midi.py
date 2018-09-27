@@ -15,12 +15,15 @@ from serial.tools import list_ports
 import serial
 
 from sys import platform
+import gstt
+print "Simulator displays point list : ", str(gstt.simuPL)
 
 import bhorosc
+
 import bhoreal
 import launchpad
 import orbits
-import gstt
+
 
 midiname = ["Name"] * 16
 midiport = [rtmidi.MidiOut() for i in range(16) ]
