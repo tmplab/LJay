@@ -1,9 +1,9 @@
 #!/bin/bash
 if [[ -z $1 ]]
 then
- VAL=0
+ CRV=0
 else
- VAL=$1
+ CRV=$1
 fi
 if [[ -z $2 ]]
 then
@@ -11,5 +11,4 @@ then
 else
  PORTN=$2
 fi
-
-oscsend 127.0.0.1 $PORTN "/nozoid/up" i $VAL
+oscsend 127.0.0.1 $PORTN "/nozoid/X" ii 0 $CRV

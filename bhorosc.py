@@ -30,8 +30,10 @@ if gstt.SLAVERY == False:
 #import oscdefault
 #import runmode
 
-oscIPin = socket.gethostbyname(socket.gethostname())
+#oscIPin = socket.gethostbyname(socket.gethostname())
 #oscIPin = "192.168.1.10"
+oscIPin = "192.168.1.246"
+#oscIPin = "0.0.0.0"
 #oscPORTin = 8001
 oscPORTin = gstt.iport
 oscpathin = ""
@@ -410,7 +412,7 @@ def nozoffset(path, tags, args, source):
 def nozX(path, tags, args, source):
     user = ''.join(path.split("/"))
     print "Here nozX in bhorosc"
-    #print user,path,args
+    print user,path,args
     print path,args
     oscillator = int(args[0])
     curveNumber = int(args[1])
@@ -418,7 +420,7 @@ def nozX(path, tags, args, source):
     print "Setting gstt.X[%d] to %d" %(curveNumber,oscillator)
     gstt.X[curveNumber] = oscillator
 
-    if oscillator == 0:
+    if oscillator%127 == 0:
 	gstt.colorX[curveNumber][0]=0
 	gstt.colorX[curveNumber][1]=0
 	gstt.colorX[curveNumber][2]=0
@@ -467,7 +469,7 @@ def nozY(path, tags, args, source):
     print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
     gstt.Y[curveNumber] = oscillator
 
-    if oscillator == 0:
+    if oscillator%127 == 0:
 	gstt.colorY[curveNumber][0]=0
 	gstt.colorY[curveNumber][1]=0
 	gstt.colorY[curveNumber][2]=0
@@ -504,7 +506,7 @@ def nozY(path, tags, args, source):
     #gstt.OscXY[2] = gstt.Y
 
 def nozcolor(path, tags, args, source):
-	#print "here we are in nozcolor!"
+        print "Here nozcolor in bhorosc"
 	#print "args",args
 	if len(args) <= 1:
 	  if len(args) == 0:

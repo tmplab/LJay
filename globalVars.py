@@ -9,7 +9,7 @@ PI = pi
 
 # Enter here your ether dream IP
 #etherIP="192.168.1.4"
-etherIP="192.168.1.4"
+etherIP="192.168.1.3"
 #etherIP="192.168.1.1"
 #etherIP="localhost"
 

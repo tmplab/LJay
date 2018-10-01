@@ -19,15 +19,15 @@
 #20 Audio_Out Right
 #21 Audio_Out Left
 
-oscsend 127.0.0.1 8003 "/nozoid/Y" ii 4 0 #LFO1
-oscsend 127.0.0.1 8003 "/nozoid/Y" ii 5 1 #LFO2
-oscsend 127.0.0.1 8003 "/nozoid/Y" ii 7 2 #ADSR
-oscsend 127.0.0.1 8003 "/nozoid/Y" ii 9 3 #Line IN
-oscsend 127.0.0.1 8003 "/nozoid/X" ii 6 0 #LFO3
-oscsend 127.0.0.1 8003 "/nozoid/X" ii 6 1
-oscsend 127.0.0.1 8003 "/nozoid/X" ii 6 2
-oscsend 127.0.0.1 8003 "/nozoid/X" ii 6 3
-oscsend 127.0.0.1 8003 "/nozoid/color" iiii 255 0 0 0
-oscsend 127.0.0.1 8003 "/nozoid/color" iiii 255 0 255 1
-oscsend 127.0.0.1 8003 "/nozoid/color" iiii 0 255 0 2
-oscsend 127.0.0.1 8003 "/nozoid/color" iiii 0 0 255 3
+oscsend 127.0.0.1 8005 "/nozoid/Y" ii 4 0 #LFO1
+oscsend 127.0.0.1 8005 "/nozoid/Y" ii 5 1 #LFO2
+oscsend 127.0.0.1 8005 "/nozoid/Y" ii 7 2 #ADSR
+oscsend 127.0.0.1 8005 "/nozoid/Y" ii 9 3 #Line IN
+oscsend 127.0.0.1 8005 "/nozoid/X" ii 6 0 #LFO3
+oscsend 127.0.0.1 8005 "/nozoid/X" ii 6 1
+oscsend 127.0.0.1 8005 "/nozoid/X" ii 6 2
+oscsend 127.0.0.1 8005 "/nozoid/X" ii 6 3
+oscsend 127.0.0.1 8005 "/nozoid/color" iiii 255 0 0 0
+oscsend 127.0.0.1 8005 "/nozoid/color" iiii 255 0 255 1
+oscsend 127.0.0.1 8005 "/nozoid/color" iiii 0 255 0 2
+oscsend 127.0.0.1 8005 "/nozoid/color" iiii 0 0 255 3

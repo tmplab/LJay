@@ -161,7 +161,7 @@ if args.laser  != None:
 		etherIP = "192.168.1."+str(lstdgtlaser)
 
 else:
-	etherIP = "192.168.1.4"
+	etherIP = "192.168.1.3"
 
 print ("Laser 1 etherIP:",etherIP)
 
@@ -477,7 +477,7 @@ thread.start_new_thread(dac_thread0, ())
 print ""
 print "dac thread 0 with IP : ", gstt.lasersIPS[0]," and point list : ", gstt.lasersPLS[0],
 
-
+'''
 thread.start_new_thread(dac_thread1, ())
 print ""
 print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
@@ -490,7 +490,7 @@ print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.la
 thread.start_new_thread(dac_thread3, ())
 print ""
 print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
-
+'''
 
 update_screen = False
 keystates = pygame.key.get_pressed()
