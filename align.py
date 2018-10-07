@@ -58,6 +58,7 @@ def Jump(fwork):
 		
 	if gstt.keystates[pygame.K_r]:
 		gstt.centerX[gstt.Laser] -= 20
+		print "r on laser ", gstt.Laser
 		Display(fwork)
 
 	if gstt.keystates[pygame.K_t]:

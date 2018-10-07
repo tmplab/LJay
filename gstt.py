@@ -79,6 +79,7 @@ surpriseon = 50
 surprisey = -10
 surprisex = -10
 
+
 cc = [0] * 256
 lfo = [0] * 10
 osc = [0] * 255
@@ -157,7 +158,7 @@ angleX = 0
 angleY = 0
 angleZ = 0
 
-tomidi = True
+tomidi = False   # currently tomidi bypass all other directions
 todmx = False
 toled = False
 tolaser = True

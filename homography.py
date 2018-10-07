@@ -2,9 +2,18 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 # -*- mode: Python -*-
+
 '''
 
-Homography for trapezoidal correction
+LJay v0.6.2
+
+LICENCE : CC
+Sam Neurohack
+
+Homographies for align + swap corrections and warp corrections
+
+Align + swap homography if found with 4 original points and corrected coordinates
+Warp correction is disabled for the moment. Should be computed at warp edition : set 1 curve 1
 
 Use the :
 
@@ -54,8 +63,11 @@ Use the :
 
 
 import numpy as np
+import math
 from scipy.linalg import svd,lstsq
-
+import ast
+import gstt
+from globalVars import screen_size, xy_center
 
 def find(points1,points2):
 	if points1.shape[0] != points2.shape[0] : raise ValueError("The number of input and output points mismatches")
@@ -140,3 +152,51 @@ def apply(H,points):
 	pp = np.dot(p,H.T)
 	pp[:,:2]/=pp[:,2].reshape(len(p),1)
 	return pp[:,:2]
+
+# Align and axis swap corrections 
+# Reference points 
+pointsref = np.array([(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.0)])
+
+def EDpoint(mylaser,(pygamex,pygamey)):
+
+	XX = pygamex - xy_center[0]
+	YY = pygamey - xy_center[1]
+	CosANGLE = math.cos(gstt.finANGLE[mylaser])
+	SinANGLE = math.sin(gstt.finANGLE[mylaser])
+	# Multilaser style
+	x = (-xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
+	y = (-xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
+	return [x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]]
+
+
+
+
+# New total homography from always the same reference points : ED (= align + swap) transform + warp transform.
+def newEDH(mylaser):
+
+	EDpoints = []
+	for point in xrange(4):
+		EDpoints.append(EDpoint(mylaser,pointsref[point]))
+
+	# H matrix tansform pygame points in Etherdream system with align and swap correction,
+	H = find(pointsref, np.array(EDpoints))
+
+	# Hwarp matrix warp etherdream points (computed with H results) 
+	#Hwarp = homography.find(np.array(EDpoints), np.array(ast.literal_eval(gstt.warpdest[gstt.Laser])))
+
+	# EDH matrix 
+	gstt.EDH[mylaser] = H
+	# EDH matrix with warp
+	#gstt.EDH[mylaser] = np.dot(H,Hwarp)
+	
+	if gstt.debug >0:
+		print "laser ", mylaser
+		print "laser ", mylaser, "laser EDpoints :", EDpoints
+		print ""
+		print  "laser ", mylaser, "H :",H
+		print ""
+		print  "laser ", mylaser, "warpd ",ast.literal_eval(gstt.warpdest[gstt.Laser])
+		print  "laser ", mylaser, "Hwarp ", Hwarp
+		print ""
+		print  "laser ", mylaser,"new EDH :",  gstt.EDH[mylaser]
+	

@@ -10,7 +10,7 @@ Sam Neurohack, Loloster,
 
 set0 collect code examples to make your own generators that use LJay Laser management.
 
-Curve 0 : Mapping introduce an editor mode allowing to odify all points one by one.
+Curve 0 : Mapping introduce an editor mode allowing to modify all points one by one.
 Curve 1 : xPLS how to have different pointlists generators
 Curve 2 : Orbits
 Curve 3 : Dots
@@ -35,7 +35,7 @@ from datetime import datetime
 import settings
 
 
-
+'''
 # for Astro()
 from jplephem.spk import SPK
 kernel = SPK.open('de430.bsp')
@@ -46,7 +46,7 @@ gstt.day = jd.day
 gstt.JulianDate = 367 * gstt.year - 7 * (gstt.year + (gstt.month + 9)/12)/4 + 275 * gstt.month/9 + gstt.day + 1721014
 print ""
 print "For Astro(), today : ", datetime.now().strftime('%Y-%m-%d'), "is in Julian : ", gstt.JulianDate
-
+'''
 
 # For Orbits()
 import orbits
@@ -368,7 +368,8 @@ def Sine(fwork):
 
 
 # Curve 7
-
+# imports and other init values may be commented at the beginning of this file.
+# ephemerids are quite big and add other dependencies so keep commented if astro is not needed.
 def Astro(fwork):
 
     PlanetsPositions = []
@@ -415,7 +416,7 @@ def Astro(fwork):
     gstt.JulianDate +=1
 
 
-# Curve 8
+# Curve 8 : WORK IN PROGRESS
 def Text(fwork):
     
     fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
@@ -517,7 +518,6 @@ def mouth(pose_json, people):
 # best order face : face browL browr eyeR eyeL nose mouth
 
 import os 
-print "Simulator displays point list : ", gstt.simuPL
 anim = ['anim1',50,400,100,0,0,0,1]
 # Get frame number for pose path describe in gstt.PoseDir 
 def lengthPOSE(pose_dir):

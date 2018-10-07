@@ -6,9 +6,11 @@ OSC Manager
 by Sam Neurohack 
 from /team/laser
 
+- OSC server and clients for externals programs
+- Manage OSC GUI.
+
+
 """
-#chercher dans doc pyosc multiclient pour subscribe...
-# pydoc OSC
 
 
 from OSC import OSCServer, OSCClient, OSCMessage
@@ -41,10 +43,14 @@ oscIPout = ""
 #oscPORTout = 8002
 oscPORTout = gstt.oport
 
+# For Resolume Arena
 oscIPresol = "127.0.0.1"
 oscPORTresol = 7000
 	
 oscdevice = 0
+
+
+# OSC GUI see the complete in Touchosc file or simplier GUI in PD patch
 
 padrightsnotes = [0,120,104,88,72,56,40,24,56]
 
@@ -82,13 +88,22 @@ oscserver.handle_timeout = types.MethodType(handle_timeout, oscserver)
 osclient = OSCClient()
 osclientme = OSCClient()
 
-# 
-osclient3 = OSCClient()
+
+# Skeletons/templates to easily add other OSC servers.
+# As is client 3 goes to localhost 8003, client 4 to localhost 8004
+# See for example send3 function. To actually send OSC command follow :
+# bhorosc.send3(oscaddress, [arg1, arg2,...])
+# These ports are only used by nozosc.py for Nozoids semi modular synthetisers. So repurpose them as you want.
+
+osclient3 = OSCClient()     
 osclient4 = OSCClient()
 osclient5 = OSCClient()
 osclient6 = OSCClient()
 
+# Resolume Arena client.
+
 osclientresol = OSCClient()
+
 
 oscmsg = OSCMessage()
 
@@ -353,7 +368,7 @@ def noteupdate(note):
 
 	# change current laser
 	if  note > 15 and note < 24:
-		gstt.Laser = note -13
+		gstt.Laser = note -16
 		status(''.join(("New Laser : ",str(gstt.Laser))))
 		bhoreal.UpdateLine(3, gstt.Laser +1)
 

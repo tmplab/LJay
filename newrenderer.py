@@ -8,6 +8,11 @@ LJay v0.6.2
 LICENCE : CC
 Sam Neurohack, pclf
 
+
+All, but clipping (not called) these functions are now in newdac and homography.
+reimport these functions, code here is not maintaned.
+
+
 '''
 
 import globalVars
@@ -32,9 +37,9 @@ def EDpoint(mylaser,(pygamex,pygamey)):
 	CosANGLE = math.cos(gstt.finANGLE[mylaser])
 	SinANGLE = math.sin(gstt.finANGLE[mylaser])
 	# Multilaser style
-	x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
-	y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
-	return [x*1, y*1]
+	x = (-xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
+	y = (-xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
+	return [x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]]
 
 
 

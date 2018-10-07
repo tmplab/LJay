@@ -10,12 +10,12 @@ def handle():
 	argsparser = argparse.ArgumentParser(description="LJay")
 	argsparser.add_argument("-i","--iport",help="OSC port number to listen to (8001 by default)",type=int)
 	argsparser.add_argument("-o","--oport",help="OSC port number to send to (8002 by default)",type=int)
-	argsparser.add_argument("-x","--invx",help="Invert X axis",action="store_true")
-	argsparser.add_argument("-y","--invy",help="Invert Y axis",action="store_true")
+	argsparser.add_argument("-x","--invx",help="Invert X axis again",action="store_true")
+	argsparser.add_argument("-y","--invy",help="Invert Y axis again",action="store_true")
 	argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
 	argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
 	argsparser.add_argument("-r","--reset",help="Reset alignement values",action="store_true")
-	argsparser.add_argument("-d","--display",help="Point list number displayed in pygame simulator",type=int)
+	argsparser.add_argument("-d","--display",help="Point List number displayed in pygame simulator",type=int)
 	argsparser.add_argument("-v","--verbose",help="Debug mode 0,1 or 2.",type=int)
 	argsparser.add_argument("-L","--Lasers",help="Number of lasers connected.",type=int)
 
@@ -46,24 +46,24 @@ def handle():
 	# X Y inversion arguments
 	if args.invx == True:
 
-		gstt.swapx = -1 * gstt.swapx
+		gstt.swapX[0] = -1 * gstt.swapX[0]
 		gstt.centerx = 0
 		gstt.centery = 0
 		#WriteSettings()
-		print("X invertion Asked")
-		if gstt.swapx == 1:
+		print("X new invertion Asked")
+		if gstt.swapX[0] == 1:
 			print ("X not Inverted")
 		else:
 			print ("X Inverted")
 
 	if args.invy == True:
 
-		gstt.swapy = -1 * gstt.swapy
+		gstt.swapY[0] = -1 * gstt.swapY[0]
 		gstt.centerx = 0
 		gstt.centery = 0
 		#WriteSettings()
 		print("Y invertion Asked")
-		if gstt.swapy == 1:
+		if gstt.swapY[0] == 1:
 			print ("Y not Inverted")
 		else:
 			print("Y inverted")

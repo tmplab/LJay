@@ -64,26 +64,6 @@ config = ConfigParser.ConfigParser()
 config.read(gstt.ConfigName)
 
 
-if gstt.debug > 0:
-	print ""
-	print "Set : ", gstt.Set
-	print "Curve : ", gstt.Curve
-	print "Lasers number : ", gstt.LaserNumber
-	print ""
-	print "Lasers parameters..."
-	print "IPs ", gstt.lasersIPS
-	print "PLs : ", gstt.lasersPLS
-	print "center X : ", gstt.centerX
-	print "center Y : ",gstt.centerY
-	print "zoom X : ", gstt.zoomX
-	print "zoom Y : ", gstt.zoomY
-	print "size X : ", gstt.sizeX
-	print "size Y : ", gstt.sizeY
-	print "Rotation : ", gstt.finANGLE
-	print "swap X : ", gstt.swapX
-	print "swap Y : ", gstt.swapY
-	print "warpdest : ", gstt.warpdest
-
 
 # Save all points for a given "shape" (=['Windows','0']) shapecoord is a list 
 # in any section of the mapping conf file

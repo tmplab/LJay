@@ -8,7 +8,14 @@ Laser Jaying
 LICENCE : CC
 Sam Neurohack, Loloster, 
 
-Set for amiral castle
+Openpose json files animations
+
+Set for amiral castle :
+
+Curve 0 : Mapping
+Curve 1 : Pose align
+Curve 2 : Faces
+Curve 3 : Dancers
 
 '''
 
@@ -39,8 +46,8 @@ f_sine = 0
 def MappingConf(section):
     global mouse_prev, sections
 
-	print ""
-	print "For Mapping(), reading Architecture Points"
+    print ""
+    print "For Mapping(), reading Architecture Points"
     gstt.EditStep = 0
     gstt.CurrentWindow = -1
     gstt.CurrentCorner = 0
@@ -171,7 +178,7 @@ def Mapping(fwork, keystates, keystates_prev):
 
 
 
-# Curve 1
+# Curve 1 : generic pose animations
 import json
 gstt.CurrentPose = 1
 '''
@@ -381,7 +388,7 @@ def preparePOSE():
         anim[5]= lengthPOSE(anim[0])
     gstt.anims0 = anims1
 
-# display the pose animation describe in gstt.PoseDir
+# display the pose animations
 def Pose(fwork):
    
     for anim in gstt.anims0:
@@ -519,8 +526,10 @@ def prepareDANCERS():
     # total frame is fetched from directory file count
 
     gstt.anims[0] = [['1dancer',100,200,300,0,0,0,10]]
-    gstt.anims[1] = [['2dancer1',100,200,300,0,0,0,10]]
-    gstt.anims[2] = [['window1',400,200, 300,0,0,0,10]]
+    gstt.anims[1] = [['2dancer1',500,200,300,0,0,0,10]]
+    gstt.anims[2] = [['window1',100,200,300,0,0,0,10]]    
+    #gstt.anims[1] = [['2dancer1',100,200,300,0,0,0,10]]
+    #gstt.anims[2] = [['window1',400,200, 300,0,0,0,10]]
     # read anims number of frames from disk.
     print gstt.anims
 

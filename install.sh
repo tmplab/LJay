@@ -1,5 +1,4 @@
-
-
+# NOT UP TO DATE. See Readme installation chapter.
 # Install debian deps
 sudo apt install libpython-dev libjack-dev
 # Install python specific deps

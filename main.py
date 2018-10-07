@@ -20,10 +20,10 @@ import os
 import thread
 import time 
 import frame
-import renderer
+#import renderer
 import dac
 import newdac
-import newrenderer
+#import newrenderer
 import settings
 from globalVars import *
 
@@ -57,11 +57,12 @@ import midi
 
 import bhorosc
 
+import homography
 import set0
-
 import set1
 import setllstr
 import setamiral
+import setexample
 
 import orbits
 import align
@@ -89,7 +90,7 @@ settables =  {					# Set 0
         1: set1.Warp,
         2: set1.Pose,
         3: set1.LineX
-    }, {						# setllstr
+    }, {						# setllstr Set 2
         0: setllstr.NozMode,
         1: setllstr.NozMode2,
         2: setllstr.Sine,
@@ -97,11 +98,17 @@ settables =  {					# Set 0
         4: setllstr.Circle,
         5: setllstr.CC,
         6: setllstr.Slave
-    }, {                        # setamiral
+    }, {                        # setamiral Set 3
         0: setamiral.Mapping,
         1: setamiral.Pose,
         2: setamiral.Faces,
         3: setamiral.Dancers
+    }, {                        # setexample Set 4
+        0: setexample.Mapping,
+        1: setexample.Sine,
+        2: setexample.xPLS,
+        3: setexample.CC,
+        4: setexample.Text
     }
 
 # built in black dot when curve = -1. Will be called when set change.
@@ -175,8 +182,15 @@ def dac_thread2():
 def dac_thread3():
     while True:
         try:
+            # newdac style
+            d3 = newdac.DAC(3,gstt.lasersPLS[3])
+            d3.play_stream()
+
+            '''
+            dac style
             d3 = dac.DAC(3,gstt.lasersPLS[3])
             d3.play_stream(laser)
+            '''
         except Exception as e:
 
             import sys, traceback
@@ -197,7 +211,7 @@ print ""
 print "Settings require", gstt.LaserNumber, "lasers..." 
 print "Generating homographies..."
 for laser in xrange(gstt.LaserNumber):
-    newrenderer.newEDH(laser)
+    homography.newEDH(laser)
     print "laser"+str(laser)
     print gstt.EDH[laser]
 
@@ -286,7 +300,7 @@ if gstt.Set == 3 and gstt.Curve == 3:
 #set0.selectPOSE('window1')
 
 fwork_holder = frame.FrameHolder()
-laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
+#laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
 
 

@@ -8,54 +8,170 @@ LICENCE : CC BY
 
 ![LJay](http://www.teamlaser.fr/thsf/images/fulls/THSF9-33.jpg)
 
-A software for Live laser actions : choose what to display, modify parameters with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
+A software for Live laser actions with support for up to 4 lasers 
+
+Live modifications with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
 
 Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network
 
-GUIs : TouchOSC, Pure Date patch. You can build your own GUI and send commands to LJay through OSC.
+GUIs : TouchOSC, Pure Data patch. You can build your own GUI and send commands to LJay through OSC. LJay send back confirmation.
 
-Devices supported : Launchpad mini, LP8, bhoreal, gamepad, smartphone & tablet (OSC gyroscopes, GUI : TouchOSC needed) and any MIDI controller that is recognised by your OS.
+Devices supported : Launchpad mini, LP8, enttec DMX PRO, bhoreal, gamepad, smartphone & tablet (OSC gyroscopes, GUI : TouchOSC needed) and any MIDI controller that is recognised by your OS.
 
 Nozosc : Semi modular synthetizers from Nozoids can send 3 of their inner sound curves and be displayed in many ways, i.e VCO 1 on X axis and LFO 2 on Y axis.
+
+You can also send OSC commands to a video, music,... software to trigger what you want.
 
 
 To run : 
 
 python main.py 
 
--i or --iport : port number to listen to (8001 by default)
-
--o or --oport : port number to send to (8002 by default)
-
--l or --laser : Last digit of etherdream ip address 192.168.1.0/24 (4 by default)
-
-
-
+use --help for all arguments
 
 #
-# Features
+# Features among many others.
 # 
 
 (Doc in progress)
 
-- "plugins" curve generators support. 
-
-- Automatic Midi devices IN & OUT detection (must be seen by OS)
+- "plugins" "curve" generators support. 
+- Automatically hook to Midi devices IN & OUT seen by OS. Very cool : LJay can script or be scripted by a midi device : Triggering different musics at given moments,... or in opposite, you can make a midi file with an external midi sequencer to script/trigger laser effects.
 - Automatic USB enttec PRO DMX interface detection
-
+- OSC server. Very cool : LJay can also script or be scripted in OSC with an OSC sequencer like Vezer.
 - OSC to midi bridge (see /note and /cc/number)
 - OSC to DMX bridge (see /cc/number)
 - Bhoreal and Launchpad device start animation
-- Control all leds of Bhoreal and Launchpad
-- Much more Command line options : python main.py --help
-- Multi laser. 
-- A multi laser example : display solar planet position is provided see Astro() (set 0 Curve 7). You need python module jplephem and to download de430.bsp : http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
+- Control all leds of Bhoreal and Launchpad through midi.
+- Multi lasers. 
 - Interactive (mouse style) warp correction (set 1 curve 1) for each laser.
-- Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file example : set0.conf
-- rPolyline draw function with integrated rotation, projection and recenter.
-- Support openpose json ! display human skeleton animation set 0 Curve 9
-- Multiple openpose animations  
+- Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file example : setamiral.conf
+- rPolyline draw function (r stand for relative) with built in end modifications like rotation, resize, position (and projection but not yet). Points must be centered around 0,0. * Easy way to build your vizualisation : generate each part around 0,0 and use rPolyline to display it. Repeat for all your parts. *
+- Support openpose json ! display human skeleton animation see setamiral or set 0 Curve 9. Openpose data must be computed around 0,0 ()
+- Multiple openpose animations on different lasers.
+- Can control Resolume Arena video software through OSC, like : bhorosc.sendresol("/layer1/clip1/connect",1) 
+- Integrated sawtooth, sine and square generator. See set0
+- A multi laser example : display solar planet positions at anytime, see Astro() (set 0 Curve 7). As Astro is not necessary and needs a big download, to use it you need to uncomment astro init lines in set0 and follow install instructions.
 
+#
+# External devices 
+#
+
+(Doc in Progress)
+
+- LPD8 : A config file is included.
+- enttec USB pro
+- Joypads : Joypads are detected and read by pygame.
+
+
+
+#
+# Make your own set and curves.
+#
+
+(Doc in progress)
+
+Introduction :
+--------------
+
+A "Curve" is actually more a scene/mode, wich can generate different pointlists, be also interactive,...
+
+A "Set" is a collection of curves
+
+In each set, Curve 0 is reserved for interactive settings modifications i.e trapezoidal corrections,...
+
+So your Curves numbers will be 1+
+
+
+Use setexample.py (it is already imported in main.py as set number 4).
+
+Check if your set and all your curves are in settables (main.py)
+
+Use a conf file like setexample.conf, check in gstt.py if Configname use it.
+
+
+
+
+Program your own "curve" :
+-------------------------
+
+- Carefully read all comments in setexample.py
+- Generate at least one point list array (say a circle). 
+- Feed your point list array to "drawing functions" : rpolyline, polyline, line, lineto.
+- You can have several drawing functions to draw several objects in one big "Point List". It's like building a frame. 
+- Once you called all necessary drawing functions, don't forget to feed the result to arrays used by automatic lasers handling functions. If you're building big "Point List" 0 :
+
+gstt.PL[0] = fwork.LinesPL(0)
+
+- One laser takes one big "Point List". All lasers can draw the same big "Point List" or different ones, see pl in setexample.conf file. 
+- There is many other examples in set0, set1, setamiral,...
+
+
+To Launch : 
+----------
+
+- You can choose which big "Point List" the pygame simulator will show you. Use -d argument.
+- Typically to launch say the curve 1 of set 4 and simulator displaying the big "Point List" 0 :
+
+python main.py -s 4 -c 1 -d 0
+
+
+If you need to receive data externally : 
+
+use /nozoid/osc/number value : Get the new value in gstt.osc[number] (number : 0-255)
+or program your own OSC commands in bhorosc.py
+
+
+
+Joypads :
+---------
+
+You need to decide what to do with joypads axis, hat, buttons. See joypads() in setexample.py. To adapt pygame button numbers to your gamepad use :
+
+python joys.py
+
+
+
+
+"Shapes" :
+----------
+
+"Shapes" are mouse editable areas i.e you make a flipper on a building and want something happen with the building windows. "Shapes" are the list of points you see at the beginning of conf file. "Shapes" are grouped in "Screens" that will be displayed by a given laser. See curve 0 in setexample.py
+Again "Shapes" are only mousely editable list of points : you can display them or not. 
+
+
+
+#
+# Install 
+#
+
+
+(Doc in progress)
+
+If you have serial or rtmidi python module, remove them first. 
+
+pip uninstall serial 
+
+pip uninstall rtmidi
+
+
+apt install git python-pip libasound2-dev python-dev libpython-dev libjack-dev
+
+pip install pysimpledmx
+
+pip install Cython
+
+pip install mido
+
+pip install python-rtmidi tokenize
+
+pip install pygame, pyserial, pyosc
+
+# Last 2, only if you want to use Astro example.
+
+pip install jplephem
+
+wget http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
 
 
 #
@@ -64,59 +180,16 @@ python main.py
 
 (Doc in Progress)
 
-- find 3D rotations matrices and 2 projections, test speed / normal algo with algotest.py
+- Find 3D rotations matrices and 2 projections, test speed / normal algo with algotest.py
 - Smaller cpu footprint (compute only when something has changed,...)
 - kpps live modification
 - Bhoreal & LaunchPad inputs 
 - Tags for automatic laser load/ balancing
 - Texts : multilasers support, more fonts (See setai/composer )
 - New UI and simulator : web, livecode ?
-
-
-#
-# External devices 
-#
-
-(Doc in Progress)
-
-LPD8 : A config file is included.
-Joypads : Xbox style controllers. Joypads are detected and read by pygame, you need to decide what to do with joypads axis, hat, buttons. Example in set1.joypads()
-
-
-
-#
-# Make your own set.
-#
-
-(Doc in progress)
-
-A "Curve" is actually more a mode, wich can generate different pointlists, be an interactive shape modifier,...
-
-A "Set" is a collection of curves
-
-Curve 0 is reserved for interactive settings modifications i.e trapezoidal corrections,...
-
-
-
-Duplicate and rename a set file like set0.py (import it in main.py).
-
-Add your set and curves in settables (main.py)
-
-Use command line arguments (-s setnumber -c curvenumber) or modify in gstt Set and Curve.
-
-
-
-Program your own "curve" :
- 
-- Generate at least one point list array. One laser takes one "point list". Any point list can be sent to any laser (= all lasers can draw the same point list or different ones)
-- Use Laser "drawing functions" : polyline, line, lineto.
-- You can have several drawing functions to draw several objects in one point list.
-
-
-If you need to receive data externally : 
-
-use /nozoid/osc/number value : Store a new value in gstt.osc[number] (number : 0-255)
-or program your own OSC commands in bhorosc.py
+- tomidi should not disable other targets.
+- Warp corrections should not used warpdestinations default values in conf file.
+- Read and play midifile.
 
 
 
@@ -127,12 +200,12 @@ or program your own OSC commands in bhorosc.py
 # General 
 
 /noteon number velocity   
-					Note on sent to laser (see below for notes effects). Noteon can also be send to midi targets if gstt.tomidi is True.
+					Note on sent to laser (see Midi below for notes effects). Noteon can also be send to midi targets if gstt.tomidi is True, but this disable all other targets for the moment. Todo.
 
 /noteoff number 	Note off is sent only to midi targets.
 
 
-/accxyz x y z 		TouchOSC gyroscope x assigned to cc 1 and y assigned to cc 2. See below for cc effects.
+/accxyz x y z 		TouchOSC gyroscope x assigned to cc 1 and y assigned to cc 2. See Midi below for cc effects.
 
 /gyrosc/gyro x y z  Change 3D rotation angles with gyroscope float values. i.e for GyrOSC iOS app. At this time Z is ignored and Z rotation set to 0
 
@@ -281,36 +354,16 @@ Midi CC channel effects (0-127) if you use built in 3D rotation and 2D projectio
 31 		3D Rotation speed Z
 
 
-
 #
-# Install 
+# Resolume Arena commands
 #
 
+A named OSC client is built in. To send OSC commands to resolume use something like 
 
-(Doc in progress)
+bhorosc.sendresol("/layer1/clip1/connect",1) 
 
-If you have serial or rtmidi python module, remove them first. 
+Remember to specify Resolume IP and port in the beginning of bhorosc.py
 
-pip uninstall serial 
-
-pip uninstall rtmidi
-
-
-apt install git python-pip libasound2-dev python-dev libpython-dev libjack-dev
-
-pip install pysimpledmx
-
-pip install Cython
-
-pip install mido
-
-pip install python-rtmidi tokenize
-
-pip install pygame, pyserial, pyosc
-
-pip install jplephem
-
-wget http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
 
 
 
@@ -336,14 +389,14 @@ About hardware setup, especially if you have several lasers : ILDA cables are in
 
 
 #
-# Coordinates if you use the proj function
+# Coordinates if you use the proj() function
 #
 
-3D reference has 0,0,0 in the middle
+3D points (x,y,z) has *0,0,0 in the middle*
 Given a square centered around origin and size 200 (z =0 is added automatically)
 ([-200, -200, 0], [200, -200, 0], [200, 200, 0], [-200, 200, 0], [-200, -200, 0])
 
-Pygame screen points are 2D. 0,0 is top left.
+Pygame screen points are 2D. *0,0 is top left*
 with no 3D rotations + 3D -> 2D Projection  + translation to top left:
 [(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 200.0), (300.0, 400.0)]
 
@@ -353,6 +406,8 @@ Pygame points with color is fed to laser renderer
 
 
 Laser points traced
+
+Because of blanking many points are automatically added and converted in etherdream coordinates system -32765 to +32765 in x and y axis.
 
 16 (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 65280, 65280, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0), (-1500.0, 1500.0, 0, 0, 0)
 8 (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0), (1500.0, 1500.0, 65280, 65280, 0)

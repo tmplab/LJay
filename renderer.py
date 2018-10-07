@@ -1,6 +1,12 @@
 # coding=UTF-8
 
 '''
+
+NOT USED. 
+Functions moved to newrenderer.py then to newdac/homography.
+
+Left here for mono laser legacy support.
+
 Created on 25 nov. 2014
 
 @author: pclf

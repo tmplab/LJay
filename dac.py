@@ -1,3 +1,17 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+# -*- mode: Python -*-
+
+'''
+
+NOT USED. 
+Functions moved to newdac
+
+Left here for mono laser legacy support.
+
+
+'''
+
 # j4cDAC test code
 #
 # Copyright 2011 Jacob Potter

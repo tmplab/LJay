@@ -1,19 +1,21 @@
-# j4cDAC test code
-#
-# Copyright 2011 Jacob Potter
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, version 3.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# coding=UTF-8
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+# -*- mode: Python -*-
+
+'''
+LJay v0.6.2
+
+LICENCE : CC
+Sam Neurohack, pclf
+
+Unhanced version of the threaded etherdream python library from j4cDAC.
+
+Conversion in etherdream coordinates and geometric corrections 
+
+
+Call it with a laser number and which point list to draw. Etherdream IP is found in conf file for given laser number
+
+'''
 
 import socket
 import time
@@ -112,7 +114,7 @@ class DAC(object):
 
 
 	# "Laser point List" Point generator
-	# points are yielded : Getpoints() call n times OnePoint()
+	# each points is yielded : Getpoints() call n times OnePoint()
 	
 	def OnePoint(self):
 		
@@ -157,7 +159,9 @@ class DAC(object):
 	
 		c = xyc[2]
 		position = homography.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
-		return (-position[0][0], -position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+		#return (-position[0][0], -position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+		#return (gstt.swapX[self.mylaser] * position[0][0], gstt.swapY[self.mylaser] * position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+		return (position[0][0],  position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
 
 
 	'''
@@ -286,7 +290,8 @@ class DAC(object):
 
 
 			points = self.GetPoints(cap)
-			#print points
+			#if self.mylaser == 0:
+			#	print points
 			if cap < 100:
 				time.sleep(0.005)
 				cap += 150
@@ -301,7 +306,7 @@ class DAC(object):
 				self.begin(0, 25000)
 				started = 1
 
-
+# not used in LJay : etherdreams have fixed IP. See conf file
 def find_dac():
 	"""Listen for broadcast packets."""
 

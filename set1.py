@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 # -*- mode: Python -*-
 '''
-Curve 0 : Mapping introduce an editor mode allowing to odify all points one by one.
-Curve 1 : LineX
+Curve 0 : Edit shapes and geometric corrections
+Curve 1 : Warp corrections
+Curve 2 : align all poses
 '''
 
 import math
@@ -16,7 +17,8 @@ import settings
 import pygame
 import numpy as np
 import ast
-import newrenderer
+#import newrenderer
+import homography
 f_sine = 0
 
 gstt.CurrentWindow = 0
@@ -180,9 +182,13 @@ def Shapes(fwork):
 
 
 
-
 #Curve 1
 # Interactive edition for trapezoid correction 
+# Mouse to move corner position
+# E     : cycle shapes/windows 
+# Z     : next corner
+# ENTER : Display all shapes
+# A     : change Laser
 
 def Warp(fwork):
     global mouse_prev, sections, warpd
@@ -196,7 +202,7 @@ def Warp(fwork):
         warpd[gstt.CurrentCorner][1] -= (deltay *5)
 
         settings.MappingWriteSection('laser' + str(gstt.Laser),"warpdest",warpd)
-        newrenderer.newEDH(gstt.Laser)
+        homography.newEDH(gstt.Laser)
         print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, warpd
 
     # Change corner if Z key is pressed.
