@@ -26,10 +26,11 @@ gstt.CurrentCorner = 0
 gstt.EditStep = 0
 PL = gstt.Laser
 
+'''
 print "Laser ", gstt.Laser, "Warpd points ", gstt.warpdest[gstt.Laser]
 warpd = ast.literal_eval(gstt.warpdest[gstt.Laser])
 print warpd
-
+'''
 
 # Curve 0
 # Edit shapes and geometric corrections

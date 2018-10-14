@@ -119,7 +119,7 @@ def black():
     y = xy_center[1]
     dots.append(proj(int(x),int(y),0))
     dots.append(proj(int(x)+5,int(y)+5,0))
-      
+    print "black"
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
     gstt.PL[PL] = fwork.LinesPL(PL)
 
@@ -323,7 +323,7 @@ print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.la
 '''
 thread.start_new_thread(dac_thread3, ())
 print ""
-print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
+print "dac thread 3 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
 '''
 print ""
@@ -387,7 +387,9 @@ while True:
 
     # pending osc message ?
     bhorosc.osc_frame()
-
+    #print gstt.lstt[0]
+    #print "Laser 0 state ", str(gstt.lstt[0].playback_state)
+    #bhorosc.send3("/laser/0/idle", gstt.lstt[0].)
 
     fwork_holder.f = fwork
 

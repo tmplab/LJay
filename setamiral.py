@@ -525,9 +525,9 @@ def prepareDANCERS():
     # anim format (name, xpos,ypos, resize, currentframe, totalframe, count, speed)
     # total frame is fetched from directory file count
 
-    gstt.anims[0] = [['1dancer',100,200,300,0,0,0,10]]
+    gstt.anims[0] = [['1dancer',500,200,300,0,0,0,10]]
     gstt.anims[1] = [['2dancer1',500,200,300,0,0,0,10]]
-    gstt.anims[2] = [['window1',100,200,300,0,0,0,10]]    
+    gstt.anims[2] = [['window1',500,200,300,0,0,0,10]]    
     #gstt.anims[1] = [['2dancer1',100,200,300,0,0,0,10]]
     #gstt.anims[2] = [['window1',400,200, 300,0,0,0,10]]
     # read anims number of frames from disk.

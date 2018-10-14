@@ -62,7 +62,7 @@ def handle():
 		gstt.centerx = 0
 		gstt.centery = 0
 		#WriteSettings()
-		print("Y invertion Asked")
+		print("Y new invertion Asked")
 		if gstt.swapY[0] == 1:
 			print ("Y not Inverted")
 		else:

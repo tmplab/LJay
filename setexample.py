@@ -44,9 +44,8 @@ f_sine = 0
 def Sine(fwork):
     global f_sine
 
-    PL = 0
+    PL = 1
     dots = []
-    etherlaser = 2
     amp = 200
     nb_point = 40
 

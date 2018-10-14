@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>LJay</title>
+        
+        <!-- Web audio  -->
+        <script src="webcomponents-lite.js"></script>
+        <script>
+        WebAudioControlsOptions={
+          useMidi:1,
+          knobSrc:"knobs/simplegray.png",
+          knobSprites:100,
+          switchSrc:"knobs/switch_toggle.png",
+          sliderSrc:"knobs/vsliderbody.png",
+          sliderKnobsrc:"knobs/vsliderknob.png",
+        }
+        </script>
+        <script src="webaudio-controls.js"></script>
+		<link rel="stylesheet" href="ljaygrid.css" />
+		
+	    <!-- Webscoket handler -->
+		<script type="text/javascript">
+
+        var _WS = {
+        // for distant tests
+        // uri: 'ws://echo.websocket.org/',
+        // for python WSMain.py
+        uri: 'ws://localhost:9999/',
+        ws: null,
+        init : function (e) {
+          _WS.s = new WebSocket(_WS.uri);
+          _WS.s.onopen = function (e) { _WS.onOpen(e); };
+          _WS.s.onclose = function (e) { _WS.onClose(e); };
+          _WS.s.onmessage = function (e) { _WS.onMessage(e); };
+          _WS.s.onerror = function (e) { _WS.onError(e); };
+        },
+        onOpen: function () {
+          _WS.showout(_WS.uri);
+          _WS.showout('CONNECTED');
+        },
+        onClose: function () {
+          _WS.showout('DISCONNECTED');
+        },
+        onMessage: function (e) {
+          _WS.showin(e.data);
+        },
+        onError: function (e) {
+          _WS.showin('<span style="color: red;">ERROR:</span> ' + e.data);
+        },
+        showin: function (message) {
+            var p = document.createElement('p');
+            p.innerHTML = message.toString();
+            document.getElementById('showin').innerHTML="";
+            document.getElementById('showin').appendChild(p);
+          },
+        showout: function (message) {
+            var p = document.createElement('p');
+            p.innerHTML = message.toString();
+            document.getElementById('showout').innerHTML="";
+            document.getElementById('showout').appendChild(p);
+          },
+        send: function (message) {
+          if (!message.length) {
+            alert('Empty message not allowed !');
+          } else {
+            _WS.showout(message);
+            _WS.s.send(message);
+          }
+        },
+        close: function () {
+          _WS.showout('GOODBYE !');
+          _WS.s.close();
+        }
+      };
+
+      window.addEventListener('load', _WS.init, false);
+
+      </script>
+ </head>
+
+<body style="background-color:#222;">
+
+<div class="maingrid">
+ 
+  <!-- Title -->
+  <div class="mgtitle">
+  
+  	<!-- LJ Logo -->
+  	<div><img src="ljaylogo.png">
+  	</div>
+  	
+  	<!-- ON OFF button -->
+  	<div class="onoffgrid">
+  		<div class="lasertextxs">ON</div>
+  		<div><webaudio-switch id="on" height="52" width="41"  value="0" src="knobs/bigbluetoggle.png" type="toggle"></webaudio-switch></div>
+  		<div class="lasertextxs">OFF</div>
+  	</div>
+  	
+    <!-- Lasers state grid -->
+    <div class="lsttgrid">
+
+    	<div></div>
+    	<div></div>
+    	<div class="lasertextxs">S</div>
+		<div class="lasertextxs">C</div>
+		
+    	<div class="lasertextxs">0</div>
+    	<div></div>
+		<div><webaudio-knob id="0/lstt" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+		<div><webaudio-knob id="0/lack" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+
+		<div class="lasertextxs">1</div>
+    	<div></div>
+		<div><webaudio-knob id="1/lstt" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+		<div><webaudio-knob id="1/lack" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+		
+		<div class="lasertextxs">2</div>
+    	<div></div>
+		<div><webaudio-knob id="2/lstt" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+		<div><webaudio-knob id="2/lack" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+
+		
+        <div class="lasertextxs">3</div>
+    	<div></div>
+		<div><webaudio-knob id="3/lstt" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+		<div><webaudio-knob id="3/lack" src="knobs/leds.png" height="17" width="17" diameter="17" min="0" max="6" value="0" sprites="6"></webaudio-knob></div>
+    </div>
+    
+  	<div class="topgrid">
+  	    <div class="lasertext">Laser</div>
+  		<div><webaudio-knob id="noteon" src="knobs/Prophetic5.png" diameter="70" min="16" max="20" value="0" sprites="5"></webaudio-knob></div>
+  		<div><webaudio-param style="font-size:medium;" link="noteon"></webaudio-param></div>
+  		<div class="lasertext">Set</div>
+  		<div><webaudio-knob id="noteon" src="knobs/Prophetic5.png" diameter="70" min="8" max="12" value="0" sprites="5"></webaudio-knob></div>
+  		<div class="lasertext">Curve</div>
+		<div><webaudio-knob id="noteon" src="knobs/Prophetic10.png"  diameter="70" min="0" max="7" value="4" sprites="10"></webaudio-knob></div>
+  		<div class="lasertext">Simu</div>
+  		<div><webaudio-knob id="noteon" src="knobs/Prophetic5.png" diameter="70" min="24" max="28" value="0" sprites="5"></webaudio-knob></div>
+	</div>
+    <div></div>
+    <div></div>	
+  </div>
+  
+  <!-- Raw O -->
+  <div class="mgraw0">
+
+    <!-- Lasergrid 0 -->
+    <div class="lasergrid" style="background-image: url(lasergrid0.png);">
+        <div class="lasertext">kPPS</div>
+    	<div class="lasertext">Points</div>
+    	<div><webaudio-param link="0/kPPS" ></webaudio-param></div>
+       	<div><webaudio-param link="0/points"></webaudio-param></div>
+    	<div class="lasertext">Offset X</div>
+    	<div class="lasertext">Offset Y</div>
+        <div><webaudio-knob id="0/offset/X" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="0/offset/Y" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="0/offset/X" ></webaudio-param></div>
+       	<div><webaudio-param link="0/offset/Y"></webaudio-param></div>
+       	<div class="lasertext">Scale X</div>
+    	<div class="lasertext">Scale Y</div>
+        <div><webaudio-knob id="0/scale/X" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="0/scale/Y" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="0/scale/X" ></webaudio-param></div>
+       	<div><webaudio-param link="0/scale/Y"></webaudio-param></div>
+       	<div class="lasertext">Swap X</div>
+    	<div class="lasertext">Swap Y</div>
+    	<div><webaudio-switch id="0/swap/X" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+        <div><webaudio-switch id="0/swap/Y" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+    </div>
+
+    <!-- Lasergrid 1 -->
+    <div class="lasergrid" style="background-image: url(lasergrid1.png);">
+        <div class="lasertext">kPPS</div>
+    	<div class="lasertext">Points</div>
+    	<div><webaudio-param link="0/kPPS" ></webaudio-param></div>
+       	<div><webaudio-param link="0/points"></webaudio-param></div>
+    	<div class="lasertext">Offset X</div>
+    	<div class="lasertext">Offset Y</div>
+        <div><webaudio-knob id="1/offset/X" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="1/offset/Y" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="1/offset/X" ></webaudio-param></div>
+       	<div><webaudio-param link="1/offset/Y"></webaudio-param></div>
+       	<div class="lasertext">Scale X</div>
+    	<div class="lasertext">Scale Y</div>
+        <div><webaudio-knob id="1/scale/X" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="1/scale/Y" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="1/scale/X" ></webaudio-param></div>
+       	<div><webaudio-param link="1/scale/Y"></webaudio-param></div>
+       	<div class="lasertext">Swap X</div>
+    	<div class="lasertext">Swap Y</div>
+    	<div><webaudio-switch id="1/swap/X" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+        <div><webaudio-switch id="1/swap/Y" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+    </div>
+  
+    <!-- Laser 2 grid -->
+    <div class="lasergrid" style="background-image: url(lasergrid2.png)">
+        <div class="lasertext">kPPS</div>
+    	<div class="lasertext">Points</div>
+    	<div><webaudio-param link="0/kPPS" ></webaudio-param></div>
+       	<div><webaudio-param link="0/points"></webaudio-param></div>
+    	<div class="lasertext">Offset X</div>
+    	<div class="lasertext">Offset Y</div>
+        <div><webaudio-knob id="2/offset/X" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="2/offset/Y" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="2/offset/X" ></webaudio-param></div>
+       	<div><webaudio-param link="2/offset/Y"></webaudio-param></div>
+       	<div class="lasertext">Scale X</div>
+    	<div class="lasertext">Scale Y</div>
+        <div><webaudio-knob id="2/scale/X" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="2/scale/Y" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="2/scale/X" ></webaudio-param></div>
+       	<div><webaudio-param link="2/scale/Y"></webaudio-param></div>
+       	<div class="lasertext">Swap X</div>
+    	<div class="lasertext">Swap Y</div>
+    	<div><webaudio-switch id="2/swap/X" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+        <div><webaudio-switch id="2/swap/Y" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+    </div>
+    
+    <!-- Lissabox -->
+    <div class="lissabox">
+    	<div class="lasertext" style="border-color:#334;border-style: groove;border-width:1px;">LISSA</div>
+    	<div class="lissagrid">
+      		<div class="lasertext">Select X</div>
+    		<div class="lasertext">Select Y</div>
+        	<div><webaudio-knob id="cc/5" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        	<div><webaudio-knob id="cc/6" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       		<div><webaudio-param link="cc/5" ></webaudio-param></div>
+       		<div><webaudio-param link="cc/6"></webaudio-param></div>
+    		<div class="lasertext">FOV</div>
+    		<div class="lasertext">Dist</div>
+        	<div><webaudio-knob id="cc/21" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
+        	<div><webaudio-knob id="cc/22" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
+       		<div><webaudio-param link="cc/21"></webaudio-param></div>
+       		<div><webaudio-param link="cc/22"></webaudio-param></div>
+       		<div class="lasertext">Offset X</div>
+    		<div class="lasertext">Offset Y</div>
+        	<div><webaudio-knob id="cc/1" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
+        	<div><webaudio-knob id="cc/2" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
+       		<div><webaudio-param link="cc/1" ></webaudio-param></div>
+       		<div><webaudio-param link="cc/2"></webaudio-param></div>
+    	</div>
+    </div>
+    
+    <!-- 3D proj grid -->
+    <div class="projgrid">
+    	<div></div>
+    	<div class="lasertext">3D ROT</div>
+    	<div></div>
+    	<div class="lasertext">X</div>
+    	<div class="lasertext">Y</div>
+    	<div class="lasertext">Z</div>
+        <div><webaudio-knob id="cc/29" diameter="60" min="0" max="127" value="0" ></webaudio-knob></div>
+        <div><webaudio-knob id="cc/30" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="cc/31" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="cc/29" ></webaudio-param></div>
+       	<div><webaudio-param link="cc/30"></webaudio-param></div>
+       	<div><webaudio-param link="cc/31"></webaudio-param></div>
+    </div>
+    
+  </div> 
+    	
+  <!-- footer -->
+  <div class="mgfooter">
+        <div id="showin"></div>
+		<div id="showout"></div>
+    	<div id="events"</div>
+   </div> 
+ 	
+</div>
+    
+
+<!-- web audio animations -->    
+<script type="text/javascript">
+    var message="";
+    var log=[];
+    var knobs = document.getElementsByTagName('webaudio-knob');
+    for(var i = 0; i < knobs.length; i++){
+      knobs[i].addEventListener("input",Dump,false);
+      knobs[i].addEventListener("change",Dump,false);
+    }
+    var sliders = document.getElementsByTagName('webaudio-slider');
+    for(var i = 0; i < sliders.length; i++){
+      sliders[i].addEventListener("input",Dump,false);
+      sliders[i].addEventListener("change",Dump,false);
+    }
+    var switches = document.getElementsByTagName('webaudio-switch');
+    for(var i = 0; i < switches.length; i++) {
+        switches[i].addEventListener("change",Dump,false);
+    }
+    function Dump(e) {
+        var str="";
+        str=e.type + " : " + e.target.id + " : " + e.target.value + " ";
+        console.log(str);
+        log.unshift(str);
+        log.length=1;
+        str="";
+        for(var i=19;i>=0;--i) {
+            if(log[i])
+                str+=log[i]+"<br/>";
+        }
+        var evview=document.getElementById("events");
+        evview.innerHTML=str;
+        console.log(  e.type + "/" + e.target.id + "/" +  e.target.value);
+        _WS.send("/" + e.target.id + " " +  e.target.value);
+    }
+</script>
+
+</body>
+
+    <!-- non displayed items, for code reference
+        <div>
+        	<span  class="lasertext">Swap X</span>
+        	<span  class="lasertext">Swap Y</span>
+        </div>
+        <div>
+        	<webaudio-switch id="swap/X" value="0" height="76" width="76" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch>
+        	<webaudio-switch id="swap/Y" value="0" height="76" width="76" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch>
+        </div>
+
+	<div><webaudio-knob id="choice"  src="knobs/Prophet5.png" diameter="80" min="0" max="10" value="0" sprites="9"></webaudio-knob></div>
+<div><webaudio-knob id="choice2" src="knobs/Old11.png"  diameter="80" min="0" max="10" value="0" sprites="10">></webaudio-knob></div>
+<div><webaudio-knob id="laser"  src="knobs/Prophetic5.png" diameter="70" min="0" max="5" value="0" sprites="5"></webaudio-knob></div>
+
+	<div>
+    <webaudio-slider id="slider1" width="24" height="120"></webaudio-slider>
+    <webaudio-slider id="slider2" width="24" height="120"></webaudio-slider>
+    </div>
+
+    <div>
+	<webaudio-switch id="laser/0" height="64" width="25"   value="0" src="knobs/key0.png" type="toggle"></webaudio-switch>
+	<webaudio-switch id="laser/1" height="64" width="25"   value="0" src="knobs/key0.png" type="toggle"></webaudio-switch>
+	<webaudio-switch id="laser/2" height="64" width="25"  value="0" src="knobs/key0.png" type="toggle"></webaudio-switch>
+	<webaudio-switch id="laser/3" height="64" width="25" value="0" src="knobs/key0.png" type="toggle"></webaudio-switch>
+	</div>
+	-->
+	
+</html>

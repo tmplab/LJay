@@ -17,14 +17,14 @@ Laser = 0
 
 # gstt.simuPL select what point list number to display in pygame simulator
 # Can be changed with /noteon 24-31
-simuPL = 2
+simuPL = 0
 
-# gstt.laserIPS. Will be overridden by settings.conf values
+# gstt.laserIPS. Will be overridden by the ConfigName (see below) file values
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 
 
 # gstt.laserPLS : What point list is sent to what laser. 
-# ** Will be overridden by settings.conf values **
+# ** Will be overridden by the ConfigName (see below) file values **
 lasersPLS = [0,1,2,0]
 
 
@@ -35,6 +35,8 @@ PL = [[],[],[],[]]
 # Transformation Matrix for each laser 
 EDH = [[], [], [], []]
 
+# Laser states
+lstt = [[], [], [], []]
 
 
 # gstt.Set select what to Curve Set to display. 
@@ -46,7 +48,7 @@ Set = 1 #nozoid loloster.py
 # Can be changed with /noteon 0-7
 Curve = 0 #nozmod
 
-ConfigName = "setamiral.conf"
+ConfigName = "setexample.conf"
 
 maxCurvesByLaser = 4
 
@@ -71,7 +73,7 @@ point = [0,0,0]
 
 # gstt.colormode select what to display. Can be changed with /noteon 57-64
 colormode = 0
-color = [255,0,0]
+color = [0,255,0]
 newcolor = 0
 
 surpriseoff = 10

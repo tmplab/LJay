@@ -30,6 +30,7 @@ import ast
 
 import homography
 import numpy as np
+import bhorosc
 
 
 def pack_point(x, y, r, g, b, i = -1, u1 = 0, u2 = 0, flags = 0):
@@ -202,7 +203,6 @@ class DAC(object):
 		cmdR = data[1]
 		status = Status(data[2:])
 
-#		status.dump()
 
 		if cmdR != cmd:
 			raise ProtocolError("expected resp for %r, got %r"
@@ -213,6 +213,7 @@ class DAC(object):
 				% (response, ))
 
 		self.last_status = status
+		gstt.lstt[self.mylaser] = status
 		return status
 
 	def __init__(self, mylaser, PL, port = 7765):
@@ -226,7 +227,6 @@ class DAC(object):
 		self.xyrgb = self.xyrgb_prev = (0,0,0,0,0)
 		self.newstream = self.OnePoint()
 		# Reference points 
-		
 		# Read the "hello" message
 		first_status = self.readresp("?")
 		first_status.dump()
@@ -235,6 +235,8 @@ class DAC(object):
 
 	def begin(self, lwm, rate):
 		cmd = struct.pack("<cHI", "b", lwm, rate)
+		#print "Begin newdac : Laser ",  str(self.mylaser), " PL : ", str(self.PL)
+
 		self.conn.sendall(cmd)
 		return self.readresp("b")
 
@@ -255,6 +257,7 @@ class DAC(object):
 	def prepare(self):
 		self.conn.sendall("p")
 		return self.readresp("p")
+
 
 	def stop(self):
 		self.conn.sendall("s")
@@ -286,12 +289,20 @@ class DAC(object):
 			
 			#pdb.set_trace()
 			# How much room?
+
+			#bhorosc.send3("/laser/" + str(self.mylaser) + "/lastPBstate/" +str(self.last_status.playback_state), self.last_status.playback_flags)
+			#if self.last_status.playback_state == 0:
+			#	bhorosc.send3("/laser/" + str(self.mylaser) + "/idle", 1)
+
+			#bhorosc.send3("/laser/" + str(self.mylaser) + "/
+			# "LEngine : ", str(self.le_state), "LEngine flags : ", str(self.le_flags), "PB state : ", str(self.playback_state), "PB flags : ", str(self.playback_flags), "Source : ", str(self.source), "Source flags : ", str(self.source_flags)
+
 			cap = 1799 - self.last_status.fullness
-
-
 			points = self.GetPoints(cap)
+
+
 			#if self.mylaser == 0:
-			#	print points
+			#print self.mylaser, cap
 			if cap < 100:
 				time.sleep(0.005)
 				cap += 150

@@ -146,7 +146,7 @@ def sendme(oscaddress,oscargs):
     #time.sleep(0.001)
    
 # send3(oscaddress, [arg1, arg2,...])
-osclient3.connect((oscIPin, 8003)) 
+osclient3.connect(("127.0.0.1", 8003)) 
 def send3(oscaddress,oscargs):
         
     oscmsg = OSCMessage()
@@ -321,13 +321,14 @@ def osc_frame():
 # /noteon number velocity
 def noteon(path, tags, args, source):
     user = ''.join(path.split("/"))
-    print ""
-    print path,args
+    #print ""
+    #print path,args
     #print "note : ", args[0]
     #print "velocity : 127"
+    #print "gstt.tomidi", str(gstt.tomidi)
     
     if gstt.tomidi and args[0] > 11:
-    	print "Sending to midi devices"
+    	print "Note on sending to midi devices"
         midi.NoteOn(int(args[0]),64)
 
     else:
@@ -357,7 +358,7 @@ def noteupdate(note):
 	if note < 8:
 		gstt.Curve = note
 		status(''.join(("New Curve : ",str(gstt.Curve))))
-		bhoreal.UpdateLine(1,gstt.Curve+1)
+		#bhoreal.UpdateLine(1,gstt.Curve+1)
 	
 	# change Set. Use black curve waiting for new Curve
 	if note > 7 and note < 16:
@@ -375,7 +376,7 @@ def noteupdate(note):
 	# change current simulator PL
 	if  note > 23 and note < 32:
 		gstt.simuPL = note - 24
-		status(''.join(("New Simu PL : ",str(gstt.SimuPL))))
+		status(''.join(("New Simu PL : ",str(gstt.simuPL))))
 		bhoreal.UpdateLine(4, gstt.simuPL +1)
 
 	if note == 57 or note == 58:
@@ -582,7 +583,7 @@ def handler(path, tags, args, source):
 	pathlength = len(oscpath)
 	#print ""
 	#print "default handler"
-	#print path, oscpath, args
+	print path, oscpath, args
 
 
 	# /control/matrix/Y/X 0 or 1

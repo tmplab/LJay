@@ -12,7 +12,7 @@ A software for Live laser actions with support for up to 4 lasers
 
 Live modifications with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
 
-Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network
+Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network (gigabits, no wifi, 100 mpbs doesn't work well with several lasers)
 
 GUIs : TouchOSC, Pure Data patch. You can build your own GUI and send commands to LJay through OSC. LJay send back confirmation.
 
@@ -326,6 +326,7 @@ Midi Note :
 
 16-23 	Laser choice 
 
+24-31   SimuPL choice
 
 57 		Color mode : Rainbow 
 
@@ -338,14 +339,15 @@ Midi CC channel effects (0-127) if you use built in 3D rotation and 2D projectio
 
 2	  Y position 
 
-5 
+5 	  X select
 
-6 
+6 	  Y select
 
 
 21 		3D projection : FOV
 
 22 		3D projection : Distance
+
 
 29 		3D Rotation speed X
 

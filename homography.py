@@ -195,8 +195,8 @@ def newEDH(mylaser):
 		print ""
 		print  "laser ", mylaser, "H :",H
 		print ""
-		print  "laser ", mylaser, "warpd ",ast.literal_eval(gstt.warpdest[gstt.Laser])
-		print  "laser ", mylaser, "Hwarp ", Hwarp
-		print ""
+		#print  "laser ", mylaser, "warpd ",ast.literal_eval(gstt.warpdest[gstt.Laser])
+		#print  "laser ", mylaser, "Hwarp ", Hwarp
+		#print ""
 		print  "laser ", mylaser,"new EDH :",  gstt.EDH[mylaser]
 	
