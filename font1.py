@@ -5,14 +5,6 @@ Created on 23 janv. 3016
 @author: Sam Neurohack
 '''
 
-import gstt
-import vectors
-from globalVars import *
-
-ZOOM_PLAYING = .5
-ZOOM_GAMEOVER = 5.0
-DZOOM_PLAYING = -.4
-DZOOM_GAMEOVER = .1
 
 # Finalement, on implémente le score ici
 ASCII_GRAPHICS = [
@@ -109,68 +101,3 @@ ASCII_GRAPHICS = [
 
 	[[(-2,15), (2,15)]]															# Point a la place de {
 ]
-
-class Text(object):
-	'''
-	classdocs
-	'''
-
-	def __init__(self):
-		'''
-		Constructor
-		'''
-		self.value = ""
-		self.zoom = ZOOM_TITLE
-		
-	def Reset(self):
-		self.value = ""
-	
-	def ZoomIn(self):
-		self.zoom += DZOOM_GAMEOVER
-		if self.zoom > ZOOM_GAMEOVER:
-			self.zoom = ZOOM_GAMEOVER
-	
-	def ZoomOut(self):
-		self.zoom += DZOOM_PLAYING
-		if self.zoom < ZOOM_PLAYING:
-			self.zoom = ZOOM_PLAYING
-
-	def ZoomReset(self):
-		self.zoom = ZOOM_PLAYING
-		
-	def Draw(self, f):
-		message = gstt.tmessage
-		self.DrawChars(f, message)
-		#print message
-	
-	def DrawChars(self,f , chars):
-		#TODO : gérer correctement les coordonnées
-		l = len(chars)
-		i= 0
-		#print chars
-		
-		#f.LineTo((title_pos[0],title_pos[1]), 0x80000000)
-		for ch in chars:
-			i +=1
-			#print ch
-			#print i
-			
-			# texte centre en x automatiquement selon le nombre de lettres l
-			x_offset = 26 * (- (0.9*l) + 3*i)
-			#print x_offset
-			
-			# texte en y selon text_pos dans globalVars
-			
-			digit_pl_list = ASCII_GRAPHICS[ord(ch) - 47]
-			
-			for pl in digit_pl_list:
-				pl_draw = []
-				for xy in pl:
-					xy_draw = vectors.Vector2D(text_pos[0],text_pos[1]) + vectors.Vector2D(xy[0] + x_offset,xy[1]) * self.zoom
-					pl_draw.append(xy_draw.ToTuple())
-					
-				f.PolyLineOneColor(pl_draw, 0xFFFFFF)
-		
-		
-		
-		

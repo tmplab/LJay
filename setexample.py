@@ -14,7 +14,7 @@ Curve 0 : Warp correction mode and "shapes" editor mode allowing to modify all p
 Curve 1 : Sin Simple Lissajoux goes to Point List 0
 Curve 2 : xPLS how to have different Point List generators to feed different lasers.
 Curve 3 : CC how to use live inputs coming from midi.
-Curve 4 : Text. Not working, work in progress.
+Curve 4 : Text. Example for rPolyline function
 
 '''
 
@@ -29,6 +29,7 @@ import pdb
 import time
 from datetime import datetime
 import settings
+import font1
 
 
 # For Mapping()
@@ -57,7 +58,6 @@ def Sine(fwork):
 
     fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  PL, closed = False)
     
-
     # after all frame components are sent :
     gstt.PL[PL] = fwork.LinesPL(PL)
     
@@ -88,9 +88,6 @@ def xPLS(fwork):
     # after all needed PolyLineOneColor :
     gstt.PL[PL] = fwork.LinesPL(PL)
        
-
-
-
     # PL 1 generator (assigned to laser 1 in setexample.conf)
     # middle vertical line
 
@@ -109,7 +106,6 @@ def xPLS(fwork):
     gstt.PL[PL] = fwork.LinesPL(PL)
     
   
-
     # PL 2 generator (assigned to laser 2 in setexample.conf
     # Some Lissajoux function.
     PL = 2
@@ -147,21 +143,36 @@ def CC(fwork):
         dots.append(proj(int(x),int(y),0))
 
     # These points are generated in pygame coordinates space (0,0 is top left) defined by screen_size in globalVars.py
-        
     fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
-
-    # you can also generate points around 0,0 and the use rPolyLineOneColor function like :
-    # fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 400, ypos = 300, resize = 50)
-    # Here the dots list will be displayed at 400,400 and resized size 50 times.
 
     gstt.PL[PL] = fwork.LinesPL(PL)
 
 
 
-# Curve 4 WORK IN PROGRESS
+# Curve 4 Text display. 
+# Example for rPolyline function
 def Text(fwork):
-    
-    fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
+
+    gstt.message = "Hello"
+    message = gstt.message
+    PL =0
+    len_message = len(message)
+    i= 0
+    for char in message:
+        i +=1
+        # x offset for each letter depends on message length
+        x_offset = 26 * (- (0.9 * len_message) + 3*i)
+        char_dots = font1.ASCII_GRAPHICS[ord(char) - 47]
+
+        for dot_pl in char_dots:
+            dots = []
+            for dot in dot_pl:
+                dots.append((x_offset+dot[0],dot[1]))
+				
+            fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 200, ypos = 200, resize = 1)
+	
+    # Works with points generated around 0,0
+    # Here the dots list will be displayed from 200,200 and resized 1 times.	
 
 
 #
