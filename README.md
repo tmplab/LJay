@@ -219,7 +219,29 @@ wget http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
 
 /quit : 			Do nothing yet
 
+
 /display/PL	number	Select what point list (PL) is displayed by simulator
+
+
+/swap/X/lasernumber value (0 or 1) 
+					switch on and off general X inversion on given laser
+	
+/swap/Y/lasernumber value (0 or 1) 
+					switch on and off general Y inversion on given laser
+
+
+/loffset/X/lasernumber value
+					Move X center on given laser of value pixels
+
+/loffset/Y/lasernumber value
+					Move Y center on given laser of value pixels
+
+
+/scale/X/lasernumber value
+					stretch laser display of given laser of value
+
+/scale/Y/lasernumber value
+					stretch laser display of given laser of value
 
 
 # Colors 

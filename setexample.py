@@ -101,6 +101,8 @@ def xPLS(fwork):
     y = (int(screen_size[1])/2) -50
     dots.append((int(x),int(y)))
     dots.append((int(x),(int(screen_size[1])/2)+50))
+ 
+    # one polyline but you can stack them with a list of dots for each one
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
  
     # after all needed PolyLineOneColor are sent :
@@ -150,7 +152,7 @@ def CC(fwork):
 
     # you can also generate points around 0,0 and the use rPolyLineOneColor function like :
     # fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 400, ypos = 300, resize = 50)
-
+    # Here the dots list will be displayed at 400,400 and resized size 50 times.
 
     gstt.PL[PL] = fwork.LinesPL(PL)
 
@@ -162,6 +164,9 @@ def Text(fwork):
     fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
 
 
+#
+# Some usefull functions 
+#
 
 # examples to generate arrays of different types i.e for Lissajoux point lists generators.
 def ssawtooth(samples,freq,phase):
@@ -186,7 +191,239 @@ def ssine(samples,freq,phase):
 	return samparray
 
 
+# Remap values in different scales i.e CC value in screen position.
+def cc2scrX(s):
+    a1, a2 = 0,127  
+    b1, b2 = -screen_size[0]/2, screen_size[0]/2
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+def cc2scrY(s):
+    a1, a2 = 0,127  
+    b1, b2 = -screen_size[1]/2, screen_size[1]/2
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+def cc2range(s,min,max):
+    a1, a2 = 0,127  
+    b1, b2 = min, max
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+def extracc2scrX(s):
+    a1, a2 = -66000,66000  
+    b1, b2 = 0, screen_size[0]
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+def extracc2scrY(s):
+    a1, a2 = -66000,66000 
+    b1, b2 = 0, screen_size[1]
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+def extracc2range(s,min,max):
+    a1, a2 = -66000,66000  
+    b1, b2 = min, max
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
+
+# Live 3D rotation and 2D projection for a given 3D point
+def proj(x,y,z):
+
+    # Skip trigo update if angleX didn't change 
+    # TODO : gstt.prev_cc29 == -1 is useful only the first time to create cosa and sina values
+
+    if gstt.prev_cc29 != gstt.cc[29] or gstt.prev_cc29 == -1: 
+        gstt.angleX += cc2range(gstt.cc[29],0,0.1)    
+        rad = gstt.angleX * PI / 180
+        cosaX = math.cos(rad)
+        sinaX = math.sin(rad)
+        prev_cc29 = gstt.cc[29]
+
+    y2 = y
+    y = y2 * cosaX - z * sinaX
+    z = y2 * sinaX + z * cosaX
+
+    # Skip trigo update if angleY didn't change 
+    if gstt.prev_cc30 != gstt.cc[30]: 
+        gstt.angleY += cc2range(gstt.cc[30],0,0.1)
+        rad = gstt.angleY * PI / 180
+        cosaY = math.cos(rad)
+        sinaY = math.sin(rad)
+        prev_cc30 = gstt.cc[30]
+
+    z2 = z
+    z = z2 * cosaY - x * sinaY
+    x = z2 * sinaY + x * cosaY
+
+
+    # Skip trigo update if angleZ didn't change 
+    if gstt.prev_cc31 != gstt.cc[31]: 
+        gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
+        rad = gstt.angleZ * PI / 180
+        cosZ = math.cos(rad)
+        sinZ = math.sin(rad)
+        
+    x2 = x
+    x = x2 * cosZ - y * sinZ
+    y = x2 * sinZ + y * cosZ
+
+    # 3D to 2D projection
+    factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
+    x = x * factor + xy_center [0] 
+    y = - y * factor + xy_center [1] 
+    
+    return x,y
+
+# For reference how to use joypads. See readme file too.
+# put joypads states in gstt.cc values and use these ones in dots generation.
+def joypads():
+
+    if gstt.Nbpads > 0:
+        
+        # Champi gauche
+        # Move center on X axis according to pad
+        if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
+            gstt.cc[1] += gstt.pad1.get_axis(2) * 2
+
+        # Move center on Y axis according to pad
+        if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
+            gstt.cc[2] += gstt.pad1.get_axis(3) * 2
+
+        # Champi droite
+        '''
+        # Change FOV according to joypad
+        if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
+            gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
+
+        # Change dist according to pad
+        if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
+            gstt.cc[22] += gstt.pad1.get_axis(1) * 2
+        ''' 
+        # "1" pygame 0
+        # "2" pygame 1
+        # "3" pygame 2
+        # "4" pygame 3
+        # "L1" pygame 4
+        # "L2" pygame 6
+        # "R1" pygame 5
+        # "R2" pygame 7
+            
+        # Hat gauche gstt.pad1.get_hat(0)[0] = -1
+        # Hat droit  gstt.pad1.get_hat(0)[0] = 1
+
+        # Hat bas gstt.pad1.get_hat(0)[1] = -1
+        # Hat haut  gstt.pad1.get_hat(0)[1] = 1
+        
+                
+        #Bouton "3" 1 : surprise ON
+        
+        if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
+            gstt.surprise = 1
+            gstt.cc[21] = 21    #FOV
+            gstt.cc[22] = gstt.surpriseon   #Distance
+            gstt.cc[2] +=  gstt.surprisey
+            gstt.cc[1] +=  gstt.surprisex
+            print "Surprise ON"
+        
+        #Bouton "3" 0 : surprise OFF
+        
+        if gstt.pad1.get_button(2) == 0:
+            gstt.surprise = 0
+            gstt.cc[21] = 21    #FOV
+            gstt.cc[22] = gstt.surpriseoff  #Distance
+            
+        #Bouton "4". cycle couleur
+        
+        #if gstt.pad1.get_button(3) == 1:
+        #   print "3", str(gstt.pad1.get_button(3))
+        '''
+        if gstt.pad1.get_button(3) == 1:
+            newcolor = random.randint(0,2)
+            print newcolor
+            
+            if gstt.color[newcolor] == 0:
+                gstt.color[newcolor] = 1
+                
+            else:
+                gstt.color[newcolor] = 0
+                
+            print "Newcolor  : ",str(gstt.newcolor), " ", str(gstt.color[newcolor])
+        
+        '''
+                
+        '''
+        #Bouton "3" : diminue Vitesse des planetes
+        if gstt.pad1.get_button(2) == 1:
+            print "2", str(gstt.pad1.get_button(2))
+        if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
+            gstt.cc[5] -=1
+            print "X Curve : ",str(gstt.cc[5])
+            
+            
+        #Bouton "1" : augmente Vitesse des planetes
+        if gstt.pad1.get_button(0) == 1:
+            print "0", str(gstt.pad1.get_button(0))
+        if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
+            gstt.cc[5] +=1
+            print "X Curve : ",str(gstt.cc[5])
+            
+            
+        #Bouton "4". diminue Nombre de planetes
+        if gstt.pad1.get_button(3) == 1:
+            print "3", str(gstt.pad1.get_button(3))
+        if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
+            gstt.cc[6] -=1
+            print "Y Curve : ",str(gstt.cc[6])
+        
+        
+        
+        #Bouton "2" augmente Nombre de planetes
+        if gstt.pad1.get_button(1) == 1:
+            print "1", str(gstt.pad1.get_button(1))
+        if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
+            gstt.cc[6] +=1
+            print "Y Curve : ",str(gstt.cc[6])
+        
+        '''
+
+
+        # Hat bas : diminue Vitesse des planetes
+        #if gstt.pad1.get_hat(0)[1] == -1:
+            #print "2", str(gstt.pad1.get_hat(0)[1])
+        if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
+            gstt.cc[5] -=1
+            print "X Curve/vitesse planete : ",str(gstt.cc[5])
+            
+            
+        #Hat haut : augmente Vitesse des planetes
+        #if gstt.pad1.get_hat(0)[1] == 1:
+            #print "0", str(gstt.pad1.get_hat(0)[1])
+        if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
+            gstt.cc[5] +=1
+            print "X Curve/Vitesse planete : ",str(gstt.cc[5])
+            
+            
+        # hat Gauche. diminue Nombre de planetes
+        #if gstt.pad1.get_hat(0)[0] == -1:
+            #print "3", str(gstt.pad1.get_hat(0)[0])
+        if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
+            gstt.cc[6] -=1
+            print "Y Curve/ nombre planete : ",str(gstt.cc[6])
+        
+        
+        
+        # hat droit augmente Nombre de planetes
+        #if gstt.pad1.get_hat(0)[0] == 1:
+            #print "1", str(gstt.pad1.get_hat(0)[0])
+        if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
+            gstt.cc[6] +=1
+            print "Y Curve/nb de planetes : ",str(gstt.cc[6])
+        
+        #print "hat : ", str(gstt.pad1.get_hat(0)[1])
+
+        
+
 # Curve 0
+# 
+# See Readme for "windows" and shapes" concepts,..
+#
 # Warp Mode / Edit shape mode 
 # Interactive edition of shapes corners
 # E     : Edit mode : cycle shapes/windows 
@@ -348,233 +585,4 @@ def Mapping(fwork, keystates, keystates_prev):
         gstt.PL[PL] = fwork.LinesPL(PL)
 
         mouse_prev = gstt.mouse
-
-
-# Remap values in different scales i.e CC value in screen position.
-def cc2scrX(s):
-    a1, a2 = 0,127  
-    b1, b2 = -screen_size[0]/2, screen_size[0]/2
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def cc2scrY(s):
-    a1, a2 = 0,127  
-    b1, b2 = -screen_size[1]/2, screen_size[1]/2
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def cc2range(s,min,max):
-    a1, a2 = 0,127  
-    b1, b2 = min, max
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def extracc2scrX(s):
-    a1, a2 = -66000,66000  
-    b1, b2 = 0, screen_size[0]
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def extracc2scrY(s):
-    a1, a2 = -66000,66000 
-    b1, b2 = 0, screen_size[1]
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-def extracc2range(s,min,max):
-    a1, a2 = -66000,66000  
-    b1, b2 = min, max
-    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
-
-
-# Live 3D rotation and 2D projection for a given 3D point
-def proj(x,y,z):
-
-    # Skip trigo update if angleX didn't change 
-    # TODO : gstt.prev_cc29 == -1 is useful only the first time to create cosa and sina values
-
-    if gstt.prev_cc29 != gstt.cc[29] or gstt.prev_cc29 == -1: 
-        gstt.angleX += cc2range(gstt.cc[29],0,0.1)    
-        rad = gstt.angleX * PI / 180
-        cosaX = math.cos(rad)
-        sinaX = math.sin(rad)
-        prev_cc29 = gstt.cc[29]
-
-    y2 = y
-    y = y2 * cosaX - z * sinaX
-    z = y2 * sinaX + z * cosaX
-
-    # Skip trigo update if angleY didn't change 
-    if gstt.prev_cc30 != gstt.cc[30]: 
-        gstt.angleY += cc2range(gstt.cc[30],0,0.1)
-        rad = gstt.angleY * PI / 180
-        cosaY = math.cos(rad)
-        sinaY = math.sin(rad)
-        prev_cc30 = gstt.cc[30]
-
-    z2 = z
-    z = z2 * cosaY - x * sinaY
-    x = z2 * sinaY + x * cosaY
-
-
-    # Skip trigo update if angleZ didn't change 
-    if gstt.prev_cc31 != gstt.cc[31]: 
-        gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
-        rad = gstt.angleZ * PI / 180
-        cosZ = math.cos(rad)
-        sinZ = math.sin(rad)
-        
-    x2 = x
-    x = x2 * cosZ - y * sinZ
-    y = x2 * sinZ + y * cosZ
-
-    # 3D to 2D projection
-    factor = 4 * gstt.cc[22] / ((gstt.cc[21] * 8) + z)
-    x = x * factor + xy_center [0] 
-    y = - y * factor + xy_center [1] 
-    
-    return x,y
-
-
-def joypads():
-
-    if gstt.Nbpads > 0:
-        
-        # Champi gauche
-        # Move center on X axis according to pad
-        if gstt.pad1.get_axis(2)<-0.1 or gstt.pad1.get_axis(2)>0.1:
-            gstt.cc[1] += gstt.pad1.get_axis(2) * 2
-
-        # Move center on Y axis according to pad
-        if gstt.pad1.get_axis(3)<-0.1 or gstt.pad1.get_axis(3)>0.1:
-            gstt.cc[2] += gstt.pad1.get_axis(3) * 2
-
-        # Champi droite
-        '''
-        # Change FOV according to joypad
-        if gstt.pad1.get_axis(0)<-0.1 or gstt.pad1.get_axis(0)>0.1:
-            gstt.cc[21] += -gstt.pad1.get_axis(0) * 2
-
-        # Change dist according to pad
-        if gstt.pad1.get_axis(1)<-0.1 or gstt.pad1.get_axis(1)>0.1:
-            gstt.cc[22] += gstt.pad1.get_axis(1) * 2
-        ''' 
-        # "1" pygame 0
-        # "2" pygame 1
-        # "3" pygame 2
-        # "4" pygame 3
-        # "L1" pygame 4
-        # "L2" pygame 6
-        # "R1" pygame 5
-        # "R2" pygame 7
-            
-        # Hat gauche gstt.pad1.get_hat(0)[0] = -1
-        # Hat droit  gstt.pad1.get_hat(0)[0] = 1
-
-        # Hat bas gstt.pad1.get_hat(0)[1] = -1
-        # Hat haut  gstt.pad1.get_hat(0)[1] = 1
-        
-                
-        #Bouton "3" 1 : surprise ON
-        
-        if gstt.pad1.get_button(2) == 1 and gstt.surprise == 0:
-            gstt.surprise = 1
-            gstt.cc[21] = 21    #FOV
-            gstt.cc[22] = gstt.surpriseon   #Distance
-            gstt.cc[2] +=  gstt.surprisey
-            gstt.cc[1] +=  gstt.surprisex
-            print "Surprise ON"
-        
-        #Bouton "3" 0 : surprise OFF
-        
-        if gstt.pad1.get_button(2) == 0:
-            gstt.surprise = 0
-            gstt.cc[21] = 21    #FOV
-            gstt.cc[22] = gstt.surpriseoff  #Distance
-            
-        #Bouton "4". cycle couleur
-        
-        #if gstt.pad1.get_button(3) == 1:
-        #   print "3", str(gstt.pad1.get_button(3))
-        '''
-        if gstt.pad1.get_button(3) == 1:
-            newcolor = random.randint(0,2)
-            print newcolor
-            
-            if gstt.color[newcolor] == 0:
-                gstt.color[newcolor] = 1
-                
-            else:
-                gstt.color[newcolor] = 0
-                
-            print "Newcolor  : ",str(gstt.newcolor), " ", str(gstt.color[newcolor])
-        
-        '''
-                
-        '''
-        #Bouton "3" : diminue Vitesse des planetes
-        if gstt.pad1.get_button(2) == 1:
-            print "2", str(gstt.pad1.get_button(2))
-        if gstt.pad1.get_button(2) == 1 and gstt.cc[5] > 2:
-            gstt.cc[5] -=1
-            print "X Curve : ",str(gstt.cc[5])
-            
-            
-        #Bouton "1" : augmente Vitesse des planetes
-        if gstt.pad1.get_button(0) == 1:
-            print "0", str(gstt.pad1.get_button(0))
-        if gstt.pad1.get_button(0) == 1 and gstt.cc[5] < 125:
-            gstt.cc[5] +=1
-            print "X Curve : ",str(gstt.cc[5])
-            
-            
-        #Bouton "4". diminue Nombre de planetes
-        if gstt.pad1.get_button(3) == 1:
-            print "3", str(gstt.pad1.get_button(3))
-        if gstt.pad1.get_button(3) == 1 and gstt.cc[6] > 2:
-            gstt.cc[6] -=1
-            print "Y Curve : ",str(gstt.cc[6])
-        
-        
-        
-        #Bouton "2" augmente Nombre de planetes
-        if gstt.pad1.get_button(1) == 1:
-            print "1", str(gstt.pad1.get_button(1))
-        if gstt.pad1.get_button(1) == 1 and gstt.cc[6] < 125:
-            gstt.cc[6] +=1
-            print "Y Curve : ",str(gstt.cc[6])
-        
-        '''
-
-
-        # Hat bas : diminue Vitesse des planetes
-        #if gstt.pad1.get_hat(0)[1] == -1:
-            #print "2", str(gstt.pad1.get_hat(0)[1])
-        if gstt.pad1.get_hat(0)[1] == -1 and gstt.cc[5] > 2:
-            gstt.cc[5] -=1
-            print "X Curve/vitesse planete : ",str(gstt.cc[5])
-            
-            
-        #Hat haut : augmente Vitesse des planetes
-        #if gstt.pad1.get_hat(0)[1] == 1:
-            #print "0", str(gstt.pad1.get_hat(0)[1])
-        if gstt.pad1.get_hat(0)[1] == 1 and gstt.cc[5] < 125:
-            gstt.cc[5] +=1
-            print "X Curve/Vitesse planete : ",str(gstt.cc[5])
-            
-            
-        # hat Gauche. diminue Nombre de planetes
-        #if gstt.pad1.get_hat(0)[0] == -1:
-            #print "3", str(gstt.pad1.get_hat(0)[0])
-        if gstt.pad1.get_hat(0)[0] == -1 and gstt.cc[6] > 2:
-            gstt.cc[6] -=1
-            print "Y Curve/ nombre planete : ",str(gstt.cc[6])
-        
-        
-        
-        # hat droit augmente Nombre de planetes
-        #if gstt.pad1.get_hat(0)[0] == 1:
-            #print "1", str(gstt.pad1.get_hat(0)[0])
-        if gstt.pad1.get_hat(0)[0] == 1 and gstt.cc[6] < 125:
-            gstt.cc[6] +=1
-            print "Y Curve/nb de planetes : ",str(gstt.cc[6])
-        
-        #print "hat : ", str(gstt.pad1.get_hat(0)[1])
-
-        
 

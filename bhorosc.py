@@ -391,6 +391,7 @@ def ccupdate(cc,value):
 
  	gstt.cc[cc]=value
 
+
 # /gyrosc/gyro x y z 
 def gyro(path, tags, args, source):
     user = ''.join(path.split("/"))
@@ -445,6 +446,8 @@ def point(path, tags, args, source):
     
     #print gstt.point[0],gstt.point[1],gstt.point[2]
 
+
+		
 # 
 # Nozosc commands for Nozoids synthetizer
 #
@@ -745,6 +748,54 @@ def handler(path, tags, args, source):
 		status("Blue Off")	
 	#print gstt.color		
 
+
+#
+# Lasers Swap, loffset and scale
+#
+
+	# /swap/X/lasernumber value (0 or 1) 
+	if oscpath[1] == "swap" and oscpath[2] == "X":
+	
+		if args[0] == 0:
+			print "swap X : -1 for laser ", oscpath[3]
+			gstt.swapX[int(oscpath[3])]= -1
+		else:
+			print "swap X : 1 for laser ",  oscpath[3]
+			gstt.swapX[int(oscpath[3])]= 1
+
+	# /swap/Y/lasernumber value (0 or 1) 
+	if oscpath[1] == "swap" and oscpath[2] == "X":
+		if args[0] == 0:
+			print "swap Y : -1 for laser ",  oscpath[3]
+			gstt.swapY[int(oscpath[3])]= -1
+		else:
+			print "swap Y : 1 for laser ",  oscpath[3]
+			gstt.swapY[int(oscpath[3])]= 1
+
+
+	# /loffset/X/lasernumber value
+	if oscpath[1] == "loffset" and oscpath[2] == "X":
+		print "offset/X laser ", oscpath[3], "modified : ",  args[0]
+		gstt.centerX[int(oscpath[3])] -=  int(args[0])
+
+	# /loffset/Y/lasernumber value
+	if oscpath[1] == "loffset" and oscpath[2] == "Y":
+		print "offset/Y laser ", oscpath[3], "modified : ",  args[0]
+		gstt.centerY[int(oscpath[3])] -=  int(args[0])
+
+
+	# /scale/X/lasernumber value
+	if oscpath[1] == "scale" and oscpath[2] == "X":
+		print "scale/X laser ", oscpath[3] , "modified : ",  args[0]
+		gstt.zoomX[int(oscpath[3])] += int(args[0])
+
+	# /scale/Y/lasernumber value
+	if oscpath[1] == "scale" and oscpath[2] == "Y":
+		print "scale/Y laser ",  oscpath[3], "modified : ",  args[0]
+		gstt.zoomY[int(oscpath[3])] += int(args[0])
+		
+		
+		
 	# 
 	# Nozoids
 	# 
@@ -912,7 +963,9 @@ def controlmatrixhandler(x,y,args):
 		if line3 =="Lissa":
 			gstt.Mode = 1
 		if line3 =="Kepler":
-			gstt.Mode = 2  			
+			gstt.Mode = 2  		
+			
+
 					
 # Display control matrix
 
@@ -1075,9 +1128,6 @@ oscserver.addMsgHandler( "/gyrosc/gyro", gyro )
 oscserver.addMsgHandler( "/point", point )
 oscserver.addMsgHandler( "/accxyz", accxyztouchosc )
 accxyztouchosc
-oscserver.addMsgHandler( "/display/PL", display )
-
-
 oscserver.addMsgHandler( "/nozoid/X", nozX )
 oscserver.addMsgHandler( "/nozoid/Y", nozY )
 oscserver.addMsgHandler( "/nozoid/color", nozcolor )
