@@ -30,7 +30,6 @@ import ast
 
 import homography
 import numpy as np
-import bhorosc
 
 
 def pack_point(x, y, r, g, b, i = -1, u1 = 0, u2 = 0, flags = 0):
@@ -152,10 +151,12 @@ class DAC(object):
 	
 
 		d = [self.newstream.next() for i in xrange(n)]
+		#print d
 		return d
 
 
 	# Etherpoint all transform in one matrix, with warp !!
+	# xyc : x y color
 	def EtherPoint(self,xyc):
 	
 		c = xyc[2]
@@ -200,6 +201,8 @@ class DAC(object):
 		"""Read a response from the DAC."""
 		data = self.read(22)
 		response = data[0]
+		#print "laser response", self.mylaser, response
+		gstt.lstt_dacanswers[self.mylaser] = response
 		cmdR = data[1]
 		status = Status(data[2:])
 
@@ -213,19 +216,27 @@ class DAC(object):
 				% (response, ))
 
 		self.last_status = status
-		gstt.lstt[self.mylaser] = status
 		return status
 
 	def __init__(self, mylaser, PL, port = 7765):
 		"""Connect to the DAC over TCP."""
-		conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		conn.connect((gstt.lasersIPS[mylaser], port))
-		self.conn = conn
+		socket.setdefaulttimeout(2)
+		#print "init"
+		self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.connstatus = self.conn.connect_ex((gstt.lasersIPS[mylaser], port))
+		#print "Connection status : ", self.connstatus
+		# ipconn state is -1 at startup (see gstt) and modified here
+		gstt.lstt_ipconn[mylaser] =  self.connstatus
 		self.buf = ""
 		self.PL = PL
 		self.mylaser = mylaser
 		self.xyrgb = self.xyrgb_prev = (0,0,0,0,0)
 		self.newstream = self.OnePoint()
+		if self.connstatus != 0 and gstt.debug > 0:
+			print ""
+			print "ERROR connection with laser :", str(mylaser),str(gstt.lasersIPS[mylaser])
+			print "first 10 points in PL",self.PL, self.GetPoints(10)
+
 		# Reference points 
 		# Read the "hello" message
 		first_status = self.readresp("?")
@@ -278,6 +289,8 @@ class DAC(object):
 	def play_stream(self):
 
 		# First, prepare the stream
+		# print last playbaxk state
+		#print "Pb : ",self.last_status.playback_state
 		if self.last_status.playback_state == 2:
 			raise Exception("already playing?!")
 		elif self.last_status.playback_state == 0:
@@ -286,16 +299,10 @@ class DAC(object):
 		started = 0
 
 		while True:
-			
-			#pdb.set_trace()
+
+			gstt.lstt_dacstt[self.mylaser] = self.last_status.playback_state
+			# pdb.set_trace()
 			# How much room?
-
-			#bhorosc.send3("/laser/" + str(self.mylaser) + "/lastPBstate/" +str(self.last_status.playback_state), self.last_status.playback_flags)
-			#if self.last_status.playback_state == 0:
-			#	bhorosc.send3("/laser/" + str(self.mylaser) + "/idle", 1)
-
-			#bhorosc.send3("/laser/" + str(self.mylaser) + "/
-			# "LEngine : ", str(self.le_state), "LEngine flags : ", str(self.le_flags), "PB state : ", str(self.playback_state), "PB flags : ", str(self.playback_flags), "Source : ", str(self.source), "Source flags : ", str(self.source_flags)
 
 			cap = 1799 - self.last_status.fullness
 			points = self.GetPoints(cap)
@@ -330,5 +337,3 @@ def find_dac():
 		
 		print "Packet from %s: " % (addr, )
 		bp.dump()
-
-

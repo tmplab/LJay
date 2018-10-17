@@ -45,7 +45,7 @@ f_sine = 0
 def Sine(fwork):
     global f_sine
 
-    PL = 1
+    PL = 0
     dots = []
     amp = 200
     nb_point = 40
@@ -168,18 +168,20 @@ def Text(fwork):
             dots = []
             for dot in dot_pl:
                 dots.append((x_offset+dot[0],dot[1]))
-				
+
             fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 200, ypos = 200, resize = 1)
-	
+        #gstt.PL[PL] = fwork.LinesPL(PL)
     # Works with points generated around 0,0
     # Here the dots list will be displayed from 200,200 and resized 1 times.	
+    gstt.PL[PL] = fwork.LinesPL(PL)
+    
 
 
 #
-# Some usefull functions 
+# Some usefull functions used or as reference
 #
 
-# examples to generate arrays of different types i.e for Lissajoux point lists generators.
+# examples to generate arrays of different types i.e for Lissajoux point lists generators. 
 def ssawtooth(samples,freq,phase):
 
 	t = np.linspace(0+phase, 1+phase, samples)
@@ -283,7 +285,7 @@ def proj(x,y,z):
     return x,y
 
 # For reference how to use joypads. See readme file too.
-# put joypads states in gstt.cc values and use these ones in dots generation.
+# put joypads states you need in gstt.cc values and use these ones in your curve dot generation.
 def joypads():
 
     if gstt.Nbpads > 0:

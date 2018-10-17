@@ -30,7 +30,7 @@ def Write():
 		config.set(laser, 'finangle', str(gstt.finANGLE[i]))
 		config.set(laser, 'swapx', str(gstt.swapX[i]))
 		config.set(laser, 'swapy', str(gstt.swapY[i]))
-		config.set(laser, 'warpdest', str(gstt.warpdest[i]))
+		#config.set(laser, 'warpdest', str(gstt.warpdest[i]))
 
 	config.write(open(gstt.ConfigName,'w'))
 
@@ -56,7 +56,7 @@ def Read():
 		gstt.finANGLE[i] = config.getfloat(laser, 'finangle')
 		gstt.swapX[i] = config.getint(laser, 'swapx')
 		gstt.swapY[i] = config.getint(laser, 'swapy')
-		gstt.warpdest[i]= config.get(laser, 'warpdest')
+		#gstt.warpdest[i]= config.get(laser, 'warpdest')
 
 
 

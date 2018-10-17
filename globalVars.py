@@ -1,13 +1,13 @@
 # coding=UTF-8
 
 # from globalVars import * : seulement des pseudo-constantes
+# Need huge clean up.
+# Stays for backward compatibility
+
 from math import pi
 PI = pi
 
-# If you don't have an ether dream connected use localhost.
-# etherIP="localhost"
-
-# Enter here your ether dream IP
+# Pretty old. Overriden by IPs in conf file now.
 #etherIP="192.168.1.4"
 etherIP="192.168.1.4"
 #etherIP="192.168.1.1"
@@ -41,18 +41,6 @@ GAME_FS_PLAY = 1
 GAME_FS_GAMEOVER = 2
 
 
-'''
-LASER_CENTER_X = 2360
-LASER_CENTER_Y = 12901
-LASER_ZOOM_X = -35.5
-LASER_ZOOM_Y = - 33.2
-LASER_SIZE_X = 25000
-LASER_SIZE_Y = 25000
-LASER_ANGLE = 0
-
-#-16040,11781,-26.2,-20.6,25000,25000
-#etherIP="192.168.1.6"
-'''
 LASER_CENTER_X = -6840
 LASER_CENTER_Y = 5281
 LASER_ZOOM_X = -41.7
@@ -60,33 +48,7 @@ LASER_ZOOM_Y = -38.8
 LASER_SIZE_X = 32000
 LASER_SIZE_Y = 32000
 LASER_ANGLE = 0
-'''
 
-LASER_CENTER_X = -16000
-LASER_CENTER_Y = 11780
-LASER_ZOOM_X = -26
-LASER_ZOOM_Y = -20
-LASER_SIZE_X = 25000
-LASER_SIZE_Y = 25000
-LASER_ANGLE = 0
-
-LASER_CENTER_X = 0
-LASER_CENTER_Y = 1
-LASER_ZOOM_X = -56
-LASER_ZOOM_Y = -71
-LASER_SIZE_X = 25000
-LASER_SIZE_Y = 25000
-LASER_ANGLE = 0
-
-LASER_CENTER_X = 5400
-LASER_CENTER_Y = -9000
-LASER_ZOOM_X = 23
-LASER_ZOOM_Y = 40
-LASER_SIZE_X = 25000
-LASER_SIZE_Y = 25000
-
-ER_ANGLE = 0
-'''
 
 NO_BGM = False
 #NO_BGM = True

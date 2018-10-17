@@ -147,6 +147,7 @@ def find_affine(points1,points2):
 	return H
 
 def apply(H,points):
+
 	p = np.ones((len(points),3),'float64')
 	p[:,:2] = points
 	pp = np.dot(p,H.T)
@@ -159,16 +160,37 @@ pointsref = np.array([(300.0, 400.0), (500.0, 400.0), (500.0, 200.0), (300.0, 20
 
 def EDpoint(mylaser,(pygamex,pygamey)):
 
+	#print "current point : ", pygamex, pygamey
 	XX = pygamex - xy_center[0]
 	YY = pygamey - xy_center[1]
 	CosANGLE = math.cos(gstt.finANGLE[mylaser])
 	SinANGLE = math.sin(gstt.finANGLE[mylaser])
 	# Multilaser style
-	x = (-xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
-	y = (-xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
+	x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
+	y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
+	'''
+	print "global center :", xy_center
+	print "centers : ", gstt.centerX[mylaser], gstt.centerY[mylaser]
+	print "swaps : ", (gstt.swapX[mylaser]), str(gstt.swapY[mylaser])
+	print "zooms : ", gstt.zoomX[mylaser], gstt.zoomY[mylaser]
+	print "angles : ", gstt.finANGLE[mylaser]
+	print "result : ", x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]
+	'''
 	return [x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]]
 
+'''
+def EDpoint((pygamex,pygamey)):
 
+    XX = pygamex - xy_center[0]
+    YY = pygamey - xy_center[1]
+    CosANGLE = math.cos(finangle)
+    SinANGLE = math.sin(finangle)
+    # Multilaser style
+    x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * zoomx + centerx
+    y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * zoomy + centery
+        
+    return [x*1, y*1]
+'''
 
 
 # New total homography from always the same reference points : ED (= align + swap) transform + warp transform.
@@ -189,14 +211,14 @@ def newEDH(mylaser):
 	# EDH matrix with warp
 	#gstt.EDH[mylaser] = np.dot(H,Hwarp)
 	
-	if gstt.debug >0:
+	if gstt.debug >1:
+		print ""
 		print "laser ", mylaser
-		print "laser ", mylaser, "laser EDpoints :", EDpoints
-		print ""
-		print  "laser ", mylaser, "H :",H
-		print ""
+		print "reference points", pointsref
+		print "laser EDpoints :", EDpoints
+		print  "H :",H
 		#print  "laser ", mylaser, "warpd ",ast.literal_eval(gstt.warpdest[gstt.Laser])
 		#print  "laser ", mylaser, "Hwarp ", Hwarp
 		#print ""
-		print  "laser ", mylaser,"new EDH :",  gstt.EDH[mylaser]
+		print  "new EDH :",  gstt.EDH[mylaser]
 	

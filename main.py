@@ -11,7 +11,7 @@ Sam Neurohack, Loloster,
 
 '''
 #from __future__ import print_function 
-import pygame
+
 import math
 import random
 import itertools
@@ -19,8 +19,18 @@ import sys
 import os
 import thread
 import time 
+
+print ""
+print "LJay"
+print ""
+print "Autoconfiguring..."
+print ""
+
 import frame
 #import renderer
+
+
+import pygame
 import dac
 import newdac
 #import newrenderer
@@ -32,23 +42,19 @@ import cli
 import colorify
 import pdb
 
-print ""
-print "LJay"
-print ""
-print "Autoconfiguring..."
-
-print ""
-if gstt.debug == 0:
-	print "NO DEBUG"
-else:
-	print "DEBUG : ", gstt.debug
-
-
 settings.Read()
 
 cli.handle()
 
 settings.Write()
+
+print ""
+if gstt.debug == 0:
+    print "NO DEBUG"
+else:
+    print "DEBUG : ", gstt.debug
+
+
 
 #raw_input("Hit Enter To Continue!")
 #print "Simulator displays point list : ", str(gstt.simuPL)
@@ -121,6 +127,7 @@ def black():
     dots.append(proj(int(x)+5,int(y)+5,0))
     print "black"
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
+
     gstt.PL[PL] = fwork.LinesPL(PL)
 
        
@@ -212,15 +219,12 @@ print "Settings require", gstt.LaserNumber, "lasers..."
 print "Generating homographies..."
 for laser in xrange(gstt.LaserNumber):
     homography.newEDH(laser)
-    print "laser"+str(laser)
-    print gstt.EDH[laser]
 
-# Ping check if debug > 0
-if gstt.debug > 0:
+# Ping check if debug > 1
+if gstt.debug > 1:
 	for lasercheck in xrange(gstt.LaserNumber):
 
 		print ""
-
 		print "Checking... ", gstt.lasersIPS[lasercheck]
 		if os.system("ping -c 1 -i 0.5 -q  " + gstt.lasersIPS[lasercheck]) != 0:
 			print ""
@@ -231,7 +235,9 @@ if gstt.debug > 0:
 
 
 else:
-	print "Checking is available with debug mode : -v 1 or 2"
+    print ""
+    print "Display newdac points without etherdreams with debug mode -v 1 or 2"
+    print "Pinging etherdreams is available with debug mode : -v 2"
 
 print ""
 
@@ -310,15 +316,21 @@ thread.start_new_thread(dac_thread0, ())
 print ""
 print "dac thread 0 with IP : ", gstt.lasersIPS[0]," and point list : ", gstt.lasersPLS[0],
 
+if gstt.LaserNumber > 1:
+    thread.start_new_thread(dac_thread1, ())
+    print ""
+    print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
 
-thread.start_new_thread(dac_thread1, ())
-print ""
-print "dac thread 1 with IP : ", gstt.lasersIPS[1]," and point list : ", gstt.lasersPLS[1],
+if gstt.LaserNumber > 2:
+    thread.start_new_thread(dac_thread2, ())
+    print ""
+    print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
 
+if gstt.LaserNumber > 3:
+    thread.start_new_thread(dac_thread3, ())
+    print ""
+    print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
-thread.start_new_thread(dac_thread2, ())
-print ""
-print "dac thread 2 with IP : ", gstt.lasersIPS[2]," and point list : ", gstt.lasersPLS[2],
 
 '''
 thread.start_new_thread(dac_thread3, ())
@@ -387,10 +399,40 @@ while True:
 
     # pending osc message ?
     bhorosc.osc_frame()
-    #print gstt.lstt[0]
+    #print gstt.lstt_ipconn
+
+    # update GUI with dac status
+    
+    for laserid in range(0,gstt.LaserNumber):
+
+        if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
+            bhorosc.sendosc("/lstt/" + str(laserid), 3)
+        if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
+            bhorosc.sendosc("/lstt/" + str(laserid), 2)
+        if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
+            bhorosc.sendosc("/lstt/" + str(laserid), 1)
+
+        if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
+            bhorosc.sendosc("/lack/" + str(laserid), 6)
+        if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
+            bhorosc.sendosc("/lack/" + str(laserid), 5)
+        if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
+            bhorosc.sendosc("/lack/" + str(laserid), 4)
+
+        if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
+            bhorosc.sendosc("/lstt/" + str(laserid), 6)    
+            bhorosc.sendosc("/lack/" + str(laserid), 6)
+
+
+    #if self.last_status.playback_state == 0:
+    #   bhorosc.send3("/laser/" + str(self.mylaser) + "/idle", 1)
+
+    #bhorosc.send3("/laser/" + str(self.mylaser) + "/
+    # "LEngine : ", str(self.le_state), "LEngine flags : ", str(self.le_flags), "PB state : ", str(self.playback_state), "PB flags : ", str(self.playback_flags), "Source : ", str(self.source), "Source flags : ", str(self.source_flags)
+
     #print "Laser 0 state ", str(gstt.lstt[0].playback_state)
     #bhorosc.send3("/laser/0/idle", gstt.lstt[0].)
-
+    
     fwork_holder.f = fwork
 
     if update_screen:

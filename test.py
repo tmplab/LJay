@@ -245,6 +245,7 @@ finangle = 0.0
 swapx = 1
 swapy = 1
 
+print xy_center
 
 def EDpoint((pygamex,pygamey)):
 
@@ -269,6 +270,7 @@ EDH = [[], [], [], []]
 # New total homography from always the same reference points : ED transform + warp transform.
 def newEDH():
 
+    print "pointsref : ",pointsref
 
     EDpoints = []
     for point in xrange(4):
@@ -282,7 +284,7 @@ def newEDH():
     print ""
     print "H :",H
 
-
+    '''
     # Hwarp matrix warp etherdream points (computed with H) 
     Hwarp = homography.find(np.array(EDpoints), np.array(gstt.warpdest[gstt.Laser]))
     print ""
@@ -293,7 +295,9 @@ def newEDH():
     
     # EDH matrix 
     EDH[gstt.Laser] = np.dot(H,Hwarp)
+    '''
     print ""
+    EDH[gstt.Laser] = H
     print "new EDH :",  EDH[gstt.Laser]
 
 

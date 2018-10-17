@@ -13,6 +13,8 @@ from /team/laser
 from OSC import OSCServer, OSCClient, OSCMessage
 import socket
 import types
+from WSEncoder import *
+from WSServer import *
 
 # Server : relay OSC message from Bhorosc outport 8002 to UI
 #oscIPin = "192.168.1.10"
@@ -40,6 +42,8 @@ osclientme = OSCClient()
 oscmsg = OSCMessage()
 osclientme.connect((oscIPout, oscPORTout)) 
 
+#_WSEncoder = WSEncoder()
+#_WSServer = WSServer()
 
 # send UI string as OSC message to Bhorosc 8001
 # sendme(oscaddress, [arg1, arg2,...])
@@ -69,13 +73,23 @@ def handler(path, tags, args, source):
     print "default handler"
     print path, oscpath, args
 
-
-    # /cc/number value
-    if oscpath[1] == "cc":
+    # /lstt/number value
+    if oscpath[1] == "lstt":
+        print "lstt"
+        '''
+        bytes = myWSEncoder.text(path)
+        myWSServer.send(bytes)
+        #self._WSClient._WSServer.send(bytes)
+        # test ping/pong
+        #self.ping()
+        '''
+    '''
+    # /lstt/number value
+    if oscpath[1] == "lstt":
         number = int(oscpath[2])
         value = int(args[0])
         gstt.cc[number] = value
-
+    '''
 
 
 # RAW OSC Frame available ? 

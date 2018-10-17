@@ -116,8 +116,8 @@ def sendosc(oscaddress,oscargs):
     oscmsg = OSCMessage()
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
-    
-    print "sending : ",oscmsg
+    if gstt.debug >0:
+        print "sending : ",oscmsg
     try:
         osclient.sendto(oscmsg, (oscIPout, oscPORTout))
         oscmsg.clearData()
@@ -135,8 +135,8 @@ def sendme(oscaddress,oscargs):
     oscmsg = OSCMessage()
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
-    
-    print "sending me: ",oscmsg
+    if gstt.debug >0:    
+        print "sending me: ",oscmsg
     try:
         osclientme.sendto(oscmsg, (oscIPin, oscPORTin))
         oscmsg.clearData()
@@ -152,8 +152,8 @@ def send3(oscaddress,oscargs):
     oscmsg = OSCMessage()
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
-    
-    #print "sending to 3 : ",oscmsg
+    if gstt.debug >0: 
+        print "sending to 3 : ",oscmsg
     try:
         osclient3.sendto(oscmsg, (oscIPin, 8003))
         oscmsg.clearData()
@@ -170,7 +170,8 @@ def send4(oscaddress,oscargs):
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
     
-    print "sending to 4 : ",oscmsg
+    if gstt.debug >0: 
+        print "sending to 4 : ",oscmsg
     try:
         osclient4.sendto(oscmsg, (oscIPin, 8004))
         oscmsg.clearData()
@@ -188,7 +189,8 @@ def send5(oscaddress,oscargs):
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
     
-    print "sending to 5 : ",oscmsg
+    if gstt.debug >0:
+        print "sending to 5 : ",oscmsg
     try:
         osclient5.sendto(oscmsg, (oscIPin, 8005))
         oscmsg.clearData()
@@ -206,7 +208,8 @@ def send6(oscaddress,oscargs):
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
     
-    print "sending to 6 : ",oscmsg
+    if gstt.debug >0:
+        print "sending to 6 : ",oscmsg
     try:
         osclient6.sendto(oscmsg, (oscIPin, 8006))
         oscmsg.clearData()
@@ -225,7 +228,8 @@ def sendresol(oscaddress,oscargs):
     oscmsg.setAddress(oscaddress)
     oscmsg.append(oscargs)
     
-    print "sending to Resolume : ",oscmsg
+    if gstt.debug >0:
+        print "sending to Resolume : ",oscmsg
     try:
         osclientresol.sendto(oscmsg, (oscIPresol, oscPORTresol))
         oscmsg.clearData()
@@ -756,7 +760,7 @@ def handler(path, tags, args, source):
 	# /swap/X/lasernumber value (0 or 1) 
 	if oscpath[1] == "swap" and oscpath[2] == "X":
 	
-		if args[0] == 0:
+		if args[0] == "0":
 			print "swap X : -1 for laser ", oscpath[3]
 			gstt.swapX[int(oscpath[3])]= -1
 		else:
@@ -764,14 +768,13 @@ def handler(path, tags, args, source):
 			gstt.swapX[int(oscpath[3])]= 1
 
 	# /swap/Y/lasernumber value (0 or 1) 
-	if oscpath[1] == "swap" and oscpath[2] == "X":
-		if args[0] == 0:
+	if oscpath[1] == "swap" and oscpath[2] == "Y":
+		if args[0] == "0":
 			print "swap Y : -1 for laser ",  oscpath[3]
 			gstt.swapY[int(oscpath[3])]= -1
 		else:
 			print "swap Y : 1 for laser ",  oscpath[3]
 			gstt.swapY[int(oscpath[3])]= 1
-
 
 	# /loffset/X/lasernumber value
 	if oscpath[1] == "loffset" and oscpath[2] == "X":
@@ -1064,6 +1067,34 @@ def display(path, tags, args, source):
     status(''.join(("Simu point list : ", str(args[0]))))
 
 
+def lstates(path, tags, args, source):
+    print "sending lasers states to UI"
+    #gstt.Curve   
+    #status(''.join(("/noteon ", str(gstt.Curve))))
+
+
+    # update GUI with dac status
+    for laserid in range(0,gstt.LaserNumber):
+
+        if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
+            bhorosc.sendosc("/lstt/" + str(laserid), 3)
+        if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
+            bhorosc.sendosc("/lstt/" + str(laserid), 2)
+        if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
+            bhorosc.sendosc("/lstt/" + str(laserid), 1)
+
+        if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
+            bhorosc.sendosc("/lack/" + str(laserid), 6)
+        if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
+            bhorosc.sendosc("/lack/" + str(laserid), 5)
+        if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
+            bhorosc.sendosc("/lack/" + str(laserid), 4)
+
+        if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
+            bhorosc.sendosc("/lstt/" + str(laserid), 6)    
+            bhorosc.sendosc("/lack/" + str(laserid), 6)
+
+
 
 #
 # with AI OSC commands
@@ -1146,6 +1177,7 @@ oscserver.addMsgHandler( "/led/xy", ledxy )
 oscserver.addMsgHandler( "/xy", xy )
 oscserver.addMsgHandler( "/allcolorbhor", allcolorbhor )
 oscserver.addMsgHandler( "/clsbhor", clsbhor)
+oscserver.addMsgHandler( "/lstates", lstates)
 
 
 

@@ -61,6 +61,7 @@ class WSServer:
 		self.listening = True
 		while self.listening:
 
+			print "listening"
 			conn, addr = self.s.accept()
 			print 'New client host/address:', addr
 			if len(self.clients) == maxclients:

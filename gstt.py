@@ -36,8 +36,16 @@ PL = [[],[],[],[]]
 EDH = [[], [], [], []]
 
 # Laser states
-lstt = [[], [], [], []]
+# ipconn is initial newdac to its etherdream
+lstt_ipconn = [[-1], [-1], [-1], [-1]]
+# dacstt is dac light engine state
+lstt_dacstt = [[-1], [-1], [-1], [-1]]
+# store last dac answers ACK, not ACK 
+lstt_dacanswers = [[-1], [-1], [-1], [-1]]
 
+
+swapX = [1,1,1,-1]
+swapY = [1,1,1,-1]
 
 # gstt.Set select what to Curve Set to display. 
 # Can be changed with /noteon 8-15
@@ -192,14 +200,14 @@ zoomY = [LASER_ZOOM_Y, LASER_ZOOM_Y, LASER_ZOOM_Y, LASER_ZOOM_Y]
 sizeX = [LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X]
 sizeY = [LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y]
 finANGLE = [LASER_ANGLE, LASER_ANGLE, LASER_ANGLE, LASER_ANGLE]
-swapX = [-1,1,1,1]
-swapY = [-1,1,1,1]
+
+'''
 warpdest = [[[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
 [[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
 [[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
 [[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]]
 ]
-
+'''
 # Etat global général
 app_path = ""
 

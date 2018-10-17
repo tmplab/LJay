@@ -257,7 +257,7 @@ def OutConfig():
 def InConfig():
 
     print("")
-    print("")
+    print("Exploring Midi configuration...")
     print("MIDIin...")
     print("List and attach to available devices on host with OUT port :")
     if  platform == 'darwin':
