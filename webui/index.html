@@ -24,10 +24,7 @@
 		<script type="text/javascript">
 
         var _WS = {
-        // for distant tests
-        // uri: 'ws://echo.websocket.org/',
-        // for python WSMain.py
-        uri: 'ws://localhost:9999/',
+        uri: 'ws://localhost:9001/',
         ws: null,
         init : function (e) {
           _WS.s = new WebSocket(_WS.uri);
@@ -44,6 +41,13 @@
           _WS.showout('DISCONNECTED');
         },
         onMessage: function (e) {
+          var res = e.data.split(" ");
+          console.log(e.data)
+          if (res[0] === "/status") {
+              _WS.showstatus(e.data.slice(8));
+              } else {
+              document.getElementById(res[0].slice(1)).value = res[1];
+              }
           _WS.showin(e.data);
         },
         onError: function (e) {
@@ -60,6 +64,12 @@
             p.innerHTML = message.toString();
             document.getElementById('showout').innerHTML="";
             document.getElementById('showout').appendChild(p);
+          },
+        showstatus: function (message) {
+            var p = document.createElement('p');
+            p.innerHTML = message.toString();
+            document.getElementById('showstatus').innerHTML="";
+            document.getElementById('showstatus').appendChild(p);
           },
         send: function (message) {
           if (!message.length) {
@@ -262,7 +272,14 @@
     </div>
     
   </div> 
-    	
+    
+  <!-- status -->
+  <div class="mgstatus">
+		<div></div>
+		<div id="showstatus">DISCONNECTED</div>
+    	<div></div>
+   </div> 
+ 		
   <!-- footer -->
   <div class="mgfooter">
         <div id="showin"></div>

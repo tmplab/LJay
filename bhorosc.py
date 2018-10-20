@@ -285,7 +285,7 @@ def on(path, tags, args, source):
     sendosc("/rot/y", 0)
     sendosc("/rot/z", 0)
         
-    status("MController ON")
+    status("LJay control ON")
     currentmatrix = 1
     matrixledsoff()
     displaymatrix(1)
@@ -298,7 +298,7 @@ def off(path, tags, args, source):
     user = ''.join(path.split("/"))
     sendosc("/off", 1)
     sendosc("/on", 0)
-    status("MController OFF")
+    status("LJay control OFF")
     oscdevice = 0
 
 
@@ -1077,22 +1077,22 @@ def lstates(path, tags, args, source):
     for laserid in range(0,gstt.LaserNumber):
 
         if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
-            bhorosc.sendosc("/lstt/" + str(laserid), 3)
+            sendosc("/lstt/" + str(laserid), 3)
         if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
-            bhorosc.sendosc("/lstt/" + str(laserid), 2)
+            sendosc("/lstt/" + str(laserid), 2)
         if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
-            bhorosc.sendosc("/lstt/" + str(laserid), 1)
+            sendosc("/lstt/" + str(laserid), 1)
 
         if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
-            bhorosc.sendosc("/lack/" + str(laserid), 6)
+            sendosc("/lack/" + str(laserid), 6)
         if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
-            bhorosc.sendosc("/lack/" + str(laserid), 5)
+            sendosc("/lack/" + str(laserid), 5)
         if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
-            bhorosc.sendosc("/lack/" + str(laserid), 4)
+            sendosc("/lack/" + str(laserid), 4)
 
         if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
-            bhorosc.sendosc("/lstt/" + str(laserid), 6)    
-            bhorosc.sendosc("/lack/" + str(laserid), 6)
+            sendosc("/lstt/" + str(laserid), 6)    
+            sendosc("/lack/" + str(laserid), 6)
 
 
 

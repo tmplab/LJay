@@ -165,14 +165,14 @@ def MidinProcess(inqueue):
         # Note On
         if msg[0]==NOTE_ON:
             NoteOn(msg[1],msg[2])
-            if bhorosc.device == 1:
+            if bhorosc.oscdevice == 1:
                 bhorosc.status(''.join(("note ",msg[1]," to ",msg[2])))
                 
         # Note Off
         if msg[0]==NOTE_OFF:
             print "noteoff"
             NoteOff(msg[1],msg[2])
-            if bhorosc.device == 1:
+            if bhorosc.oscdevice == 1:
                 bhorosc.status(''.join(("note ",msg[1]," to ",msg[2])))
                 
         # other midi message          
@@ -183,7 +183,7 @@ def MidinProcess(inqueue):
         if msg[0] != NOTE_OFF and  msg[0] != NOTE_ON:
 
             MidiMsg(msg[0],msg[1],msg[2])
-            if bhorosc.device == 1:
+            if bhorosc.oscdevice == 1:
                 bhorosc.status(''.join(("msg : ",msg[0],"  ",msg[1],"  ",msg[2])))
 
        

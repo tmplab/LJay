@@ -75,7 +75,7 @@ def StartBhoreal(port):
 
 
 def UpdateLine(line,newval):
-    if bhorosc.device == 1:
+    if bhorosc.oscdevice == 1:
         for led in range(8):
             NoteOffXY(led,line)
     

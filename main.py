@@ -308,7 +308,7 @@ if gstt.Set == 3 and gstt.Curve == 3:
 fwork_holder = frame.FrameHolder()
 #laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
 
-
+print gstt.LaserNumber
 
 # Start Dac threads
 
@@ -401,37 +401,39 @@ while True:
     bhorosc.osc_frame()
     #print gstt.lstt_ipconn
 
-    # update GUI with dac status
     
-    for laserid in range(0,gstt.LaserNumber):
+    # update GUI with dac status
+    if bhorosc.oscdevice == 1:
+        for laserid in range(0,gstt.LaserNumber):			# Laser not used -> led is not lit
 
-        if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
-            bhorosc.sendosc("/lstt/" + str(laserid), 3)
-        if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
-            bhorosc.sendosc("/lstt/" + str(laserid), 2)
-        if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
-            bhorosc.sendosc("/lstt/" + str(laserid), 1)
+            if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
+               bhorosc.sendosc("/lstt/" + str(laserid), 3)
+            if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
+               bhorosc.sendosc("/lstt/" + str(laserid), 2)
+            if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
+               bhorosc.sendosc("/lstt/" + str(laserid), 1)
 
-        if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
-            bhorosc.sendosc("/lack/" + str(laserid), 6)
-        if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
-            bhorosc.sendosc("/lack/" + str(laserid), 5)
-        if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
-            bhorosc.sendosc("/lack/" + str(laserid), 4)
+            if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
+               bhorosc.sendosc("/lack/" + str(laserid), 6)
+            if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
+               bhorosc.sendosc("/lack/" + str(laserid), 5)
+            if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
+               bhorosc.sendosc("/lack/" + str(laserid), 4)
 
-        if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
-            bhorosc.sendosc("/lstt/" + str(laserid), 6)    
-            bhorosc.sendosc("/lack/" + str(laserid), 6)
+            if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
+               bhorosc.sendosc("/lstt/" + str(laserid), 6)    
+               bhorosc.sendosc("/lack/" + str(laserid), 6)
 
 
-    #if self.last_status.playback_state == 0:
-    #   bhorosc.send3("/laser/" + str(self.mylaser) + "/idle", 1)
+    	#if self.last_status.playback_state == 0:
+    	#   bhorosc.send3("/laser/" + str(self.mylaser) + "/idle", 1)
 
-    #bhorosc.send3("/laser/" + str(self.mylaser) + "/
-    # "LEngine : ", str(self.le_state), "LEngine flags : ", str(self.le_flags), "PB state : ", str(self.playback_state), "PB flags : ", str(self.playback_flags), "Source : ", str(self.source), "Source flags : ", str(self.source_flags)
+    	#bhorosc.send3("/laser/" + str(self.mylaser) + "/
+    	# "LEngine : ", str(self.le_state), "LEngine flags : ", str(self.le_flags), "PB state : ", str(self.playback_state), "PB flags : ", str(self.playback_flags), "Source : ", str(self.source), "Source flags : ", str(self.source_flags)
 
-    #print "Laser 0 state ", str(gstt.lstt[0].playback_state)
-    #bhorosc.send3("/laser/0/idle", gstt.lstt[0].)
+    	#print "Laser 0 state ", str(gstt.lstt[0].playback_state)
+        #bhorosc.send3("/laser/0/idle", gstt.lstt[0].)
+    
     
     fwork_holder.f = fwork
 
