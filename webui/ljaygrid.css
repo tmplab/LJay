@@ -19,10 +19,30 @@
   border-style: groove;
   border-width: 1px;
 }
-.mgraw0 {
+.mgalign {
   display: grid;
-  height: 366px;
-  grid-template-columns: 138px 138px 138px 138px 200px 10px;
+  height: 400px;
+  grid-template-columns: 138px 138px 138px 138px 10px;
+  grid-template-rows: 1Fr;
+  background-color: #151515;
+  border-color: #445;
+  border-style: groove;
+  border-width: 1px;
+}
+.mgcanvas {
+  display: none;
+  height: 400px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1Fr;
+  background-color: #151515;
+  border-color: #445;
+  border-style: groove;
+  border-width: 1px;
+}
+.mglive {
+  display: none;
+  height: 400px;
+  grid-template-columns: 138px 138px 512px 1Fr;
   grid-template-rows: 1Fr;
   background-color: #151515;
   border-color: #445;
@@ -31,8 +51,8 @@
 }
 .mgstatus {
   display: grid;  
-  grid-template-columns: 1fr  1fr 1fr;
-  grid-template-raw: 1fr
+  grid-template-columns: 250px 150px 1fr;
+  grid-template-raw: 20px;
   grid-column-gap: 1px;
   grid-row-gap: 1px;
   border-color: #334;
@@ -118,7 +138,32 @@
   justify-items: center;
   align-items: center;
 }
-
+.withaibox {
+  display: grid;
+  height: 353px;
+  width: 126px;
+  grid-template-columns: 124px;
+  grid-template-rows: 15px 338px;
+  background-color: #111;
+  line-height: 1;
+  padding: 6px;
+  justify-items: center;
+  align-items: center;
+  border-color: #334;
+  border-style: groove;
+  border-width: 1px;
+}
+.withaigrid {
+  display: grid;
+  height: 323px;
+  width: 124px;
+  grid-template-columns: 60px 60px ;
+  grid-template-rows: 15px 60px 30px 15px 60px 30px 15px 60px 30px;
+  background-color: #111;
+  line-height: 1;
+  justify-items: center;
+  align-items: center;
+}
 .projgrid {
   display: grid;
   height: 140px;
@@ -159,9 +204,29 @@
   display: grid;
   height: 14px;
   grid-template-columns: 1Fr;
-  grid-template-rows: 10px 110px 10px;
+  grid-template-rows: 15px 110px;
   justify-items: center;
   transition: all .3s ease;
+}
+.mgrun {
+  display: none;
+  height: 400px;
+  grid-template-columns: 66px 66px 66px 66px 66px 66px 66px 66px;
+  grid-template-rows: 66px 17px 69px 17px 66px 17px 66px 17px;
+  background-color: #000;
+  justify-items: center;
+  align-items: center;
+  border-color: #445;
+  border-style: groove;
+  border-width: 1px;
+  grid-gap: 1px;
+  transition: all .3s ease;
+}
+
+.icongrid {
+   padding: 2px;
+   width: 100%;
+   max-height: 100%;
 }
 #showin {
    font-family: Helvetica, Verdana, Arial, sans-serif;
@@ -184,10 +249,40 @@
    height: 10px;
    padding-bottom: 1px;
 }
-#showstatus {
-   font-family: Helvetica, Verdana, Arial, sans-serif;
-   color: #444;
-   width: 150px;
-   height: 10px;
-   padding-bottom: 25px;
+.button {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 2px 9px;
+    border: 1px solid #404040;
+    border-radius: 5px;
+    background: #141414;
+    background: -webkit-gradient(linear, left top, left bottom, from(#141414), to(#141414));
+    background: -moz-linear-gradient(top, #141414, #141414);
+    background: linear-gradient(to bottom, #141414, #141414);
+    font: normal normal normal 11px arial;
+    color: #ffffff;
+    text-decoration: none;
+}
+.button:hover,
+.button:focus {
+    border: 1px solid #b6b6b6;
+    background: #181818;
+    background: -webkit-gradient(linear, left top, left bottom, from(#181818), to(#181818));
+    background: -moz-linear-gradient(top, #181818, #181818);
+    background: linear-gradient(to bottom, #181818, #181818);
+    color: #ffffff;
+    text-decoration: none;
+}
+.button:active {
+    background: #0c0c0c;
+    background: -webkit-gradient(linear, left top, left bottom, from(#0c0c0c), to(#141414));
+    background: -moz-linear-gradient(top, #0c0c0c, #141414);
+    background: linear-gradient(to bottom, #0c0c0c, #141414);
+    border: 1px solid #6666B6;
+}
+.button:checked {
+    background: #c0c0c0;
+	color: #0c0c0c;
+    border: 1px solid #6666B6;
 }

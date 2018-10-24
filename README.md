@@ -48,10 +48,12 @@ use --help for all arguments
 - Interactive (mouse style) any shape correction (set 1 curve 0). The shape point list must be defined in a "screen". See configuration file example : setamiral.conf
 - rPolyline draw function (r stand for relative) with built in end modifications like rotation, resize, position (and projection but not yet). Points must be centered around 0,0. * Easy way to build your vizualisation : generate each part around 0,0 and use rPolyline to display it. Repeat for all your parts. *
 - Support openpose json ! display human skeleton animation see setamiral or set 0 Curve 9. Openpose data must be computed around 0,0 ()
-- Multiple openpose animations on different lasers.
+- Multiple openpose animations on different lasers, see setamiral.py
 - Can control Resolume Arena video software through OSC, like : bhorosc.sendresol("/layer1/clip1/connect",1) 
 - Integrated sawtooth, sine and square generator. See set0
 - A multi laser example : display solar planet positions at anytime, see Astro() (set 0 Curve 7). As Astro is not necessary and needs a big download, to use it you need to uncomment astro init lines in set0 and follow install instructions.
+- Web ui !! (start server.py from webui directory). This "server" is basically a OSC/websocket bridge. Websocket side talks to webui index.html page. OSC side talks to LJay. OSC specs are not fully supported.
+- Status OSC thread sends every 10th seconds : every etherdream DAC state, all "big" point list points
 
 #
 # External devices 
@@ -74,21 +76,28 @@ use --help for all arguments
 Introduction :
 --------------
 
-A "Curve" is actually more a scene/mode, wich can generate different pointlists, be also interactive,...
+A "Curve" is actually more a scene/mode, wich must generate all necessary pointlists ("PL") for all the needed lasers, be interactive,... One Curve at a time.
 
-A "Set" is a collection of curves
+A "Set" is a collection of curves, like a MIDI bank (="Set") has different programs (="Curve"). For the moment there is 8 Sets (0-7) of 8 Curves (0-7). You can actually code as many Curves you want in a Set, the 8 limit is for built in support of the web UI, Bhoreal device,... 
 
-In each set, Curve 0 is reserved for interactive settings modifications i.e trapezoidal corrections,...
+In each Set, Curve 0 is reserved for interactive settings modifications i.e trapezoidal corrections,...
 
-So your Curves numbers will be 1+
+So your Curve numbers will be 1+. 
 
 
-Use setexample.py (it is already imported in main.py as set number 4).
+Use setexample.py (it is already imported in main.py as Set number 4).
 
 Check if your set and all your curves are in settables (main.py)
 
-Use a conf file like setexample.conf, check in gstt.py if Configname use it.
+Use a conf file like setexample.conf, check in gstt.py if Configname use it. The conf file tells LJay what Set/Curve should run at launch. The PL to display in the simulator at first is : simuPL in gstt.
 
+You run with 
+
+python main.py
+
+Be sure to check command arguments : python main.py --help
+
+LJay is meant for Live, so a lot of parameters can be changed via OSC/midi, webUI,...
 
 
 
@@ -361,9 +370,9 @@ Midi CC channel effects (0-127) if you use built in 3D rotation and 2D projectio
 
 2	  Y position 
 
-5 	  X select
+5 	  X select for Lissa curves (set curve )
 
-6 	  Y select
+6 	  Y select for Lissa curves (set curve )
 
 
 21 		3D projection : FOV
@@ -382,7 +391,7 @@ Midi CC channel effects (0-127) if you use built in 3D rotation and 2D projectio
 # Resolume Arena commands
 #
 
-A named OSC client is built in. To send OSC commands to resolume use something like 
+A dedicated OSC client is built in. To send OSC commands to resolume use something like 
 
 bhorosc.sendresol("/layer1/clip1/connect",1) 
 

@@ -9,6 +9,7 @@ import midi
 #import launchpad
 
 import sys
+import bhorosc
 
 
 is_py2 = sys.version[0] == '2'
@@ -17,6 +18,16 @@ if is_py2:
 else:
     from queue import Queue
 
+def NoteOn(note,color):
+    #print x,y
+    msg = [NOTE_ON, note, color]
+    midi.send("Bhoreal",msg)
+    gstt.BhorLeds[note]=color
+    
+def NoteOff(note):
+    msg = [NOTE_OFF, note, 0]
+    midi.send("Bhoreal",msg)
+    gstt.BhorLeds[note]=0
 
 
 def NoteOnXY(x,y,color):
@@ -29,6 +40,7 @@ def NoteOffXY(x,y):
     msg = [NOTE_OFF, NoteXY(x,y), 0]
     midi.send("Bhoreal",msg)
     gstt.BhorLeds[NoteXY(x,y)]=0
+
 
 # Leds position are humans numbers 1-8. So -1 for pythonic array position 0-7
 def NoteXY(x,y):
@@ -75,11 +87,48 @@ def StartBhoreal(port):
 
 
 def UpdateLine(line,newval):
-    if bhorosc.oscdevice == 1:
+    if gstt.BhorealHere  != -1:
         for led in range(8):
             NoteOffXY(led,line)
     
         NoteOnXY(newval,line,64)
+
+
+# todo 57  Color mode : Rainbow 
+#      58  Color mode : RGB 
+
+# Notes for Curve :  0-7
+def UpdateCurve():
+    print "New Curve :", gstt.Curve
+    if gstt.BhorealHere  != -1:
+        for led in range(0,8):
+            NoteOff(led)
+        NoteOn(gstt.Curve,20)
+        
+# Notes for set :  8-15 
+def UpdateSet():
+    print "New Set :", gstt.Set
+    if gstt.BhorealHere  != -1:
+        for led in range(9,17):
+            NoteOff(led)
+        NoteOn(gstt.Set+8,10)
+
+# Note for current laser :  16-23 
+def UpdateLaser():
+    print "New Laser :", gstt.Laser
+    if gstt.BhorealHere  != -1:
+        for led in range(16,24):
+            NoteOff(led)
+        NoteOn(gstt.Laser+16,30)
+
+# Note for PL displayed in pygame window :  24-31
+def UpdateSimu():
+    print "New simuPL :", gstt.simuPL
+    if gstt.BhorealHere  != -1:
+        for led in range(24,32):
+            NoteOff(led)
+        NoteOn(gstt.simuPL+24,40)
+
 
 #       
 # Events from Bhoreal handling
@@ -94,16 +143,39 @@ def MidinProcess(bhorqueue):
         msg = bhorqueue_get()
         # Note On
         print msg
-        if msg[0]==NOTE_ON:
-            if gstt.BhorLeds[msg[1]] < 115:
-                 gstt.BhorLeds[msg[1]] += 10
-                 
-            #Bhoreal send back note on and off to light up the led.
-            midi.NoteOn(msg[1],gstt.BhorLeds[msg[1]])
-            print "Bhoreal Matrix : ", str(msg[1]), str(gstt.BhorLeds[msg[1]])
-            time.sleep(0.1)
-            midi.NoteOff(msg[1])
+        print "Bhoreal Matrix : ", str(msg[1]), str(gstt.BhorLeds[msg[1]])
 
+        if msg[0]==NOTE_ON:
+            bhorosc.Noteon_Update(msg[1])
+        '''
+        
+            print "Bhoreal Matrix : ", str(msg[1]), str(gstt.BhorLeds[msg[1]])
+            
+            if msg[1]< 8:
+                gstt.Curve = msg[1]
+                UpdateCurve()
+            
+            if msg[1]> 7 and msg[1] < 16:
+                gstt.Set = msg[1]-8
+                UpdateSet()
+
+            if msg[1]> 15 and msg[1] < 24:
+                gstt.Laser = msg[1]-16
+                UpdateLaser()
+
+            if msg[1]> 23 and msg[1] < 31:  
+                gstt.simuPL = msg[1]-24
+                UpdateSimu()
+
+            #Bhoreal send back note on and off to light up the led.
+            if msg[1]> 56:
+                if gstt.BhorLeds[msg[1]] < 115:
+                    gstt.BhorLeds[msg[1]] += 10
+            #midi.NoteOn(msg[1],gstt.BhorLeds[msg[1]])
+            
+            #time.sleep(0.1)
+            #midi.NoteOff(msg[1])
+        '''
 bhorqueue = Queue()
 
 

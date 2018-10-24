@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # -*- mode: Python -*-
 '''
+LJay
+v0.7.0
 
 Settings Handler
 

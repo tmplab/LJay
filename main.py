@@ -3,7 +3,7 @@
 # -*- mode: Python -*-
 
 '''
-LJay v0.6.2
+LJay v0.7.0
 
 LICENCE : CC
 Sam Neurohack, Loloster, 
@@ -11,17 +11,17 @@ Sam Neurohack, Loloster,
 
 '''
 #from __future__ import print_function 
-
+import time 
 import math
 import random
 import itertools
 import sys
 import os
 import thread
-import time 
+
 
 print ""
-print "LJay"
+print "LJay v0.7.0"
 print ""
 print "Autoconfiguring..."
 print ""
@@ -85,12 +85,10 @@ settables =  {					# Set 0
         1: set0.xPLS,
         2: set0.Orbits,
         3: set0.Dot,
-        4: set0.Circle,
-        5: set0.CC,
-        6: set0.Sine,
-        7: set0.Astro,
-        8: set0.Text,
-        9: set0.Pose
+        4: set0.Sine,
+        5: set0.Astro,
+        6: set0.Text,
+        7: set0.Pose
     }, {						# Set 1
         0: set1.Shapes,
         1: set1.Warp,
@@ -117,14 +115,16 @@ settables =  {					# Set 0
         4: setexample.Text
     }
 
+gstt.MaxSets = len(settables)
+
 # built in black dot when curve = -1. Will be called when set change.
 def black():
     PL = 0
     dots = []
     x = xy_center[0] 
     y = xy_center[1]
-    dots.append(proj(int(x),int(y),0))
-    dots.append(proj(int(x)+5,int(y)+5,0))
+    dots.append((x,y))
+    dots.append((x+5,y+5))
     print "black"
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
 
@@ -211,6 +211,57 @@ def dac_thread3():
 
 
 
+# Automated status sender
+def dacstatus_thread():
+    while True:
+        try:
+            while True:
+                time.sleep(0.1)
+                if bhorosc.oscdevice == 1:
+                    for laserid in range(0,gstt.LaserNumber):           # Laser not used -> led is not lit
+
+                        if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
+                            bhorosc.sendosc("/lstt/" + str(laserid), 3)
+                        if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
+                            bhorosc.sendosc("/lstt/" + str(laserid), 2)
+                        if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
+                            bhorosc.sendosc("/lstt/" + str(laserid), 1)
+
+                        ''' This is not working : lack never change. Todo : understand why.
+                        if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
+                            bhorosc.sendosc("/lack/" + str(laserid), 6)
+                        if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
+                            bhorosc.sendosc("/lack/" + str(laserid), 5)
+                        if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
+                            bhorosc.sendosc("/lack/" + str(laserid), 4)
+                        '''
+
+                        if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
+                            bhorosc.sendosc("/lstt/" + str(laserid), 6)    
+                        
+                            #bhorosc.sendosc("/lack/" + str(laserid), 6)
+
+                        # last number of points sent to etherdream buffer
+                        bhorosc.sendosc("/points/" + str(laserid), gstt.lstt_points[laserid])
+
+                    # WIP Too much packets -> flood webUI : Draw all PL point lists in JS canvas in WebUI
+                    '''
+                    for pl in range(0,1):   
+                        bhorosc.sendosc("/plframe/" + str(pl),"")
+                        for plpoint in range(0,len(gstt.PL[pl])):
+                            bhorosc.sendosc("/plpoint/" + str(pl),"")
+                    '''
+
+
+
+        except Exception as e:
+            import sys, traceback
+            print '\n---------------------'
+            print 'Exception: %s' % e
+            print '- - - - - - - - - - -'
+            traceback.print_tb(sys.exc_info()[2])
+            print "\n"
+
 # Inits
 
 # Check if all required etherdreams are actually on the network if gstt.debug > 0
@@ -292,13 +343,13 @@ clock = pygame.time.Clock()
 
 # For Amiral
 
-if gstt.Set == 3 and gstt.Curve == 2:
+if gstt.Set == 3 and gstt.Curve == 1:
+    setamiral.preparePOSE()
 
-    #setamiral.preparePOSE()
+if gstt.Set == 3 and gstt.Curve == 2:
     setamiral.prepareFACES()
 
 if gstt.Set == 3 and gstt.Curve == 3:
-
     setamiral.prepareDANCERS()
 
 
@@ -307,8 +358,6 @@ if gstt.Set == 3 and gstt.Curve == 3:
 
 fwork_holder = frame.FrameHolder()
 #laser = renderer.LaserRenderer(fwork_holder, gstt.centerx, gstt.centery, gstt.zoomx, gstt.zoomy, gstt.sizex, gstt.sizey)
-
-print gstt.LaserNumber
 
 # Start Dac threads
 
@@ -331,15 +380,20 @@ if gstt.LaserNumber > 3:
     print ""
     print "dac thread 2 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
-
 '''
+Old style launch with old dac.py
 thread.start_new_thread(dac_thread3, ())
 print ""
 print "dac thread 3 with IP : ", gstt.lasersIPS[3]," and point list : ", gstt.lasersPLS[3],
 
 '''
-print ""
 
+print "Dac Status OSC thread launch..."
+# Launch Dac status OSC thread listening to Bhorosc
+thread.start_new_thread(dacstatus_thread, ())
+
+
+print ""
 
 
 update_screen = False
@@ -348,7 +402,7 @@ gstt.keystates = pygame.key.get_pressed()
 
 (SCREEN_W, SCREEN_H) = screen_size
 
-
+print "Set", gstt.Set, "has", len(settables[gstt.Set]), "Curves"
 gstt.jumptable = settables[gstt.Set]
 
 
@@ -379,6 +433,12 @@ while True:
     if keystates[pygame.K_ESCAPE]:
         break
 
+    # Maybe the Set has changed. So getting the new max number of Curve for the new Set
+    # This is needed if the user ask for a non available Curve.
+    # Refreshing at all times is stupid. Needs a better solution. Todo
+    gstt.MaxCurves = len(settables[gstt.Set])
+    
+    
     screen.fill(0)
     fwork = frame.Frame()
 	
@@ -399,42 +459,7 @@ while True:
 
     # pending osc message ?
     bhorosc.osc_frame()
-    #print gstt.lstt_ipconn
 
-    
-    # update GUI with dac status
-    if bhorosc.oscdevice == 1:
-        for laserid in range(0,gstt.LaserNumber):			# Laser not used -> led is not lit
-
-            if gstt.lstt_dacstt[laserid] == 0:              # Dac IDLE state(0) -> led is blue (3)
-               bhorosc.sendosc("/lstt/" + str(laserid), 3)
-            if gstt.lstt_dacstt[laserid] == 1:              # Dac PREPARE state (1) -> led is cyan (2)
-               bhorosc.sendosc("/lstt/" + str(laserid), 2)
-            if gstt.lstt_dacstt[laserid] == 2:              # Dac PLAYING (2) -> led is green (1)
-               bhorosc.sendosc("/lstt/" + str(laserid), 1)
-
-            if gstt.lstt_dacanswers[laserid] == 'a':        # Dac sent ACK ("a") -> led is green (6)
-               bhorosc.sendosc("/lack/" + str(laserid), 6)
-            if gstt.lstt_dacanswers[laserid] == 'F':        # Dac sent FULL ("F") -> led is orange (5)
-               bhorosc.sendosc("/lack/" + str(laserid), 5)
-            if gstt.lstt_dacanswers[laserid] == 'I':        # Dac sent INVALID ("I") -> led is yellow (4)
-               bhorosc.sendosc("/lack/" + str(laserid), 4)
-
-            if gstt.lstt_ipconn[laserid] != 0:              # no connection to dac -> leds are red (6)
-               bhorosc.sendosc("/lstt/" + str(laserid), 6)    
-               bhorosc.sendosc("/lack/" + str(laserid), 6)
-
-
-    	#if self.last_status.playback_state == 0:
-    	#   bhorosc.send3("/laser/" + str(self.mylaser) + "/idle", 1)
-
-    	#bhorosc.send3("/laser/" + str(self.mylaser) + "/
-    	# "LEngine : ", str(self.le_state), "LEngine flags : ", str(self.le_flags), "PB state : ", str(self.playback_state), "PB flags : ", str(self.playback_flags), "Source : ", str(self.source), "Source flags : ", str(self.source_flags)
-
-    	#print "Laser 0 state ", str(gstt.lstt[0].playback_state)
-        #bhorosc.send3("/laser/0/idle", gstt.lstt[0].)
-    
-    
     fwork_holder.f = fwork
 
     if update_screen:

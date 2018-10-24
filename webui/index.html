@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <title>LJay</title>
         
-        <!-- Web audio  -->
+        <!-- Web audio defaults -->
         <script src="webcomponents-lite.js"></script>
         <script>
         WebAudioControlsOptions={
@@ -43,10 +43,18 @@
         onMessage: function (e) {
           var res = e.data.split(" ");
           console.log(e.data)
-          if (res[0] === "/status") {
-              _WS.showstatus(e.data.slice(8));
-              } else {
-              document.getElementById(res[0].slice(1)).value = res[1];
+		  switch (res[0]) {
+    			case "/status":
+    				_WS.showstatus(e.data.slice(8));
+        			break;
+    			case "/plframe/":
+        			console.log("plframe");
+        			break;
+        		case "/plpoint/":
+        			console.log("plpoint");
+        			break;
+        		default:
+        			document.getElementById(res[0].slice(1)).value = res[1];
               }
           _WS.showin(e.data);
         },
@@ -88,13 +96,16 @@
       window.addEventListener('load', _WS.init, false);
 
       </script>
+      
+
  </head>
 
 <body style="background-color:#222;">
 
+<!-- mg : MainGrid Webpage one column, different raws displayed or hidden by menu button -->
 <div class="maingrid">
  
-  <!-- Title -->
+  <!-- mg : Title and laser state ()-->
   <div class="mgtitle">
   
   	<!-- LJ Logo -->
@@ -103,9 +114,8 @@
   	
   	<!-- ON OFF button -->
   	<div class="onoffgrid">
-  		<div class="lasertextxs">ON</div>
+  		<div class="lasertextxs">/on</div>
   		<div><webaudio-switch id="on" height="52" width="41"  value="0" src="knobs/bigbluetoggle.png" type="toggle"></webaudio-switch></div>
-  		<div class="lasertextxs">OFF</div>
   	</div>
   	
     <!-- Lasers state grid -->
@@ -152,28 +162,41 @@
     <div></div>
     <div></div>	
   </div>
-  
-  <!-- Raw O -->
-  <div class="mgraw0">
+ 
+  <!-- mg : Menu buttons and Status display -->
+  <div id="mgstatus" class="mgstatus">
+		<div>
+			<button class="button:checked" id="showalign" onclick="showAlign()" checked="checked">Align</button>
+			<button class="button" id="showcanvas" onclick="showCanvas()">Simu</button>
+			<button class="button" id="showrun" onclick="showRun()">Run</button>
+			<button class="button" id="showlive"  onclick="showLive()">Live</button>
+		</div>
+			<div><button class="button" id="showstatus">DISCONNECTED</button></div>
+		
+    	<div></div>
+   </div> 
+ 		
+  <!-- mg : Align -->
+  <div id="mgalign" class="mgalign">
 
     <!-- Lasergrid 0 -->
     <div class="lasergrid" style="background-image: url(lasergrid0.png);">
         <div class="lasertext">kPPS</div>
     	<div class="lasertext">Points</div>
-    	<div><webaudio-param link="kPPS/0" ></webaudio-param></div>
-       	<div><webaudio-param link="points/0"></webaudio-param></div>
+    	<div><webaudio-param id="kPPS/0" link="kPPS/0" ></webaudio-param></div>
+       	<div><webaudio-param id="points/0" link="points/0"></webaudio-param></div>
     	<div class="lasertext">Offset X</div>
     	<div class="lasertext">Offset Y</div>
-        <div><webaudio-knob id="loffset/X/0" diameter="60" min="-500" max="500" value="0"></webaudio-knob></div>
-        <div><webaudio-knob id="loffset/Y/0" diameter="60" min="-500" max="500" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="loffset/X/0" ></webaudio-param></div>
-       	<div><webaudio-param link="loffset/Y/0"></webaudio-param></div>
+        <div><webaudio-knob id="loffset/X/0" diameter="60" min="-250" max="250" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="loffset/Y/0" diameter="60" min="-250" max="250" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="loffset/X/0" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="loffset/Y/0" value="0"></webaudio-param></div>
        	<div class="lasertext">Scale X</div>
     	<div class="lasertext">Scale Y</div>
-        <div><webaudio-knob id="scale/X/0" diameter="60" min="-500" max="500" value="0"></webaudio-knob></div>
-        <div><webaudio-knob id="scale/Y/0" diameter="60" min="-500" max="500" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="scale/X/0" ></webaudio-param></div>
-       	<div><webaudio-param link="scale/Y/0"></webaudio-param></div>
+        <div><webaudio-knob id="scale/X/0" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="scale/Y/0" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="scale/X/0" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="scale/Y/0" value="0"></webaudio-param></div>
        	<div class="lasertext">Swap X</div>
     	<div class="lasertext">Swap Y</div>
     	<div><webaudio-switch id="swap/X/0" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
@@ -185,19 +208,19 @@
         <div class="lasertext">kPPS</div>
     	<div class="lasertext">Points</div>
     	<div><webaudio-param link="kPPS/1" ></webaudio-param></div>
-       	<div><webaudio-param link="points/1"></webaudio-param></div>
+       	<div><webaudio-param id="points/1" link="points/1"></webaudio-param></div>
     	<div class="lasertext">Offset X</div>
     	<div class="lasertext">Offset Y</div>
         <div><webaudio-knob id="loffset/X/1" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
         <div><webaudio-knob id="loffset/Y/1" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="loffset/X/1" ></webaudio-param></div>
-       	<div><webaudio-param link="loffset/Y/1"></webaudio-param></div>
+       	<div><webaudio-param link="loffset/X/1" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="loffset/Y/1" value="0"></webaudio-param></div>
        	<div class="lasertext">Scale X</div>
     	<div class="lasertext">Scale Y</div>
-        <div><webaudio-knob id="scale/X/1" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
-        <div><webaudio-knob id="scale/Y/1" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="scale/X/1" ></webaudio-param></div>
-       	<div><webaudio-param link="scale/Y/1"></webaudio-param></div>
+        <div><webaudio-knob id="scale/X/1" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="scale/Y/1" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="scale/X/1" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="scale/Y/1" value="0"></webaudio-param></div>
        	<div class="lasertext">Swap X</div>
     	<div class="lasertext">Swap Y</div>
     	<div><webaudio-switch id="swap/X/1" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
@@ -210,55 +233,111 @@
         <div class="lasertext">kPPS</div>
     	<div class="lasertext">Points</div>
     	<div><webaudio-param link="kPPS/2" ></webaudio-param></div>
-       	<div><webaudio-param link="points/2"></webaudio-param></div>
+       	<div><webaudio-param id="points/2" link="points/2"></webaudio-param></div>
     	<div class="lasertext">Offset X</div>
     	<div class="lasertext">Offset Y</div>
         <div><webaudio-knob id="loffset/X/2" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
         <div><webaudio-knob id="loffset/Y/2" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="loffset/X/2" ></webaudio-param></div>
-       	<div><webaudio-param link="loffset/Y/2"></webaudio-param></div>
+       	<div><webaudio-param link="loffset/X/2" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="loffset/Y/2" value="0"></webaudio-param></div>
        	<div class="lasertext">Scale X</div>
     	<div class="lasertext">Scale Y</div>
-        <div><webaudio-knob id="scale/X/2" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
-        <div><webaudio-knob id="scale/Y/2" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="scale/X/2" ></webaudio-param></div>
-       	<div><webaudio-param link="scale/Y/2"></webaudio-param></div>
+        <div><webaudio-knob id="scale/X/2" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="scale/Y/2" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="scale/X/2" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="scale/Y/2" value="0"></webaudio-param></div>
        	<div class="lasertext">Swap X</div>
     	<div class="lasertext">Swap Y</div>
     	<div><webaudio-switch id="swap/X/2" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
         <div><webaudio-switch id="swap/Y/2" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
-    </div>
-
+    </div>   
     
+    <!-- Laser 3 grid -->
+    <div class="lasergrid" style="background-image: url(lasergrid3.png)">
+        <div class="lasertext">kPPS</div>
+    	<div class="lasertext">Points</div>
+    	<div><webaudio-param link="kPPS/3" ></webaudio-param></div>
+       	<div><webaudio-param id="points/3" link="points/3"></webaudio-param></div>
+    	<div class="lasertext">Offset X</div>
+    	<div class="lasertext">Offset Y</div>
+        <div><webaudio-knob id="loffset/X/3" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="loffset/Y/3" diameter="60" min="-50" max="50" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="loffset/X/3" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="loffset/Y/3" value="0"></webaudio-param></div>
+       	<div class="lasertext">Scale X</div>
+    	<div class="lasertext">Scale Y</div>
+        <div><webaudio-knob id="scale/X/3" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+        <div><webaudio-knob id="scale/Y/3" diameter="60" min="-30" max="30" value="0"></webaudio-knob></div>
+       	<div><webaudio-param link="scale/X/3" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="scale/Y/3" value="0"></webaudio-param></div>
+       	<div class="lasertext">Swap X</div>
+    	<div class="lasertext">Swap Y</div>
+    	<div><webaudio-switch id="swap/X/3" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+        <div><webaudio-switch id="swap/Y/3" value="0" height="70" width="70" tooltip="Switch-B" src="knobs/switch_toggle.png"></webaudio-switch></div>
+    </div>   
+  </div>     
+    
+  <!-- mg : Live -->
+  <div id="mglive" class="mglive">
+  
+
+    <!-- with AI box -->
+    <div class="withaibox">
+    	<div class="lasertext" style="border-color:#334;border-style: groove;border-width:1px;">With AI
+      </div>
+    	<div class="withaigrid">
+      		<div class="lasertext">Velocity</div>
+    		<div class="lasertext">Express.</div>
+        	<div><webaudio-knob id="ai/velocity" diameter="60" min="0" max="127" value="64"></webaudio-knob></div>
+        	<div><webaudio-knob id="ai/expressivity" diameter="60" min="0" max="127" value="64"></webaudio-knob></div>
+       		<div><webaudio-param link="ai/velocity" value="64"></webaudio-param></div>
+       		<div><webaudio-param link="ai/expressivity" value="64"></webaudio-param></div>
+    		<div class="lasertext">Sens.</div>
+    		<div class="lasertext">Beauty</div>
+        	<div><webaudio-knob id="ai/sensibility" diameter="60" min="0" max="127" value="64"></webaudio-knob></div>
+        	<div><webaudio-knob id="ai/beauty" diameter="60" min="0" max="127" value="64"></webaudio-knob></div>
+       		<div><webaudio-param link="ai/sensibility" value="64"></webaudio-param></div>
+       		<div><webaudio-param link="ai/beauty" value="64"></webaudio-param></div>
+       		<div class="lasertext"> </div>
+    		<div class="lasertext"> </div>
+        	<div><webaudio-knob id="cc/1" diameter="60" min="1" max="127" value="64"></webaudio-knob></div>
+        	<div><webaudio-knob id="cc/2" diameter="60" min="1" max="127" value="64"></webaudio-knob></div>
+       		<div><webaudio-param link="cc/1" value="1"></webaudio-param></div>
+       		<div><webaudio-param link="cc/2" value="1"></webaudio-param></div>
+    	</div>
+    </div>
+     
+ 
     <!-- Lissabox -->
     <div class="lissabox">
-    	<div class="lasertext" style="border-color:#334;border-style: groove;border-width:1px;">LISSA</div>
+    	<div class="lasertext" style="border-color:#334;border-style: groove;border-width:1px;">LISSA
+      </div>
     	<div class="lissagrid">
       		<div class="lasertext">Select X</div>
     		<div class="lasertext">Select Y</div>
         	<div><webaudio-knob id="cc/5" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
         	<div><webaudio-knob id="cc/6" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
-       		<div><webaudio-param link="cc/5" ></webaudio-param></div>
-       		<div><webaudio-param link="cc/6"></webaudio-param></div>
+       		<div><webaudio-param link="cc/5" value="0"></webaudio-param></div>
+       		<div><webaudio-param link="cc/6" value="0"></webaudio-param></div>
     		<div class="lasertext">FOV</div>
     		<div class="lasertext">Dist</div>
         	<div><webaudio-knob id="cc/21" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
         	<div><webaudio-knob id="cc/22" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
-       		<div><webaudio-param link="cc/21"></webaudio-param></div>
-       		<div><webaudio-param link="cc/22"></webaudio-param></div>
+       		<div><webaudio-param link="cc/21" value="0"></webaudio-param></div>
+       		<div><webaudio-param link="cc/22" value="0"></webaudio-param></div>
        		<div class="lasertext">Offset X</div>
     		<div class="lasertext">Offset Y</div>
         	<div><webaudio-knob id="cc/1" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
         	<div><webaudio-knob id="cc/2" diameter="60" min="1" max="127" value="1"></webaudio-knob></div>
-       		<div><webaudio-param link="cc/1" ></webaudio-param></div>
-       		<div><webaudio-param link="cc/2"></webaudio-param></div>
+       		<div><webaudio-param link="cc/1" value="0"></webaudio-param></div>
+       		<div><webaudio-param link="cc/2" value="0"></webaudio-param></div>
     	</div>
     </div>
-    
+
     <!-- 3D proj grid -->
     <div class="projgrid">
     	<div></div>
-    	<div class="lasertext">3D ROT</div>
+    	<div class="lasertext" style="border-color:#334;border-style: groove;border-width:1px;">3D ROT</div>
     	<div></div>
     	<div class="lasertext">X</div>
     	<div class="lasertext">Y</div>
@@ -266,27 +345,101 @@
         <div><webaudio-knob id="cc/29" diameter="60" min="0" max="127" value="0" ></webaudio-knob></div>
         <div><webaudio-knob id="cc/30" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
         <div><webaudio-knob id="cc/31" diameter="60" min="0" max="127" value="0"></webaudio-knob></div>
-       	<div><webaudio-param link="cc/29" ></webaudio-param></div>
-       	<div><webaudio-param link="cc/30"></webaudio-param></div>
-       	<div><webaudio-param link="cc/31"></webaudio-param></div>
+       	<div><webaudio-param link="cc/29" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="cc/30" value="0"></webaudio-param></div>
+       	<div><webaudio-param link="cc/31" value="0"></webaudio-param></div>
     </div>
     
-  </div> 
-    
-  <!-- status -->
-  <div class="mgstatus">
+
+  </div>  
+   
+  <!-- mg : canvas to display point list as laser simulator -->
+  <div id = "mgcanvas" class="mgcanvas">
+        <div>
+        	<canvas id="canvas" width="300" height="300"></canvas>				
+		</div>
 		<div></div>
-		<div id="showstatus">DISCONNECTED</div>
-    	<div></div>
-   </div> 
- 		
-  <!-- footer -->
+  </div> 
+  
+  <!-- mg run icons grid -->    
+  <div id="mgrun"class="mgrun">
+    	<!-- Curve selection grid --> 
+  	    <div><img src="img/iconljay2.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconljay2.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconastro.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconljay2.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconllstr.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconastro.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconljay2.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconpose.png" alt=" " class="icongrid" /></div>
+  	    <div><button id ="noteon 0" onclick ="buttonClicked(this.id)"  class="button">Map.</button></div>
+  	    <div><button id ="noteon 1" onclick ="buttonClicked(this.id)"  class="button">xPLS</button></div>
+  	    <div><button id ="noteon 2" onclick ="buttonClicked(this.id)"  class="button">Orbits</button></div>
+  	    <div><button id ="noteon 3" onclick ="buttonClicked(this.id)"  class="button">Dot</button></div>
+  	    <div><button id ="noteon 4" onclick ="buttonClicked(this.id)"  class="button">Sine</button></div>
+  	    <div><button id ="noteon 5" onclick ="buttonClicked(this.id)"  class="button">Astro</button></div>
+  	    <div><button id ="noteon 6" onclick ="buttonClicked(this.id)"  class="button:checked">Text</button></div>
+  	    <div><button id ="noteon 7" onclick ="buttonClicked(this.id)"  class="button">Pose</button></div>
+  	    <!-- Set selection grid --> 
+  	    <div><img src="img/iconljay1.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconljay1.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconllstr.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconamiral.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconljay1.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><button id ="noteon 8" onclick ="buttonClicked(this.id)"  class="button:checked">Set 0</button></div>
+  	    <div><button id ="noteon 9" onclick ="buttonClicked(this.id)"  class="button">Set 1</button></div>
+  	    <div><button id ="noteon 10" onclick ="buttonClicked(this.id)"  class="button">LLSTR</button></div>
+  	    <div><button id ="noteon 11" onclick ="buttonClicked(this.id)"  class="button">Amiral</button></div>
+  	    <div><button id ="noteon 12" onclick ="buttonClicked(this.id)"  class="button">Ex.</button></div>
+  	    <div></div>
+  	    <div></div>
+  	    <div></div>
+  	    <!-- Laser selection grid --> 
+  	    <div><img src="img/iconlaser.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconlaser.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconlaser.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconlaser.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><button id ="noteon 16" onclick ="buttonClicked(this.id)"  class="button:checked">0</button></div>
+  	    <div><button id ="noteon 17" onclick ="buttonClicked(this.id)"  class="button">1</button></div>
+  	    <div><button id ="noteon 18" onclick ="buttonClicked(this.id)"  class="button">2</button></div>
+  	    <div><button id ="noteon 19" onclick ="buttonClicked(this.id)"  class="button">La3</button></div>
+  	    <div></div>
+  	    <div></div>
+  	    <div></div>
+  	    <div></div>
+  	    <!-- Simulator PL selection grid --> 
+  	    <div><img src="img/iconsimu.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconsimu.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconsimu.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconsimu.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><img src="img/iconblack.png" alt=" " class="icongrid" /></div>
+  	    <div><button id ="noteon 24" onclick ="buttonClicked(this.id)"  class="button:checked">PL 0</button></div>
+  	    <div><button id ="noteon 25" onclick ="buttonClicked(this.id)"  class="button">PL 1</button></div>
+  	    <div><button id ="noteon 26" onclick ="buttonClicked(this.id)"  class="button">PL 2</button></div>
+  	    <div><button id ="noteon 27" onclick ="buttonClicked(this.id)"  class="button">PL 3</button></div>
+  	    <div></div>
+  	    <div></div>
+  	    <div></div>
+  	    <div></div>
+	</div>
+	
+  <!-- mg : footer display events for debug -->
   <div class="mgfooter">
         <div id="showin"></div>
 		<div id="showout"></div>
     	<div id="events"</div>
-   </div> 
- 	
+  </div> 
+
 </div>
     
 
@@ -322,9 +475,122 @@
         var evview=document.getElementById("events");
         evview.innerHTML=str;
         console.log(  e.type + "/" + e.target.id + "/" +  e.target.value);
-        _WS.send("/" + e.target.id + " " +  e.target.value);
+        if (e.target.id === "noteon" && e.type ==="input") 
+        	console.log("only noteon change are sent not input")
+        else 
+        	_WS.send("/" + e.target.id + " " +  e.target.value);
     }
 </script>
+
+<!--  Menu buttons handler -->
+<script type="text/javascript">
+	function noMenu() {
+	    var x = document.getElementById("showalign");
+	    x.className = "button";
+		var x = document.getElementById("showrun");
+		x.className = "button";
+		var x = document.getElementById("showcanvas");
+		x.className = "button";
+		var x = document.getElementById("showlive");
+		x.className = "button";
+		}
+	function showAlign() {
+    	var x = document.getElementById("mgalign");
+    	x.style.display = "grid";
+    	noMenu()
+    	var x = document.getElementById("showalign");
+    	x.className = "button:checked";
+    	var x = document.getElementById("mgcanvas");
+    	x.style.display = "none";
+    	var x = document.getElementById("mgrun");
+    	x.style.display = "none";
+    	var x = document.getElementById("mglive");
+    	x.style.display = "none";
+    	}
+    function showRun() {
+    	var x = document.getElementById("mgalign");
+       	x.style.display = "none";
+       	var x = document.getElementById("mgcanvas");
+       	x.style.display = "none";
+    	var x = document.getElementById("mgrun");
+    	x.style.display = "grid";
+    	noMenu()
+    	var x = document.getElementById("showrun");
+    	x.className = "button:checked";
+    	var x = document.getElementById("mglive");
+    	x.style.display = "none";
+       	}
+     function showCanvas() {
+    	var x = document.getElementById("mgcanvas");
+       	x.style.display = "block";
+       	noMenu()
+    	var x = document.getElementById("showcanvas");
+    	x.className = "button:checked";
+       	var x = document.getElementById("mgalign");
+       	x.style.display = "none";
+    	var x = document.getElementById("mgrun");
+    	x.style.display = "none";
+    	var x = document.getElementById("mglive");
+    	x.style.display = "none";
+       	} 
+     function showLive() {
+    	var x = document.getElementById("mgcanvas");
+       	x.style.display = "none";
+       	var x = document.getElementById("mgalign");
+       	x.style.display = "none";
+    	var x = document.getElementById("mgrun");
+    	x.style.display = "none";
+    	var x = document.getElementById("mglive");
+    	x.style.display = "grid";
+    	noMenu()
+    	var x = document.getElementById("showlive");
+    	x.className = "button:checked";
+       	} 
+     function buttonClicked(clicked_id) {
+     	_WS.send("/" + clicked_id) 
+     	} 
+</script>
+		
+<!-- Point list draw -->
+<script>
+	// Store Reference To The Canvas & Set Context
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d");
+
+	// Function To Draw To The Canvas
+	function draw() {
+    	// Clear Canvas At The Start Of Every Frame
+    	ctx.clearRect(0,0,300,300);
+    
+    	// Begin Line Path & Set Starting Point
+    	ctx.beginPath();
+    	ctx.moveTo(Math.random() * 250, Math.random() * 250);
+    
+    	// var xA = new Array();
+    	// var yA = new Array();
+    	//for (var i=0; i<=100, i++){
+    	//xA[i] = ;
+    	//yA[i] = ;
+    	//}
+    
+    	// Draw Additional Randomly Placed Lines
+    	for (var i = 0; i < 25; i++) {
+        	ctx.lineTo(Math.random() * 250, Math.random() * 250);
+    		}
+    
+    	// Enable Stroke & Set Stroke Color
+    	ctx.strokeStyle = "#888";
+    	ctx.stroke();
+    
+    	// Call Draw Function Again To Continue 
+    	// Drawing To Canvas To Create Animation
+    	window.requestAnimationFrame(draw);
+		}
+
+	// Initialize The Draw Function
+	draw();
+</script>
+
 
 </body>
 

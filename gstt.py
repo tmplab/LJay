@@ -28,6 +28,7 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 lasersPLS = [0,1,2,0]
 
 
+
 # with 4 laser available, 4 PL only are necessary
 PL = [[],[],[],[]]
 
@@ -42,7 +43,8 @@ lstt_ipconn = [[-1], [-1], [-1], [-1]]
 lstt_dacstt = [[-1], [-1], [-1], [-1]]
 # store last dac answers ACK, not ACK 
 lstt_dacanswers = [[-1], [-1], [-1], [-1]]
-
+# store last number of points sent to etherdreams buffer 
+lstt_points = [[0], [0], [0], [0]]
 
 swapX = [1,1,1,-1]
 swapY = [1,1,1,-1]
@@ -56,8 +58,8 @@ Set = 1 #nozoid loloster.py
 # Can be changed with /noteon 0-7
 Curve = 0 #nozmod
 
-ConfigName = "setexample.conf"
-
+#ConfigName = "setexample.conf"
+ConfigName = "setamiral.conf"
 maxCurvesByLaser = 4
 
 

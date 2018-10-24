@@ -5,7 +5,8 @@
 
 '''
 
-LJay v0.6.2
+LJay 
+v0.7.0
 
 LICENCE : CC
 Sam Neurohack
@@ -194,6 +195,7 @@ def EDpoint((pygamex,pygamey)):
 
 
 # New total homography from always the same reference points : ED (= align + swap) transform + warp transform.
+# WARP IS DISABLED. Some bug tracking is needed !
 def newEDH(mylaser):
 
 	EDpoints = []

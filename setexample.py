@@ -3,7 +3,8 @@
 # -*- mode: Python -*-
 
 '''
-Laser Jaying
+LJay
+v0.7.0
 
 LICENCE : CC
 Sam Neurohack, Loloster, 

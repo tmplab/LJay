@@ -3,12 +3,15 @@
 # -*- mode: Python -*-
 
 '''
-LJay v0.6.2
+LJay v0.7.0
+
+newdac.py
+Unhanced version of the threaded etherdream python library from j4cDAC.
 
 LICENCE : CC
 Sam Neurohack, pclf
 
-Unhanced version of the threaded etherdream python library from j4cDAC.
+
 
 Conversion in etherdream coordinates and geometric corrections 
 
@@ -307,6 +310,7 @@ class DAC(object):
 			cap = 1799 - self.last_status.fullness
 			points = self.GetPoints(cap)
 
+			gstt.lstt_points[self.mylaser] = cap 
 
 			#if self.mylaser == 0:
 			#print self.mylaser, cap

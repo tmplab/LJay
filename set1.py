@@ -2,6 +2,14 @@
 # -*- coding: utf-8 -*-
 # -*- mode: Python -*-
 '''
+Laser Jaying
+v0.7.0
+
+LICENCE : CC
+Sam Neurohack, Loloster, 
+
+set1 code examples 
+
 Curve 0 : Edit shapes and geometric corrections
 Curve 1 : Warp corrections
 Curve 2 : align all poses

@@ -228,6 +228,10 @@ def OutConfig():
             print("Bhoreal start animation")
             gstt.BhorealHere = port
             bhoreal.StartBhoreal(port)
+            bhoreal.UpdateCurve()
+            bhoreal.UpdateSet()
+            bhoreal.UpdateLaser()
+            bhoreal.UpdateSimu()
             time.sleep(0.2)
 
         # Search for a LaunchPad

@@ -3,7 +3,8 @@
 # -*- mode: Python -*-
 
 '''
-Laser Jaying
+LJay
+v0.7.0
 
 LICENCE : CC
 Sam Neurohack, Loloster, 
@@ -14,12 +15,10 @@ Curve 0 : Mapping introduce an editor mode allowing to modify all points one by 
 Curve 1 : xPLS how to have different pointlists generators
 Curve 2 : Orbits
 Curve 3 : Dots
-Curve 4 : Circle    
-Curve 5 : CC
-Curve 6 : Sine
-Curve 7 : Astro
-Curve 8 : Text
-
+Curve 4 : Sine
+Curve 5 : Astro
+Curve 6 : Text
+Curve 7 : Pose
 '''
 
 
@@ -33,7 +32,7 @@ import pdb
 import time
 from datetime import datetime
 import settings
-
+import font1
 
 '''
 # for Astro()
@@ -300,50 +299,7 @@ def Dot(fwork):
 
 
 
-
 # Curve 4
-def Circle(fwork):
-    global f_sine
-
-    PL = 0
-    dots = []
-    amp = 200
-    nb_point = 40
-    for t in range(0, nb_point+1):
-        y = 0 - amp*math.sin(2* PI * f_sine *(float(t)/float(nb_point)))
-        x = 0 - amp*math.cos(2* PI * f_sine *(float(t)/float(nb_point)))
-        dots.append(proj(int(x),int(y),0))
-
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
-    #print f_sine
-    if f_sine > 24:
-        f_sine = 0
-    f_sine += 0.01
-		
-
-# Curve 5
-def CC(fwork):
-
-    PL = 0
-    dots = []
-        
-    amp = 200
-    nb_point = 60
-    for t in range(0, nb_point+1):
-        y = 1 - amp*math.sin(2*PI*cc2range(gstt.cc[5],0,24)*(float(t)/float(nb_point)))
-        x = 1 - amp*math.cos(2*PI*cc2range(gstt.cc[6],0,24)*(float(t)/float(nb_point))) 
-        #bhorosc.send5("/point", [proj(int(x),int(y),0),colorify.rgb2hex(gstt.color)])       
-        dots.append(proj(int(x),int(y),0))
-        
-    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False )
-    gstt.PL[PL] = fwork.LinesPL(PL)
-
-
-
-
-# Curve 6
 
 def Sine(fwork):
     global f_sine
@@ -367,7 +323,7 @@ def Sine(fwork):
     f_sine += 0.01
 
 
-# Curve 7
+# Curve 5
 # imports and other init values may be commented at the beginning of this file.
 # ephemerids are quite big and add other dependencies so keep commented if astro is not needed.
 def Astro(fwork):
@@ -416,14 +372,35 @@ def Astro(fwork):
     gstt.JulianDate +=1
 
 
-# Curve 8 : WORK IN PROGRESS
+# Curve 6 : WORK IN PROGRESS
 def Text(fwork):
     
-    fwork.LineTo([gstt.point[0],gstt.point[1]],gstt.point[2])
+    gstt.message = "Hello"
+    message = gstt.message
+    PL =0
+    len_message = len(message)
+    i= 0
+    for char in message:
+        i +=1
+        # x offset for each letter depends on message length
+        x_offset = 26 * (- (0.9 * len_message) + 3*i)
+        char_dots = font1.ASCII_GRAPHICS[ord(char) - 47]
+
+        for dot_pl in char_dots:
+            dots = []
+            for dot in dot_pl:
+                dots.append((x_offset+dot[0],dot[1]))
+
+            fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 200, ypos = 200, resize = 1)
+        #gstt.PL[PL] = fwork.LinesPL(PL)
+    # Works with points generated around 0,0
+    # Here the dots list will be displayed from 200,200 and resized 1 times.    
+    gstt.PL[PL] = fwork.LinesPL(PL)
+    
 
 
 
-# Curve 9
+# Curve 7
 import json
 gstt.CurrentPose = 1
 
