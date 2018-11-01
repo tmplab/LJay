@@ -169,14 +169,18 @@ def EDpoint(mylaser,(pygamex,pygamey)):
 	# Multilaser style
 	x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[mylaser] + gstt.centerX[mylaser]
 	y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[mylaser] + gstt.centerY[mylaser]
-	'''
-	print "global center :", xy_center
-	print "centers : ", gstt.centerX[mylaser], gstt.centerY[mylaser]
-	print "swaps : ", (gstt.swapX[mylaser]), str(gstt.swapY[mylaser])
-	print "zooms : ", gstt.zoomX[mylaser], gstt.zoomY[mylaser]
-	print "angles : ", gstt.finANGLE[mylaser]
-	print "result : ", x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]
-	'''
+	
+	if gstt.debug >0:
+	
+		#print "global center :", xy_center
+	
+		print "Laser :", mylaser, "center at : ", gstt.centerX[mylaser], gstt.centerY[mylaser]
+		'''
+		print "swaps : ", (gstt.swapX[mylaser]), str(gstt.swapY[mylaser])
+		print "zooms : ", gstt.zoomX[mylaser], gstt.zoomY[mylaser]
+		print "angles : ", gstt.finANGLE[mylaser]
+		'''
+		print "result : ", x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]
 	return [x * gstt.swapX[mylaser] , y * gstt.swapY[mylaser]]
 
 '''
@@ -205,22 +209,26 @@ def newEDH(mylaser):
 	# H matrix tansform pygame points in Etherdream system with align and swap correction,
 	H = find(pointsref, np.array(EDpoints))
 
-	# Hwarp matrix warp etherdream points (computed with H results) 
-	#Hwarp = homography.find(np.array(EDpoints), np.array(ast.literal_eval(gstt.warpdest[gstt.Laser])))
+	# Computer Hwarp matrix with previously reference warped points in configuration file.
+	Hwarp = find(pointsref, gstt.warpdest[mylaser])
+	#Hwarp = np.identity(3, dtype = float)
 
 	# EDH matrix 
-	gstt.EDH[mylaser] = H
-	# EDH matrix with warp
-	#gstt.EDH[mylaser] = np.dot(H,Hwarp)
+	#gstt.EDH[mylaser] = H
+
+	# EDH matrix is H x Hwarp
+	gstt.EDH[mylaser] = np.dot(H,Hwarp)
 	
-	if gstt.debug >1:
+	if gstt.debug >0:
 		print ""
 		print "laser ", mylaser
 		print "reference points", pointsref
 		print "laser EDpoints :", EDpoints
-		print  "H :",H
+		print "-> Computed H :",H
+		print "warped points coordinates ", gstt.warpdest[mylaser]
+		print "-> Computed Hwarp", Hwarp
 		#print  "laser ", mylaser, "warpd ",ast.literal_eval(gstt.warpdest[gstt.Laser])
 		#print  "laser ", mylaser, "Hwarp ", Hwarp
 		#print ""
-		print  "new EDH :",  gstt.EDH[mylaser]
+		print  "-> new EDH :",  gstt.EDH[mylaser]
 	

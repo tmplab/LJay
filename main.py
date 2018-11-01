@@ -119,14 +119,17 @@ gstt.MaxSets = len(settables)
 
 # built in black dot when curve = -1. Will be called when set change.
 def black():
-    PL = 0
-    dots = []
-    x = xy_center[0] 
-    y = xy_center[1]
-    dots.append((x,y))
-    dots.append((x+5,y+5))
-    print "black"
-    fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
+
+    print "black out"
+    for laserid in range(0,4):
+        PL = laserid
+        dots = []
+        x = xy_center[0] 
+        y = xy_center[1]
+        dots.append((x,y))
+        dots.append((x+5,y+5))
+        print "black"
+        fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
 
     gstt.PL[PL] = fwork.LinesPL(PL)
 
@@ -327,11 +330,11 @@ if gstt.Nbpads > 0:
 	print "Buttons : " , str(numButtons)
 
 
-if gstt.Set == 0 and gstt.Curve == 0:
+if gstt.Curve == 0:
 
     # section 0 is "General", then first screen shapes in section 1
     # Todo : Should search automatically first screen in settings file sections.
-    set0.MappingConf(1)
+    setexample.MappingConf(1)
 
 if gstt.Set == 1 and gstt.Curve == 0:
 

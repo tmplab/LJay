@@ -32,6 +32,7 @@ import socket
 import colorify
 import homography
 import settings
+import align
 
 
 import mydmx
@@ -283,6 +284,8 @@ def on(path, tags, args, source):
 	print ""
 	print osclient
 	oscdevice = 1
+
+	# Update UI
 	sendosc("/on", 1)
 	sendosc("/off", 0)
 	sendosc("/cc/5", 60)
@@ -290,7 +293,20 @@ def on(path, tags, args, source):
 	sendosc("/rot/x", 0)
 	sendosc("/rot/y", 0)
 	sendosc("/rot/z", 0)
-		
+
+	for laserid in range(0,gstt.LaserNumber):    
+		sendosc("/ip/" + str(laserid), gstt.lasersIPS[laserid])
+
+		if gstt.swapX[laserid] == 1:
+			sendosc("swap/X/" + str(laserid), 1)
+		else:
+			sendosc("swap/X/" + str(laserid), 0)
+
+		if gstt.swapY[laserid] == 1:
+			sendosc("swap/Y/" + str(laserid), 1)
+		else:
+			sendosc("swap/Y/" + str(laserid), 0)
+
 	status("LJay control ON")
 	currentmatrix = 1
 	matrixledsoff()
@@ -407,6 +423,8 @@ def Noteon_Update(note):
 	# change Curve
 	if note < 8:
 		if note < gstt.MaxCurves:
+			if note == 0:
+				align.MappingConf(1)
 			gstt.Curve = note
 			status(''.join(("New Curve : ",str(gstt.Curve))))
 			bhoreal.UpdateCurve()
@@ -813,8 +831,47 @@ def handler(path, tags, args, source):
 
 
 #
-# Lasers Swap, loffset and scale
+# Lasers IP, Swap, loffset, angle, scale and intens (actually not implemented in etherdream firmware ?)
 #
+
+	# /ip/lasernumber value
+	if oscpath[1] == "ip":
+		print "New IP for laser ", oscpath[2]
+		gstt.lasersIPS[int(oscpath[2])]= args[0]
+		settings.Write()	
+
+	# /angle/lasernumber value 
+	if oscpath[1] == "angle":
+		print "New Angle modification for laser ", oscpath[2], ":",  args[0]
+		gstt.finANGLE[int(oscpath[2])] += int(args[0])
+		homography.newEDH(int(oscpath[2]))
+		settings.Write()
+
+	# /intens/lasernumber value 
+	if oscpath[1] == "intens":
+		print "New intensity requested for laser ", oscpath[2], ":",  args[0]
+		print "Change not implemented yet"
+
+	# /grid/lasernumber value (0 or 1) 
+	if oscpath[1] == "grid":
+	
+		if args[0] == "1":
+			print "Grid requested for laser ", oscpath[2]
+			gstt.Laser = int(oscpath[2])
+			gstt.GridDisplay[gstt.Laser] = 1
+		else:
+			print "No grid for laser ",  oscpath[2]
+			gstt.GridDisplay[gstt.Laser] = 0
+
+	# /mouse/lasernumber value (0 or 1) 
+	if oscpath[1] == "mouse":
+	
+		if args[0] == "1":
+			print "Mouse requested for laser ", oscpath[2]
+			gstt.Laser = oscpath[2]
+		else:
+			print "No mouse for laser ",  oscpath[2]
+
 
 	# /swap/X/lasernumber value (0 or 1) 
 	if oscpath[1] == "swap" and oscpath[2] == "X":
@@ -1132,7 +1189,7 @@ def stoprot(path, tags, args, source):
 
 # Change simulator point list
 
-# /display/PL/ pointlistnumber
+# /display pointlistnumber
 def display(path, tags, args, source):
 	user = ''.join(path.split("/"))
 	print ""
@@ -1192,12 +1249,11 @@ def AiBeauty(path, tags, args, source):
 
 
 
-# Setting all handlers
-
+# OSC callbacks
 
 oscserver.addMsgHandler( "/on", on )
 oscserver.addMsgHandler( "/off", off )
-oscserver.addMsgHandler("default", handler)
+oscserver.addMsgHandler("default", handler)				# "Default" handle all other other OSC commands 
 oscserver.addMsgHandler( "/quit", quit )
 oscserver.addMsgHandler( "/padmode", padmode )
 oscserver.addMsgHandler( "/noteon", noteon )

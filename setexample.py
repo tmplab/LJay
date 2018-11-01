@@ -31,6 +31,7 @@ import time
 from datetime import datetime
 import settings
 import font1
+import homography
 
 
 # For Mapping()
@@ -42,11 +43,11 @@ f_sine = 0
 
 # Curve 1
 # Simple Lissajoux goes to Point List 0
+# In setexample.conf you assign at least one laser to PL 0 if you want to see it :)
 
 def Sine(fwork):
     global f_sine
 
-    PL = 0
     dots = []
     amp = 200
     nb_point = 40
@@ -57,10 +58,10 @@ def Sine(fwork):
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
 
-    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  PL, closed = False)
+    fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  0, closed = False)
     
-    # after all frame components are sent :
-    gstt.PL[PL] = fwork.LinesPL(PL)
+    # transfer full frame to automatic laser display PL 0 :
+    gstt.PL[0] = fwork.LinesPL(0)
     
     if f_sine > 24:
         f_sine = 0
@@ -69,30 +70,31 @@ def Sine(fwork):
 
 
 # Curve 2
-# Multi laser example.
+# Multi laser example with 3 lasers : one horizontal line (= PL 0), one vertical line (= PL 1) and one lissajoux (= PL 2)
 
 def xPLS(fwork):
     global f_sine
 
-
-    # point list "PL" 0 generator (assigned to laser 0 in setexample.conf) 
     # middle horizontal line
+    # point list "PL" 0 generator (assigned to laser 0 in setexample.conf) 
 
-    PL = 0
     dots = []
     x = (int(screen_size[1]) / 2) - 50
     y = (int(screen_size[0])/2)
     dots.append((int(x),int(y)))
     dots.append((int((int(screen_size[1]) / 2) + 50),(int(y))))
+
+    # add the line to the current "frame" of PL 0 
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 0, closed = False)
     
-    # after all needed PolyLineOneColor :
-    gstt.PL[PL] = fwork.LinesPL(PL)
+    # transfer full frame to automatic laser display PL 0  :
+    gstt.PL[0] = fwork.LinesPL(0)
        
-    # PL 1 generator (assigned to laser 1 in setexample.conf)
-    # middle vertical line
 
-    PL = 1
+
+    # middle vertical line
+    # PL 1 generator (assigned to laser 1 in setexample.conf)
+
     dots = []
     #pdb.set_trace()
     x = int(screen_size[1]) / 2
@@ -100,15 +102,16 @@ def xPLS(fwork):
     dots.append((int(x),int(y)))
     dots.append((int(x),(int(screen_size[1])/2)+50))
  
-    # one polyline but you can stack them with a list of dots for each one
+    # add the line to the current "frame" of PL 1
     fwork.PolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color), PL = 1, closed = False)
  
-    # after all needed PolyLineOneColor are sent :
-    gstt.PL[PL] = fwork.LinesPL(PL)
+    # transfer full frame to automatic laser display PL 1 :
+    gstt.PL[1] = fwork.LinesPL(1)
     
+
   
+    # Some Lissajoux function.  
     # PL 2 generator (assigned to laser 2 in setexample.conf
-    # Some Lissajoux function.
     PL = 2
     dots = []     
     amp = 200
@@ -117,8 +120,12 @@ def xPLS(fwork):
         y = 0 - amp*math.sin(2 * PI * (float(t)/float(nb_point)))
         x = 0 - amp*math.cos(2 * PI * f_sine *(float(t)/float(nb_point)))
         dots.append(proj(int(x),int(y),0))
+
+    # add the polyline to the current "frame" of PL 2 
     fwork.PolyLineOneColor ( dots, c = colorify.rgb2hex(gstt.color), PL =  2, closed = False)
-    gstt.PL[PL] = fwork.LinesPL(PL)
+
+    # transfer full frame to automatic laser display PL 2 :
+    gstt.PL[2] = fwork.LinesPL(2)
     
     if f_sine > 24:
         f_sine = 0
@@ -170,16 +177,17 @@ def Text(fwork):
             for dot in dot_pl:
                 dots.append((x_offset+dot[0],dot[1]))
 
+            # Works with letters generated around 0,0 (see font1.py)
+            # Here the dots list will be displayed from 200,200 in pygame coordinates and resized 1 times.
             fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 200, ypos = 200, resize = 1)
-        #gstt.PL[PL] = fwork.LinesPL(PL)
-    # Works with points generated around 0,0
-    # Here the dots list will be displayed from 200,200 and resized 1 times.	
+	
+
     gstt.PL[PL] = fwork.LinesPL(PL)
     
 
 
 #
-# Some usefull functions used or as reference
+# Some usefull functions used or as reference (how to get joypads inputs ?)
 #
 
 # examples to generate arrays of different types i.e for Lissajoux point lists generators. 
@@ -434,19 +442,27 @@ def joypads():
 
         
 
-# Curve 0
-# 
-# See Readme for "windows" and shapes" concepts,..
-#
-# Warp Mode / Edit shape mode 
-# Interactive edition of shapes corners
-# E     : Edit mode : cycle shapes/windows 
-# Z     : next corner of current shape
-# ENTER : Back to Warp mode that displays all shapes.
-# A     : change "Screen"
+# Curve 0 : Warp and "windows" edit modes
+
+''' 
+ Warp edit Mode
+ by default or ENTER key : 
+    # Mouse : change current corner position
+    # Z key : next corner
+
+
+ Windows edit mode with E key from Warp edit mode
+    E     : Edit mode : cycle shapes/windows 
+    Z     : next corner of current shape
+    ENTER : Back to Warp mode that displays all shapes.
+    A     : change "Screen"
+
+(See Readme for "windows" and shapes" concepts,..)
+
+'''
 
 def MappingConf(section):
-    global mouse_prev, sections, warpd
+    global mouse_prev, sections
 
     gstt.EditStep = 0
     gstt.CurrentWindow = -1
@@ -465,7 +481,6 @@ def MappingConf(section):
     gstt.Laser = settings.MappingRead([sections[gstt.CurrentSection],'laser'])
     print "Laser : ", gstt.Laser
     gstt.simuPL = gstt.Laser
-    warpd = np.array(gstt.warpdest[gstt.Laser])
 
     for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
         if gstt.debug > 0:
@@ -477,23 +492,23 @@ def MappingConf(section):
     print "Section points : " ,gstt.Windows
 
 
-
-def Mapping(fwork, keystates, keystates_prev):
-    global mouse_prev, sections, warpd
+# ENTER : Edit warp mode
+# E key : Edit windows mode 
+def Mapping(fwork):
+    global mouse_prev, sections
 
     PL = gstt.Laser
     dots = []
 
-
-    #switch to edit mode Key E ?
-    if keystates[pygame.K_e] and not keystates_prev[pygame.K_e] and gstt.EditStep == 0:
+    # switch to windows/shapes edit mode Key E ?
+    if gstt.keystates[pygame.K_e] and not gstt.keystates_prev[pygame.K_e] and gstt.EditStep == 0:
             print "Switching to Edit Mode"
             gstt.EditStep = 1
             gstt.CurrentWindow = 0
             gstt.CurrentCorner = 0
 
-    # Back to WARP mode if ENTER key is pressed ?
-    if keystates[pygame.K_RETURN] and gstt.EditStep == 1:    
+    # Back to Warp edit Mode if ENTER key is pressed ?
+    if gstt.keystates[pygame.K_RETURN] and gstt.EditStep == 1:    
             
             print "Switching to Warp Mode"
             gstt.EditStep =0
@@ -501,9 +516,65 @@ def Mapping(fwork, keystates, keystates_prev):
 
 
 
+    # Warp Display and Warp edit Mode
+    # Change current corner position with mouse pointer
+    # Change corner with Z key
 
-    # EDIT MODE : cycle windows if press e key to adjust corner position 
-    # Escape edit mode with enter key
+    if gstt.EditStep == 0:
+        
+        # print "Warp mode"
+        # Left mouse is clicked, modify current Corner coordinate
+        # print gstt.mouse
+
+        if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
+            deltax = gstt.mouse[0][0]-mouse_prev[0][0]
+            deltay = gstt.mouse[0][1]-mouse_prev[0][1]
+            
+            gstt.warpdest[gstt.Laser][gstt.CurrentCorner,0]+= (deltax *20)
+            gstt.warpdest[gstt.Laser][gstt.CurrentCorner,0]+= (deltax *2)
+
+            print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, "deltax ", deltax, "deltay", deltay
+            print gstt.warpdest[gstt.Laser]
+       
+            homography.newEDH(gstt.Laser)
+            settings.Write()
+
+
+        # Change corner if Z key is pressed.
+        if gstt.keystates[pygame.K_z] and not gstt.keystates_prev[pygame.K_z]:
+            if gstt.CurrentCorner < 3:
+                gstt.CurrentCorner += 1
+            else:
+                gstt.CurrentCorner = 0
+            print "Corner : ", gstt.CurrentCorner
+
+
+        # Display all windows to current PL for display
+        for Window in gstt.Windows:  
+
+            dots = []
+            for corner in xrange(len(Window)):   
+                #print "Editing : ", WindowPoints[corner]
+                #print Window[corner][0]
+                dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
+            
+            fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False  )
+    
+        gstt.PL[PL] = fwork.LinesPL(PL)
+
+        mouse_prev = gstt.mouse
+
+
+
+
+
+    # EDIT WINDOWS MODE : cycle windows for current laser if press e key to adjust corner position 
+    # ENTER key to warp/display mode 
+    # Mouse to change current corner postion
+    # Z key : next corner
+    # E Key : Next window 
+    # A key : Next section
+
     if gstt.EditStep >0:
 
         dots = []
@@ -522,13 +593,13 @@ def Mapping(fwork, keystates, keystates_prev):
             CurrentWindowPoints[gstt.CurrentCorner][1] -= (deltay * 2)
 
         # Change corner if Z key is pressed.
-        if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
+        if gstt.keystates[pygame.K_z] and not gstt.keystates_prev[pygame.K_z]:
             if gstt.CurrentCorner < settings.Mapping(sections[gstt.CurrentSection]) - 1:
                 gstt.CurrentCorner += 1
                 print "Corner : ", gstt.CurrentCorner
 
-        # Press E inside Edit mode : Next window 
-        if keystates[pygame.K_e] and not keystates_prev[pygame.K_e]:
+        # E Key : Next window 
+        if gstt.keystates[pygame.K_e] and not gstt.keystates_prev[pygame.K_e]:
 
             # Save current Window and switch to the next one.
             if gstt.CurrentWindow < settings.Mapping(sections[gstt.CurrentSection]) -1:
@@ -544,8 +615,8 @@ def Mapping(fwork, keystates, keystates_prev):
         mouse_prev = gstt.mouse
         gstt.PL[PL] = fwork.LinesPL(PL)
 
-    # Press A : Next section ?
-    if keystates[pygame.K_a] and not keystates_prev[pygame.K_a]: 
+    # A key : Next section ?
+    if gstt.keystates[pygame.K_a] and not gstt.keystates_prev[pygame.K_a]: 
             
         print "current section : ", gstt.CurrentSection
         if gstt.CurrentSection < len(sections)-1:
@@ -559,44 +630,4 @@ def Mapping(fwork, keystates, keystates_prev):
              gstt.CurrentSection = -1
         
 
-
-
-    # WARP Mode
-    if gstt.EditStep == 0:
-        
-        #print "Warp mode"
-        # Left mouse is clicked, modify current Corner coordinate
-        #print gstt.mouse
-        if gstt.mouse[1][0] == mouse_prev[1][0] and mouse_prev[1][0] == 1:
-            deltax = gstt.mouse[0][0]-mouse_prev[0][0]
-            deltay = gstt.mouse[0][1]-mouse_prev[0][1]
-            
-            print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, "deltax ", deltax, "deltay", deltay
-            #int(gstt.warpdest[gstt.Laser][gstt.CurrentCorner][0]) += (deltax *20)
-            #int(gstt.warpdest[gstt.Laser][gstt.CurrentCorner][1]) += (deltay * 2)
-            
-            print warpd
-
-            #print int(gstt.warpdest[gstt.Laser][gstt.CurrentCorner][0]) + (deltax * 20)
-        # Change corner if Z key is pressed.
-        if keystates[pygame.K_z] and not keystates_prev[pygame.K_z]:
-            if gstt.CurrentCorner < 4:
-                gstt.CurrentCorner += 1
-                print "Corner : ", gstt.CurrentCorner
-
-
-        # Display all windows to current PL for display
-        for Window in gstt.Windows:  
-
-            dots = []
-            for corner in xrange(len(Window)):   
-                #print "Editing : ", WindowPoints[corner]
-                #print Window[corner][0]
-                dots.append(proj(int(Window[corner][0]),int(Window[corner][1]),0))
-            
-            fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL = PL, closed = False  )
-    
-        gstt.PL[PL] = fwork.LinesPL(PL)
-
-        mouse_prev = gstt.mouse
 

@@ -28,6 +28,8 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 lasersPLS = [0,1,2,0]
 
 
+# gstt.GridDisplay : if = 1 Curve points actually sent to PL are replaced by a grid
+GridDisplay = [0,0,0,0]
 
 # with 4 laser available, 4 PL only are necessary
 PL = [[],[],[],[]]
@@ -59,8 +61,15 @@ Set = 1 #nozoid loloster.py
 Curve = 0 #nozmod
 
 #ConfigName = "setexample.conf"
-ConfigName = "setamiral.conf"
+ConfigName = "setexample.conf"
 maxCurvesByLaser = 4
+
+
+# For glitch art : change position and decrease number of points added by newdac.py
+# shortline for lines shorter than 4000 (in etherdream coordinates) 
+# i.e (0.25,3) means add 3 points at 25% on the line.
+stepshortline = [ (1.0, 8)]
+stepslongline = [ (0.25, 3), (0.75, 3), (1.0, 10)]
 
 
 #curveColor = [255,0,0] * maxCurvesByLaser
@@ -203,13 +212,13 @@ sizeX = [LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X, LASER_SIZE_X]
 sizeY = [LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y, LASER_SIZE_Y]
 finANGLE = [LASER_ANGLE, LASER_ANGLE, LASER_ANGLE, LASER_ANGLE]
 
-'''
-warpdest = [[[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
-[[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
-[[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]],
-[[-1500. ,1500.],[ 1500.,  1500.],[ 1500., -1500.],[-1500., -1500.]]
+
+warpdest = [[[ 1. , 0. , 0.],[ 0. , 1. , 0.],[ 0. , 0. , 1.]],
+[[ 1. , 0. , 0.],[ 0. , 1. , 0.],[ 0. , 0. , 1.]],
+[[ 1. , 0. , 0.],[ 0. , 1. , 0.],[ 0. , 0. , 1.]],
+[[ 1. , 0. , 0.],[ 0. , 1. , 0.],[ 0. , 0. , 1.]]
 ]
-'''
+
 # Etat global général
 app_path = ""
 

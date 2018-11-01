@@ -134,10 +134,14 @@ class DAC(object):
 				#test adaptation selon longueur ligne
 				if math.hypot(delta_x, delta_y) < 4000:
 
-					l_steps = [ (1.0, 8)]
+					# For glitch art : decrease lsteps
+					#l_steps = [ (1.0, 8)]
+					l_steps = gstt.stepshortline
 
 				else:
-					l_steps = [ (0.25, 3), (0.75, 3), (1.0, 10)]#(0.0, 1),
+					# For glitch art : decrease lsteps
+					#l_steps = [ (0.25, 3), (0.75, 3), (1.0, 10)]#(0.0, 1),
+					l_steps = gstt.stepslongline
 
 				for e in l_steps:
 					step = e[0]

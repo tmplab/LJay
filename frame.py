@@ -27,11 +27,10 @@ class Frame(object):
 		
 		# 4 point list
 		self.pl = [[],[],[],[]]
-		
+		self.grid_points = [(300.0, 400.0, 0), (500.0, 400.0, 65280), (500.0, 200.0, 65280), (300.0, 200.0, 65280), (300.0, 400.0, 65280)]
 
 	def LineTo(self, xy, c, PL):
 	
-
 		self.point_list.append((xy + (c,)))				#add c to the tuple 
 		self.pl[PL].append((xy + (c,)))
 	
@@ -53,7 +52,9 @@ class Frame(object):
 				self.LineTo(xy,c, PL)
 		if closed:
 			self.LineTo(xy0,c, PL)
-	
+
+
+	# Computing points coordinates for rPolyline function from 3D and around 0,0 to pygame coordinates
 	def Pointransf( self, xy, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
 
 			x = xy[0] * resize
@@ -110,7 +111,13 @@ class Frame(object):
 
 	def LinesPL(self, PL):
 
-		return self.pl[PL]
+		if gstt.GridDisplay[PL] == 0:
+			print len(self.pl[PL])
+			return self.pl[PL]
+		else:
+			print len(self.grid_points)
+			return self.grid_points
+
 
 	def ResetPL(self, PL):
 		self.pl[PL] = []

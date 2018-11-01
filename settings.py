@@ -13,6 +13,7 @@ LICENCE : CC
 import ConfigParser
 import gstt
 import ast
+import numpy as np
 
 
 def Write(): 
@@ -23,6 +24,7 @@ def Write():
 
 	for i in range(gstt.LaserNumber):
 		laser = 'laser' + str(i)
+		config.set(laser, 'ip', str(gstt.lasersIPS[i]))
 		config.set(laser, 'centerx', str(gstt.centerX[i]))
 		config.set(laser, 'centery', str(gstt.centerY[i]))
 		config.set(laser, 'zoomx', str(gstt.zoomX[i]))
@@ -32,7 +34,7 @@ def Write():
 		config.set(laser, 'finangle', str(gstt.finANGLE[i]))
 		config.set(laser, 'swapx', str(gstt.swapX[i]))
 		config.set(laser, 'swapy', str(gstt.swapY[i]))
-		#config.set(laser, 'warpdest', str(gstt.warpdest[i]))
+		config.set(laser, 'warpdest', np.array2string(gstt.warpdest[i], precision=2, separator=',',suppress_small=True))
 
 	config.write(open(gstt.ConfigName,'w'))
 
@@ -58,7 +60,7 @@ def Read():
 		gstt.finANGLE[i] = config.getfloat(laser, 'finangle')
 		gstt.swapX[i] = config.getint(laser, 'swapx')
 		gstt.swapY[i] = config.getint(laser, 'swapy')
-		#gstt.warpdest[i]= config.get(laser, 'warpdest')
+		gstt.warpdest[i]= np.array(ast.literal_eval(config.get(laser, 'warpdest')))
 
 
 

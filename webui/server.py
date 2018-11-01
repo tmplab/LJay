@@ -15,6 +15,11 @@ from websocket_server import WebsocketServer
 #import socket
 import types, thread, time
 
+# Websocket listening port
+wsPORT = 9001
+
+
+# With Bhorosc
 # OSC Server : relay OSC message from Bhorosc outport 8002 to UI
 #oscIPin = "192.168.1.10"
 oscIPin = "127.0.0.1"
@@ -24,8 +29,17 @@ oscPORTin = 8002
 oscIPout = "127.0.0.1"
 oscPORTout = 8001
 
-# Websocket listening port
-wsPORT = 9001
+
+# With Nozosc
+'''
+# OSC Server : relay OSC message from Bhorosc outport 8002 to UI
+#oscIPin = "192.168.1.10"
+oscIPin = "127.0.0.1"
+oscPORTin = 8004
+'''
+# OSC Client : relay message from UI to Nozosc inport 8003
+NozoscIPout = "127.0.0.1"
+NozoscPORTout = 8003
 
 # 
 # OSC part
@@ -68,6 +82,27 @@ def sendbhorosc(oscaddress,oscargs=''):
     #time.sleep(0.001)
 
 
+# send UI string as OSC message to Nozosc 8003
+# sendnozosc(oscaddress, [arg1, arg2,...])
+
+def sendnozosc(oscaddress,oscargs=''):
+        
+    oscmsg = OSCMessage()
+    oscmsg.setAddress(oscaddress)
+    oscmsg.append(oscargs)
+    
+    print ("sending to nozosc : ",oscmsg)
+    try:
+        osclientnozosc.sendto(oscmsg, (NozoscIPout, NozoscPORTout))
+        oscmsg.clearData()
+    except:
+        print ('Connection to nozosc refused : died ?')
+        sendWSall("/on 0")
+        sendWSall("/status No Nozosc ")
+        pass
+    #time.sleep(0.001)
+
+
 # OSC default path handler : send OSC message from Bhorosc to UI via websocket 9999
 def handler(path, tags, args, source):
 
@@ -75,7 +110,7 @@ def handler(path, tags, args, source):
     pathlength = len(oscpath)
     #print ""
     #print "default handler"
-    print "Bhorosc said : ", path, oscpath, args
+    #print "Bhorosc said : ", path, oscpath, args
     sendWSall(path + " " + str(args[0]))
     '''
     # /lstt/number value
@@ -149,7 +184,7 @@ def handle_timeout(self):
     self.timed_out = True
 
 def sendWSall(message):
-    print("WS sending %s" % (message))
+    #print("WS sending %s" % (message))
     server.send_message_to_all(message)
     
     
