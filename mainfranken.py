@@ -15,7 +15,7 @@ Send point lists directly to the redis server. Needs LJay Server (serverp.py) to
 
 
 LICENCE : CC
-Sam Neurohack, Loloster, 
+Sam Neurohack, loloster, 
 
 '''
 #from __future__ import print_function 
@@ -29,17 +29,6 @@ import thread
 import redis
 
 
-print ""
-print "LJay v0.8.0 Client"
-print "Multilaser, multi process and redis style."
-print ""
-print "Needs redis and serverp.py launched to talk to etherdreams"
-print ""
-print "webui/index.html is the WebUI page"
-print "Needs webui/uiserverp.py to talk to WebUI"
-print ""
-print "Autoconfiguring..."
-print ""
 
 
 #import renderer
@@ -58,6 +47,17 @@ import colorify
 import pdb
 import redis
 
+print "LJay v0.8.0 Client"
+print "Multilaser, multi process and redis style."
+
+if gstt.debug > 0:
+  print ""
+  print "Needs redis and serverp.py launched to talk to etherdreams"
+  print ""
+  print "webui/index.html is the WebUI page"
+  print "Needs webui/uiserverp.py to talk to WebUI"
+  print ""
+  print "Autoconfiguring..."
 
 settings.Read()
 
@@ -83,7 +83,7 @@ import bhoroscp
 import homographyp
 import set0
 import set1
-import setllstr
+import setllstrp
 import setamiral
 import setfranken
 import setexample
@@ -117,13 +117,13 @@ settables =  {					# Set 0
         2: set1.Pose,
         3: set1.LineX
     }, {						# setllstr Set 2
-        0: setllstr.NozMode,
-        1: setllstr.NozMode2,
-        2: setllstr.Sine,
-        3: setllstr.Orbits,
-        4: setllstr.Circle,
-        5: setllstr.CC,
-        6: setllstr.Slave
+        0: setllstrp.NozMode,
+        1: setllstrp.NozMode2,
+        2: setllstrp.Sine,
+        3: setllstrp.Orbits,
+        4: setllstrp.Circle,
+        5: setllstrp.CC,
+        6: setllstrp.Slave
     }, {                        # setfranken Set 3 (was setamiral)
         0: setfranken.Mapping,
         1: setfranken.Starfield,
@@ -139,17 +139,17 @@ settables =  {					# Set 0
         4: setexample.Text,
         5: setexample.black
     }, {                        # setexample Set 5
-        0: set5.square,
-        1: set5.Sine
+        0: set5.Sine,
+        1: set5.square
     }, {                        # setexample Set 6
-        0: set6.square,
-        1: set6.Sine
+        0: set6.Mapping,
+        1: set6.square
     }, {                        # setexample Set 7
-        0: set7.square,
+        0: set7.Mapping,
         1: set7.Sine
     }, {                        # setexample Set 8
-        0: set8.square,
-        1: set8.Sine
+        0: set8.Mapping,
+        1: set8.Sine,
     }
 
 gstt.MaxSets = len(settables)
@@ -186,14 +186,17 @@ for laser in xrange(gstt.LaserNumber):
 if gstt.debug > 1:
 	for lasercheck in xrange(gstt.LaserNumber):
 
-		print ""
-		print "Checking... ", gstt.lasersIPS[lasercheck]
-		if os.system("ping -c 1 -i 0.5 -q  " + gstt.lasersIPS[lasercheck]) != 0:
-			print ""
-			print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
+		#print ""
+		print "Checking...",gstt.lasersIPS[lasercheck],
+		#if os.system("ping -c 1 -i 0.5 -q  " + gstt.lasersIPS[lasercheck]) != 0:
+		if os.system("ping -c 1 -W 1 -q " + gstt.lasersIPS[lasercheck] + "> /dev/null 2>&1") != 0:
+			#print ""
+			#print gstt.lasersIPS[lasercheck], "IS NOT CONNECTED"
+			print "which is not connected"
 		else:
-			print ""
-			print gstt.lasersIPS[lasercheck], "IS OK"
+			#print ""
+			#print gstt.lasersIPS[lasercheck], "IS OK"
+			print "which is up and running !"
 
 
 else:

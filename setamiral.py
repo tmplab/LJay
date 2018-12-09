@@ -369,9 +369,12 @@ import os
 # Get frame number for pose path describe in gstt.PoseDir 
 def lengthPOSE(pose_dir):
 
-    print "Check directory ",'poses/' + pose_dir + '/'
+
+    if gstt.debug > 0:
+      print "Check directory ",'poses/' + pose_dir + '/'
     numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
-    print "Pose : ", pose_dir, numfiles, "images"
+    if gstt.debug > 0:
+      print "Pose : ", pose_dir, numfiles, "images"
     return numfiles
 
 

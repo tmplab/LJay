@@ -127,11 +127,17 @@ import os
 # Get frame number for pose path describe in gstt.PoseDir 
 def lengthPOSE(pose_dir):
 
-    print "Check directory ",'poses/' + pose_dir + '/'
-    numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
-    print "Pose : ", pose_dir, numfiles, "images"
-    return numfiles
-
+    if gstt.debug > 0:
+      print "Check directory",'poses/' + pose_dir,
+    if os.path.exists('poses/' + pose_dir):
+      numfiles = sum(1 for f in os.listdir('poses/' + pose_dir) if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
+      if gstt.debug > 0:
+        print numfiles,"images"
+      return numfiles
+    else:
+      if gstt.debug > 0:
+        print "but it doesn't even exist!"
+      return 0
 
 def preparePOSE():
 
@@ -232,10 +238,28 @@ def prepareFACES():
         gstt.anims2[anim][5]= lengthPOSE(gstt.anims2[anim][0])
     '''
 
+    #replace code below
+    ''' 
     for laseranims in range(3):
-        print laseranims
+	if gstt.debug > 0:
+	        print "gstt.anims:",gstt.anims[laseranims],
         for anim in range(len(gstt.anims[laseranims])):
             gstt.anims[laseranims][anim][5]= lengthPOSE(gstt.anims[laseranims][anim][0])
+	    if gstt.debug > 1:
+		print gstt.anims[laseranims][anim][5]
+    '''
+    #by this one
+    #thanks to https://stackoverflow.com/questions/19184335/is-there-a-need-for-rangelena
+
+    for laseranims in gstt.anims:
+	if gstt.debug > 1:
+	    print "gstt.anims:",laseranims
+        for anim in laseranims:
+            anim[5]=lengthPOSE(anim[0])
+	    if gstt.debug > 1:
+		print anim[5]
+    	    
+
 
 # display the face animation describe in gstt.PoseDir
 def Faces(fwork):
@@ -580,13 +604,14 @@ def MappingConf(section):
     gstt.simuPL = gstt.Laser
 
     for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
-        print "Reading option :  ", str(Window)
-        shape = [sections[gstt.CurrentSection], str(Window)]
-        WindowPoints = settings.MappingRead(shape)
-        gstt.Windows.append(WindowPoints)
+      if gstt.debug > 1:
+        print "Reading option  ",str(Window)
+      shape = [sections[gstt.CurrentSection], str(Window)]
+      WindowPoints = settings.MappingRead(shape)
+      gstt.Windows.append(WindowPoints)
 
-    print "Section points : " ,gstt.Windows
-
+    if gstt.debug > 1:
+      print "Section points : " ,gstt.Windows
 
 
 

@@ -102,9 +102,11 @@ def mouth(d):
 #def Pose(fwork):
 def Pose(pose_dir):
 
-	print "Check directory ",'poses/' + pose_dir + '/'
+	if gstt.debug > 0:
+		print "Check directory ",'poses/' + pose_dir + '/'
 	numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
-	print "Pose : ", pose_dir, numfiles, "images"
+	if gstt.debug > 0:
+		print "Pose : ", pose_dir, numfiles, "images"
 
 	for frame in xrange(numfiles):
 

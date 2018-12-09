@@ -6,7 +6,7 @@ Etat global (anciennement singleton de la classe GameState + autres VARIABLES n√
 from globalVars import *
 
 #ConfigName = "setexample.conf"
-ConfigName = "setfranken.conf"
+ConfigName = "setllstr.conf"
 
 anims= [[],[],[],[]]
 
@@ -21,7 +21,7 @@ Laser = 2
 
 # gstt.simuPL select what point list number to display in pygame simulator
 # Can be changed with /noteon 24-31
-simuPL = 3
+simuPL = 1
 
 # gstt.laserIPS. Will be overridden by the ConfigName (see below) file values
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
@@ -80,13 +80,16 @@ stepslongline = [ (0.25, 3), (0.75, 3), (1.0, 10)]
 
 
 #curveColor = [255,0,0] * maxCurvesByLaser
-curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+#curveColor = [[0 for _ in range(3)] for _ in range(maxCurvesByLaser)]
+curveColor = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 colorX = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 colorY = [[255 for _ in range(3)] for _ in range(maxCurvesByLaser)]
 offsetX = [0] * maxCurvesByLaser
 offsetY = [0] * maxCurvesByLaser
 curveNumber = 0
 Curve = curveNumber
+XTimeAxe=30000
+YTimeAxe=30000
 
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser
@@ -124,7 +127,7 @@ viewer_distance = cc[21] * 8
 cc[22]= 60
 fov = 4 * cc[22]
 
-debug = 2
+debug = 0
 
 '''
 Also vailable with args : -v Value 
