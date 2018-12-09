@@ -3,20 +3,35 @@
 # -*- mode: Python -*-
 
 '''
-LJay v0.7.0
+LJay v0.8.0
 
-newdac.py
-Unhanced version of the threaded etherdream python library from j4cDAC.
+newdacp.py
+Unhanced version (redis and process style) of the etherdream python library from j4cDAC.
 
 LICENCE : CC
 Sam Neurohack, pclf
 
+Conversion in etherdream coordinates, geometric corrections,... 
+Init call with a laser number and which point list to draw. Etherdream IP is found in conf file for given laser number
+
+Uses redis keys value for live inputs/outputs 
+These redis keys are read and set at each main loop.
+
+Live inputs :
+/pl/lasernumber [(x,y,color),(x1,y1,color),...] A string of list of pygame points list. 
+/resampler/lasernumber [(1.0,8), (0.25,3),(0.75,3),(1.0,10)] : a string for resampling rules. 
+					the first tuple (1.0,8) is for short line < 4000 in etherdream space
+					(0.25,3),(0.75,3),(1.0,10) for long line > 4000
+					i.e (0.25,3) means go at 25% position on the line, send 3 times this position to etherdream
+
+Live ouputs :
+/lstt/lasernumber value    etherdream last_status.playback_state  (0: idle   1: prepare   2: playing)
+/cap/lasernumber           number of empty points sent to fill etherdream buffer (up to 1799)
+/lack/lasernumber value    "a": ACK   "F": Full  "I": invalid. 64 or 35 for no connection. 
+Geometric corrections :
 
 
-Conversion in etherdream coordinates and geometric corrections 
 
-
-Call it with a laser number and which point list to draw. Etherdream IP is found in conf file for given laser number
 
 '''
 
@@ -30,9 +45,12 @@ from itertools import cycle
 from globalVars import *
 import pdb
 import ast
+import redis
 
-import homography
+import homographyp
 import numpy as np
+
+r = redis.StrictRedis(host=gstt.LjayServerIP, port=6379, db=0)
 
 
 def pack_point(x, y, r, g, b, i = -1, u1 = 0, u2 = 0, flags = 0):
@@ -81,10 +99,11 @@ class Status(object):
 			"Source: %d, flags 0x%x" %
 				(self.source, self.source_flags)
 		]
+		'''
 		if debug == 2:
 			for l in lines:
 				print prefix + l
-
+		'''
 
 class BroadcastPacket(object):
 	"""Represents a broadcast packet from the DAC."""
@@ -124,8 +143,8 @@ class DAC(object):
 		while True:
 
 			#pdb.set_trace()	
-			for indexpoint,currentpoint in enumerate(PL[self.PL]):
-
+			for indexpoint,currentpoint in enumerate(self.pl):
+				#print indexpoint, currentpoint
 				xyc = [currentpoint[0],currentpoint[1],currentpoint[2]]
 				self.xyrgb = self.EtherPoint(xyc)
 
@@ -135,13 +154,13 @@ class DAC(object):
 				if math.hypot(delta_x, delta_y) < 4000:
 
 					# For glitch art : decrease lsteps
-					#l_steps = [ (1.0, 8)]
-					l_steps = gstt.stepshortline
+					l_steps = [ (1.0, 8)]
+					#l_steps = gstt.stepshortline
 
 				else:
 					# For glitch art : decrease lsteps
-					#l_steps = [ (0.25, 3), (0.75, 3), (1.0, 10)]#(0.0, 1),
-					l_steps = gstt.stepslongline
+					l_steps = [ (0.25, 3), (0.75, 3), (1.0, 10)]
+					#_steps = gstt.stepslongline
 
 				for e in l_steps:
 					step = e[0]
@@ -155,7 +174,6 @@ class DAC(object):
 			
 
 	def GetPoints(self, n):
-	
 
 		d = [self.newstream.next() for i in xrange(n)]
 		#print d
@@ -167,32 +185,15 @@ class DAC(object):
 	def EtherPoint(self,xyc):
 	
 		c = xyc[2]
-		position = homography.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
-		#return (-position[0][0], -position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
-		#return (gstt.swapX[self.mylaser] * position[0][0], gstt.swapY[self.mylaser] * position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
+
+		#print ""
+		#print "pygame point",[(xyc[0],xyc[1],xyc[2])]
+		#gstt.EDH[self.mylaser]= np.array(ast.literal_eval(r.get('/EDH/'+str(self.mylaser))))
+		position = homographyp.apply(gstt.EDH[self.mylaser],np.array([(xyc[0],xyc[1])]))
+
+		#print "etherdream point",position[0][0],  position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8
+		#print ''
 		return (position[0][0],  position[0][1], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
-
-
-	'''
-	# Etherpoint Legacy style
-	def EtherPoint(self, xyc):
-		
-		# compute for a given point, actual coordinates with alignment parameters (center, zoom, axis swap,..) 
-		# and rescaled in etherdream coord space
-
-		c = xyc[2]
-		XX = xyc[0] - xy_center[0]
-		YY = xyc[1] - xy_center[1]
-		CosANGLE = math.cos(gstt.finANGLE[self.mylaser])
-		SinANGLE = math.sin(gstt.finANGLE[self.mylaser])
-		# Multilaser style
-		x = (xy_center[0] + ((XX * CosANGLE) - (YY * SinANGLE)) - xy_center[0]) * gstt.zoomX[self.mylaser] + gstt.centerX[self.mylaser]
-		y = (xy_center[1] + ((XX * SinANGLE) + (YY * CosANGLE)) - xy_center[1]) * gstt.zoomY[self.mylaser] + gstt.centerY[self.mylaser]
-		
-		return (x*gstt.swapX[self.mylaser], y*gstt.swapY[self.mylaser], ((c >> 16) & 0xFF) << 8, ((c >> 8) & 0xFF) << 8, (c & 0xFF) << 8)
-	'''
-
-
 
 
 	def read(self, l):
@@ -212,7 +213,7 @@ class DAC(object):
 		gstt.lstt_dacanswers[self.mylaser] = response
 		cmdR = data[1]
 		status = Status(data[2:])
-
+		r.set('/lack/'+str(self.mylaser), response)
 
 		if cmdR != cmd:
 			raise ProtocolError("expected resp for %r, got %r"
@@ -228,18 +229,46 @@ class DAC(object):
 	def __init__(self, mylaser, PL, port = 7765):
 		"""Connect to the DAC over TCP."""
 		socket.setdefaulttimeout(2)
+
 		#print "init"
+		self.mylaser = mylaser
+		#print "DAC", self.mylaser, "Handler process, connecting to", gstt.lasersIPS[mylaser] 
 		self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.connstatus = self.conn.connect_ex((gstt.lasersIPS[mylaser], port))
-		#print "Connection status : ", self.connstatus
+		#print "Connection status for", self.mylaser,":", self.connstatus
+		#print 'debug', debug, gstt.debug
 		# ipconn state is -1 at startup (see gstt) and modified here
-		gstt.lstt_ipconn[mylaser] =  self.connstatus
+		r.set('/lack/'+str(self.mylaser), self.connstatus)
+		gstt.lstt_ipconn[self.mylaser] =  self.connstatus		
+
 		self.buf = ""
+		# Upper case PL is the Point List number
 		self.PL = PL
-		self.mylaser = mylaser
+
+		# Lower case pl is the actual point list coordinates
+		self.pl = ast.literal_eval(r.get('/pl/'+str(self.mylaser)))
+		#if self.mylaser ==0:
+		print "Init Laser", self.mylaser
+		#print  "pl :", self.pl
+		#print "EDH/"+str(self.mylaser),r.get('/EDH/'+str(self.mylaser))
+		gstt.EDH[self.mylaser] = np.array(ast.literal_eval(r.get('/EDH/'+str(self.mylaser))))
+		homographyp.newEDH(self.mylaser)
+		
+		'''
+		d =homographyp.apply(gstt.EDH[self.mylaser],np.array([(300,400)]))
+		print ''
+		print "d",d
+		print "d0",d[0]
+		#print "d1",len(d[1])
+		print " "
+		'''
+
 		self.xyrgb = self.xyrgb_prev = (0,0,0,0,0)
 		self.newstream = self.OnePoint()
-		if self.connstatus != 0 and gstt.debug > 0:
+
+		print "Connection status for", self.mylaser,":", self.connstatus
+		print 'debug', debug
+		if self.connstatus != 0 and debug > 0:
 			print ""
 			print "ERROR connection with laser :", str(mylaser),str(gstt.lasersIPS[mylaser])
 			print "first 10 points in PL",self.PL, self.GetPoints(10)
@@ -295,11 +324,14 @@ class DAC(object):
 
 	def play_stream(self):
 
-		# First, prepare the stream
-		# print last playbaxk state
-		#print "Pb : ",self.last_status.playback_state
+		# print last playback state
+		#print "laser", self.mylaser, "Pb : ",self.last_status.playback_state
+
+		# error if etherdream is already playing state (from other source)
 		if self.last_status.playback_state == 2:
 			raise Exception("already playing?!")
+		
+		# if idle go to prepare state
 		elif self.last_status.playback_state == 0:
 			self.prepare()
 
@@ -307,23 +339,43 @@ class DAC(object):
 
 		while True:
 
-			gstt.lstt_dacstt[self.mylaser] = self.last_status.playback_state
+			#print "laser", self.mylaser, "Pb : ",self.last_status.playback_state
+			# update drawing parameters from redis keys
+
+			self.pl = ast.literal_eval(r.get('/pl/'+str(self.mylaser)))
+			gstt.EDH[self.mylaser]= np.array(ast.literal_eval(r.get('/EDH/'+str(self.mylaser))))
+
+			#if self.mylaser == 0:
+			#	print "franken pl for ", self.mylaser, ":", self.pl
+			#print "franken 0 point :", self.pl[0]
+
+			'''
+			self.resampler = ast.literal_eval(r.get('/resampler/'+str(self.mylaser)))
+			print "resampler for", self.mylaser, ":",self.resampler
+			gstt.stepshortline    = self.resampler[0]
+			gstt.stepslongline[0] = self.resampler[1]
+			gstt.stepslongline[1] = self.resampler[2]
+			gstt.stepslongline[2] = self.resampler[3]
+			'''
+
+			r.set('/lstt/'+str(self.mylaser), self.last_status.playback_state)
 			# pdb.set_trace()
 			# How much room?
 
 			cap = 1799 - self.last_status.fullness
 			points = self.GetPoints(cap)
 
-			gstt.lstt_points[self.mylaser] = cap 
+			r.set('/cap/'+str(self.mylaser), cap)
 
 			#if self.mylaser == 0:
 			#print self.mylaser, cap
 			if cap < 100:
-				time.sleep(0.005)
+				time.sleep(0.001)
 				cap += 150
 
 #			print "Writing %d points" % (cap, )
 			#t0 = time.time()
+			#print points
 			self.write(points)
 			#t1 = time.time()
 #			print "Took %f" % (t1 - t0, )

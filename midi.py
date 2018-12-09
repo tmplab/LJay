@@ -18,7 +18,7 @@ from sys import platform
 import gstt
 print "Simulator displays point list : ", str(gstt.simuPL)
 
-import bhorosc
+import bhoroscp
 
 import bhoreal
 import launchpad

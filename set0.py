@@ -25,7 +25,7 @@ Curve 7 : Pose
 import math
 import gstt
 from globalVars import *
-import bhorosc
+import bhoroscp
 import colorify
 import numpy as np
 import pdb
@@ -372,12 +372,12 @@ def Astro(fwork):
     gstt.JulianDate +=1
 
 
-# Curve 6 : WORK IN PROGRESS
-def Text(fwork):
+# Curve 6 : LaserID : cast '0' on laser 0, "1" on laser "1",...
+def LaserID(fwork):
     
-    gstt.message = "Hello"
-    message = gstt.message
-    PL =0
+    # "0" on laser 0
+    message = "0"
+
     len_message = len(message)
     i= 0
     for char in message:
@@ -392,11 +392,52 @@ def Text(fwork):
                 dots.append((x_offset+dot[0],dot[1]))
 
             fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 0, closed = False, xpos = 200, ypos = 200, resize = 1)
-        #gstt.PL[PL] = fwork.LinesPL(PL)
-    # Works with points generated around 0,0
-    # Here the dots list will be displayed from 200,200 and resized 1 times.    
-    gstt.PL[PL] = fwork.LinesPL(PL)
-    
+   
+    gstt.PL[0] = fwork.LinesPL(0)
+ 
+
+     # "1" on laser 1
+    message = "1"
+
+    len_message = len(message)
+    i= 0
+    for char in message:
+        i +=1
+        # x offset for each letter depends on message length
+        x_offset = 26 * (- (0.9 * len_message) + 3*i)
+        char_dots = font1.ASCII_GRAPHICS[ord(char) - 47]
+
+        for dot_pl in char_dots:
+            dots = []
+            for dot in dot_pl:
+                dots.append((x_offset+dot[0],dot[1]))
+
+            fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 1, closed = False, xpos = 200, ypos = 200, resize = 1)
+   
+    gstt.PL[1] = fwork.LinesPL(1)
+
+
+
+    # "2" on laser 2
+    message = "2"
+
+    len_message = len(message)
+    i= 0
+    for char in message:
+        i +=1
+        # x offset for each letter depends on message length
+        x_offset = 26 * (- (0.9 * len_message) + 3*i)
+        char_dots = font1.ASCII_GRAPHICS[ord(char) - 47]
+
+        for dot_pl in char_dots:
+            dots = []
+            for dot in dot_pl:
+                dots.append((x_offset+dot[0],dot[1]))
+
+            fwork.rPolyLineOneColor(dots, c=colorify.rgb2hex(gstt.color),  PL = 2, closed = False, xpos = 200, ypos = 200, resize = 1)
+   
+    gstt.PL[2] = fwork.LinesPL(2)
+
 
 
 

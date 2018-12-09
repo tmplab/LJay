@@ -15,6 +15,10 @@ import numpy as np
 import math
 import redis
 
+if gstt.debug >0: 
+	print "Point list server :",gstt.LjayServerIP
+r = redis.StrictRedis(host=gstt.LjayServerIP, port=6379, db=0)
+
 class Frame(object):
 	'''
 	classdocs
@@ -118,9 +122,12 @@ class Frame(object):
 	def LinesPL(self, PL):
 
 		if gstt.GridDisplay[PL] == 0:
-			return self.pl[PL]
+			if r.set('/pl/'+str(PL), str(self.pl[PL])) == True:
+				#print 'franken /pl/'+str(PL), str(self.pl[PL])
+				return self.pl[PL]
 
 		if gstt.GridDisplay[PL] == 1:
+			r.set('/pl/'+str(PL), str(self.grid_points))
 			return self.grid_points
 
 	def ResetPL(self, PL):

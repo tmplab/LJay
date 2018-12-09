@@ -2,6 +2,7 @@ import time
 from globalVars import *
 import gstt
 
+
 '''
 from itertools import cycle
 import ConfigParser
@@ -226,7 +227,7 @@ newpoint = numpy.array([10, 20])
 apply_homography(homomap,points)
 
 '''
-
+'''
 import homography
 import math
 import numpy as np
@@ -284,7 +285,6 @@ def newEDH():
     print ""
     print "H :",H
 
-    '''
     # Hwarp matrix warp etherdream points (computed with H) 
     Hwarp = homography.find(np.array(EDpoints), np.array(gstt.warpdest[gstt.Laser]))
     print ""
@@ -295,7 +295,7 @@ def newEDH():
     
     # EDH matrix 
     EDH[gstt.Laser] = np.dot(H,Hwarp)
-    '''
+
     print ""
     EDH[gstt.Laser] = H
     print "new EDH :",  EDH[gstt.Laser]
@@ -306,7 +306,7 @@ newEDH()
 final = homography.apply(EDH[gstt.Laser],np.array([(300.0, 400.0)]))
 print final
 
-
+'''
 '''
 for test in xrange(repetitions):
     tt = homography.apply(H1,points1)
@@ -347,3 +347,94 @@ def RotationMatrix(theta) :
  
     return R
 '''
+import redis
+from multiprocessing import Process, Queue, TimeoutError 
+import random, ast
+import settings
+settings.Read()
+import newdacp
+import homography
+
+gstt.debug = 2
+
+
+def dac_process(number, pl):
+    while True:
+        try:
+            d = newdacp.DAC(number,pl)
+            d.play_stream()
+        except Exception as e:
+
+            import sys, traceback
+            if gstt.debug == 2:
+                print '\n---------------------'
+                print 'Exception: %s' % e
+                print '- - - - - - - - - - -'
+                traceback.print_tb(sys.exc_info()[2])
+                print "\n"
+            pass
+
+        except KeyboardInterrupt:
+            sys.exit(0)
+ 
+
+
+if __name__ == '__main__':
+
+        
+    r = redis.StrictRedis(host=gstt.LjayServerIP , port=6379, db=0)
+
+    grid_points = [(300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 0), (500.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280), (500.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280)]
+    if r.set('/pl/0', grid_points) == True:
+        print "original /pl/0 ", ast.literal_eval(r.get('/pl/0'))
+
+    grid_points = [(300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 0), (500.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280), (500.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280)]
+    if r.set('/pl/1', grid_points) == True:
+        print "original /pl/1 ", ast.literal_eval(r.get('/pl/1'))
+
+    grid_points = [(300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 0), (500.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280), (500.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280)]
+    if r.set('/pl/2', grid_points) == True:
+        print "original /pl/2 ", ast.literal_eval(r.get('/pl/2'))
+
+    dac_worker0= Process(target=dac_process,args=(0,0))
+    dac_worker0.start()
+    
+    dac_worker1= Process(target=dac_process,args=(1,0))
+    dac_worker1.start()
+
+    dac_worker2= Process(target=dac_process,args=(2,0))
+    dac_worker2.start()
+    
+    try:
+        while True:
+            #print "lstt0 : ", r.get('lstt0')
+        
+            zrr = random.randint(0, 100000)
+            #print zrr
+            if zrr == 98:
+                #print 'ZRR = 98'
+                grid_points = [(300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 0), (500.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280), (500.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280)]
+                #print "0", grid_points
+                r.set('/pl/0', grid_points)
+
+                grid_points = [(300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 0), (500.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280), (500.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280)]
+                #print "1", grid_points
+                r.set('/pl/1', grid_points)
+
+                grid_points = [(300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 0), (500.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280), (500.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 400.0+random.randint(-100, 100), 65280), (300.0+random.randint(-100, 100), 200.0+random.randint(-100, 100), 65280)]
+                #print "2", grid_points
+                r.set('/pl/2', grid_points)
+            
+            #print grid_points
+            #if r.set('pl0', grid_points) == True:
+                #print "pl0 ", ast.literal_eval(r.get('pl0'))
+ 
+    except KeyboardInterrupt:
+        pass
+    finally:
+
+        dac_worker0.join()
+        dac_worker1.join()
+        dac_worker2.join()
+ 
+    print "Fin des haricots"

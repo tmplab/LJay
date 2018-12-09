@@ -8,7 +8,7 @@ from threading import Thread
 from rtmidi.midiconstants import (CHANNEL_PRESSURE, CONTROLLER_CHANGE, NOTE_ON, NOTE_OFF,
                                   PITCH_BEND, POLY_PRESSURE, PROGRAM_CHANGE)
 
-import bhorosc
+import bhoroscp
 
 from mido import MidiFile
 import mido

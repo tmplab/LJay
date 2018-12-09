@@ -30,7 +30,7 @@ print "Simulator displays point list : ", str(gstt.simuPL)
 import midi
 import socket
 import colorify
-import homography
+import homographyp
 import settings
 import align
 
@@ -42,7 +42,7 @@ import mydmx
 
 #oscIPin = '127.0.0.1'
 #oscIPin = socket.gethostbyname("")
-oscIPin = '192.168.1.52'
+oscIPin = gstt.oscIPin
 #oscPORTin = 8001
 oscPORTin = gstt.iport
 oscpathin = ""
@@ -80,7 +80,7 @@ line3 = 1
 
 
 print("")
-print("Starting OSCServer...")
+print("Starting OSCServerp...")
 print ("Receiving on ", oscIPin, ":",str(oscPORTin))
 oscserver = OSCServer( (oscIPin, oscPORTin) )
 oscserver.timeout = 0
@@ -854,7 +854,7 @@ def handler(path, tags, args, source):
 	if oscpath[1] == "angle":
 		print "New Angle modification for laser ", oscpath[2], ":",  args[0]
 		gstt.finANGLE[int(oscpath[2])] += int(args[0])
-		homography.newEDH(int(oscpath[2]))
+		homographyp.newEDH(int(oscpath[2]))
 		settings.Write()
 
 	# /intens/lasernumber value 
@@ -889,13 +889,13 @@ def handler(path, tags, args, source):
 		if args[0] == "0":
 			print "swap X : -1 for laser ", oscpath[3]
 			gstt.swapX[int(oscpath[3])]= -1
-			homography.newEDH(int(oscpath[3]))
+			homographyp.newEDH(int(oscpath[3]))
 			settings.Write()
 
 		else:
 			print "swap X : 1 for laser ",  oscpath[3]
 			gstt.swapX[int(oscpath[3])]= 1
-			homography.newEDH(int(oscpath[3]))
+			homographyp.newEDH(int(oscpath[3]))
 			settings.Write()
 
 	# /swap/Y/lasernumber value (0 or 1) 
@@ -903,26 +903,26 @@ def handler(path, tags, args, source):
 		if args[0] == "0":
 			print "swap Y : -1 for laser ",  oscpath[3]
 			gstt.swapY[int(oscpath[3])]= -1
-			homography.newEDH(int(oscpath[3]))
+			homographyp.newEDH(int(oscpath[3]))
 			settings.Write()
 		else:
 			print "swap Y : 1 for laser ",  oscpath[3]
 			gstt.swapY[int(oscpath[3])]= 1
-			homography.newEDH(int(oscpath[3]))
+			homographyp.newEDH(int(oscpath[3]))
 			settings.Write()
 
 	# /loffset/X/lasernumber value
 	if oscpath[1] == "loffset" and oscpath[2] == "X":
 		print "offset/X laser ", oscpath[3], "modified : ",  args[0]
 		gstt.centerX[int(oscpath[3])] -=  int(args[0])
-		homography.newEDH(int(oscpath[3]))
+		homographyp.newEDH(int(oscpath[3]))
 		settings.Write()
 
 	# /loffset/Y/lasernumber value
 	if oscpath[1] == "loffset" and oscpath[2] == "Y":
 		print "offset/Y laser ", oscpath[3], "modified : ",  args[0]
 		gstt.centerY[int(oscpath[3])] -=  int(args[0])
-		homography.newEDH(int(oscpath[3]))
+		homographyp.newEDH(int(oscpath[3]))
 		settings.Write()
 
 
@@ -930,14 +930,14 @@ def handler(path, tags, args, source):
 	if oscpath[1] == "scale" and oscpath[2] == "X":
 		print "scale/X laser ", oscpath[3] , "modified : ",  args[0]
 		gstt.zoomX[int(oscpath[3])] += int(args[0])
-		homography.newEDH(int(oscpath[3]))
+		homographyp.newEDH(int(oscpath[3]))
 		settings.Write()
 
 	# /scale/Y/lasernumber value
 	if oscpath[1] == "scale" and oscpath[2] == "Y":
 		print "scale/Y laser ",  oscpath[3], "modified : ",  args[0]
 		gstt.zoomY[int(oscpath[3])] += int(args[0])
-		homography.newEDH(int(oscpath[3]))
+		homographyp.newEDH(int(oscpath[3]))
 		settings.Write()
 
 	# /black/lasernumber value 0

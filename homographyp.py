@@ -69,6 +69,11 @@ from scipy.linalg import svd,lstsq
 import ast
 import gstt
 from globalVars import screen_size, xy_center
+import redis
+
+
+r = redis.StrictRedis(host=gstt.LjayServerIP, port=6379, db=0)
+
 
 def find(points1,points2):
 	if points1.shape[0] != points2.shape[0] : raise ValueError("The number of input and output points mismatches")
@@ -212,12 +217,12 @@ def newEDH(mylaser):
 	# Computer Hwarp matrix with previously reference warped points in configuration file.
 	Hwarp = find(pointsref, gstt.warpdest[mylaser])
 	#Hwarp = np.identity(3, dtype = float)
-
 	# EDH matrix 
 	gstt.EDH[mylaser] = H
 
 	# EDH matrix is H x Hwarp
 	#gstt.EDH[mylaser] = np.dot(H,Hwarp)
+	r.set('/EDH/'+str(mylaser), np.array2string(gstt.EDH[mylaser], separator=','))
 	
 	if gstt.debug >0:
 		print ""

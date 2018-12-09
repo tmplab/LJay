@@ -21,10 +21,12 @@ def Write():
 	config.set('General', 'set', str(gstt.Set))
 	config.set('General', 'curve', str(gstt.Curve))
 	config.set('General', 'lasernumber', str(gstt.LaserNumber))
+	config.set('General', 'LjayServerIP', str(gstt.LjayServerIP))
 
 	for i in range(gstt.LaserNumber):
 		laser = 'laser' + str(i)
 		config.set(laser, 'ip', str(gstt.lasersIPS[i]))
+		config.set(laser, 'kpps', str(gstt.kpps[i]))
 		config.set(laser, 'centerx', str(gstt.centerX[i]))
 		config.set(laser, 'centery', str(gstt.centerY[i]))
 		config.set(laser, 'zoomx', str(gstt.zoomX[i]))
@@ -45,11 +47,14 @@ def Read():
 	gstt.Set = config.getint('General', 'set')
 	gstt.Curve = config.getint('General', 'curve')
 	gstt.LaserNumber = config.getint('General', 'lasernumber')
+	gstt.LjayServerIP = config.get('General', 'LjayServerIP')
+	print "redis server :", gstt.LjayServerIP
 
 	for i in range(4):
 		laser = 'laser' + str(i)
 		gstt.lasersIPS[i]= config.get(laser, 'ip')
 		gstt.lasersPLS[i] = config.getint(laser, 'PL')
+		gstt.kpps[i] = config.getint(laser, 'kpps')
 		#gstt.lasersPLcolor[i] = config.getint(laser, 'color')
 		gstt.centerX[i]= config.getint(laser, 'centerx')
 		gstt.centerY[i] = config.getint(laser, 'centery')

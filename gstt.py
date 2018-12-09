@@ -5,19 +5,23 @@ Etat global (anciennement singleton de la classe GameState + autres VARIABLES n√
 
 from globalVars import *
 
+#ConfigName = "setexample.conf"
+ConfigName = "setfranken.conf"
+
 anims= [[],[],[],[]]
 
 # How many lasers are connected. Different that "currentlaser" used by bhorosc
 LaserNumber = 2
 
-
+LjayServerIP = '192.168.1.13'
+oscIPin = '192.168.2.15'
 # gstt.Laser select to what laser modifcation will occur.
 # Can be changed with /noteon 16-23
-Laser = 0
+Laser = 2
 
 # gstt.simuPL select what point list number to display in pygame simulator
 # Can be changed with /noteon 24-31
-simuPL = 0
+simuPL = 3
 
 # gstt.laserIPS. Will be overridden by the ConfigName (see below) file values
 lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
@@ -27,6 +31,10 @@ lasersIPS = ['192.168.1.5','192.168.1.6','192.168.1.3','192.168.1.4']
 # ** Will be overridden by the ConfigName (see below) file values **
 lasersPLS = [0,1,2,0]
 
+
+# gstt.kpps stores kpps for each laser.
+# ** Will be overridden by the ConfigName (see below) file values **
+kpps = [25000,25000,25000,25000]
 
 # gstt.GridDisplay : if = 1 Curve points actually sent to PL are replaced by a grid
 GridDisplay = [0,0,0,0]
@@ -60,8 +68,7 @@ Set = 1 #nozoid loloster.py
 # Can be changed with /noteon 0-7
 Curve = 0 #nozmod
 
-#ConfigName = "setexample.conf"
-ConfigName = "setexample.conf"
+
 maxCurvesByLaser = 4
 
 
@@ -84,15 +91,13 @@ Curve = curveNumber
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser
 
-
-
 Mode = 5
 
 point = [0,0,0]
 
 # gstt.colormode select what to display. Can be changed with /noteon 57-64
 colormode = 0
-color = [0,255,0]
+color = [255,255,255]
 newcolor = 0
 
 surpriseoff = 10
@@ -107,6 +112,10 @@ osc = [0] * 255
 oscInUse = [0] * 255
 knob = [0] * 33
 
+stars0=[]
+stars1=[]
+stars2=[]
+#stars3=[]
 # Viewer distance (cc 21) 
 cc[21]=60
 viewer_distance = cc[21] * 8
@@ -115,7 +124,7 @@ viewer_distance = cc[21] * 8
 cc[22]= 60
 fov = 4 * cc[22]
 
-debug = 0
+debug = 2
 
 '''
 Also vailable with args : -v Value 

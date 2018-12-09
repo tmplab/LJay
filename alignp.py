@@ -2,7 +2,7 @@ import gstt
 import frame
 import pygame
 import settings
-import homography
+import homographyp
 from globalVars import *
 import bhoreal
 
@@ -48,7 +48,7 @@ def Display(f):
 	#print str(gstt.centerx) + "," + str(gstt.centery) + "," + str(gstt.zoomx) + "," + str(gstt.zoomy) + "," + str(gstt.sizex) + "," + str(gstt.sizey)
 	print "Current Laser", gstt.Laser
 	print "computing homography",gstt.Laser
-	homography.newEDH(gstt.Laser)
+	homographyp.newEDH(gstt.Laser)
 
 	'''
 	for laserid in range(0,4):
@@ -238,7 +238,7 @@ def Mapping(fwork):
 			print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, "deltax ", deltax, "deltay", deltay
 			print gstt.warpdest[gstt.Laser]
 	   
-			homography.newEDH(gstt.Laser)
+			homographyp.newEDH(gstt.Laser)
 			settings.Write()
 
 

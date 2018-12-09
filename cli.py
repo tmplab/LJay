@@ -2,22 +2,26 @@ import gstt
 import argparse
 
 
+
 def handle():
 
 	print ""
 	print "Arguments parsing if needed..."
 	#have to be done before importing bhorosc.py to get correct port assignment
 	argsparser = argparse.ArgumentParser(description="LJay")
+	argsparser.add_argument("-r","--redisIP",help="Redis computer IP address (gstt.LjayServerIP by default)",type=str)
 	argsparser.add_argument("-i","--iport",help="OSC port number to listen to (8001 by default)",type=int)
 	argsparser.add_argument("-o","--oport",help="OSC port number to send to (8002 by default)",type=int)
 	argsparser.add_argument("-x","--invx",help="Invert X axis again",action="store_true")
 	argsparser.add_argument("-y","--invy",help="Invert Y axis again",action="store_true")
-	argsparser.add_argument("-s","--set",help="Specify wich generator set to use (default is in gstt.py)",type=int)
-	argsparser.add_argument("-c","--curve",help="Specify with generator curve to use (default is in gstt.py)",type=int)
-	argsparser.add_argument("-r","--reset",help="Reset alignement values",action="store_true")
+	argsparser.add_argument("-s","--set",help="Only for VJ version. Specify wich generator set to use (default is in gstt.py)",type=int)
+	argsparser.add_argument("-c","--curve",help="Only for VJ version. Specify with generator curve to use (default is in gstt.py)",type=int)
+	argsparser.add_argument("-a","--align",help="Reset alignement values",action="store_true")
 	argsparser.add_argument("-d","--display",help="Point List number displayed in pygame simulator",type=int)
 	argsparser.add_argument("-v","--verbose",help="Debug mode 0,1 or 2.",type=int)
 	argsparser.add_argument("-L","--Lasers",help="Number of lasers connected.",type=int)
+	argsparser.add_argument("-b","--bhoroscIP",help="Computer IP running bhorosc ('127.0.0.1' by default)",type=str)
+
 
 	# Keep it ! if new features of cli.py is used in a monolaser program
 	# argsparser.add_argument("-l","--laser",help="Last digit of etherdream ip address 192.168.1.0/24 (4 by default). Localhost if digit provided is 0.",type=int)
@@ -68,6 +72,9 @@ def handle():
 		else:
 			print("Y inverted")
 
+	# Redis Computer IP
+	if args.redisIP  != None:
+		gstt.LjayServerIP  = args.redisIP
 
 
 	# Set / Curves arguments
@@ -97,6 +104,11 @@ def handle():
 		gstt.LaserNumber = args.Lasers
 	
 	
+	if args.bhoroscIP  != None:
+		gstt.oscIPin = args.bhoroscIP
+	else:
+		gstt.oscIPin = '127.0.0.1'
+
 	# Etherdream target for mono laser program
 	'''
 	if args.laser  != None:
@@ -114,7 +126,7 @@ def handle():
 	'''
 
 	# Reset alignment values
-	if args.reset == True:
+	if args.align == True:
 
 		gstt.centerx = 0
 		gstt.centery = 0

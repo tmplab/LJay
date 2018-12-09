@@ -12,7 +12,7 @@ A software for Live laser actions with support for up to 4 lasers
 
 Live modifications with many devices: music (Nozoids), gamepad, midicontroller, smartphone, tablet,...
 
-Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network (gigabits, no wifi, 100 mpbs doesn't work well with several lasers)
+Needs at least : an etherdream DAC connected to an ILDA laser, RJ 45 IP network (gigabits only !!  no wifi, 100 mpbs doesn't work well with several lasers)
 
 GUIs : WebUI, TouchOSC, Pure Data patch. You can build your own GUI and send/get commands to/from LJay through OSC. Attention : the Pure Data patch works with PD-extended 0.43. Any contribution for whatever "better" Pure Data version are welcome.
 
@@ -23,11 +23,31 @@ Nozosc : Semi modular synthetizers from Nozoids can send a lot of their inner so
 You can also send OSC commands to a video, music,... external software to trigger what you want.
 
 
-To run : 
+To run one laser style : 
 
 python main.py 
 
 use --help for all arguments
+
+
+To run multilasers, a server approach is based on redis. One process per etherdream is spawn to retrieve the given point list from redis, warp, resample and manage the given etherdream DAC dialog.
+
+Say the server computer IP is 192.138.1.13, the client computer that run LJ is 192.168.1.52 
+
+On the server computer :
+edit /etc/redis/redis.conf or redis-server --slaveof 192.168.1.13 6379 &
+python serverp.py -r 192.168.1.13
+cd webui/
+python uiserverp.py -r 192.168.1.13 -b 192.168.1.52
+
+on the client computer for all features :
+python mainp.py -r 192.168.1.13
+
+to just generate and send list points
+node testredis.js
+
+to monitor redis server :
+redis-cli -h 192.168.1.13 monitor
 
 #
 # Features among many others.
@@ -53,8 +73,11 @@ use --help for all arguments
 - Integrated sawtooth, sine and square generator. See set0
 - A multi laser example : display solar planet positions at anytime, see Astro() (set 0 Curve 7). As Astro is not necessary and needs a big download, to use it you need to uncomment astro init lines in set0 and follow install instructions. A simplier multilaser example is in setexample.py
 - Web ui !! (start server.py from webui directory). This "server" is basically a OSC/websocket bridge. Websocket side talks to webui index.html page. OSC side talks to LJay (bhorosc.py) and Nozosc. All OSC specs are not fully supported.
-- Status every 10th seconds : every etherdream DAC state, number of buffer points sent,...
-- "Optimisation" points automatically added can be changed live, for glitch art. See gstt.py
+- Status every 0.5 seconds : every etherdream DAC state, number of buffer points sent,...
+- "Optimisation" points automatically added can be changed live, for glitch art. Search "glitch" in gstt.py
+- D key will kind of cycle PL in simulator. buggy
+- redis server version : Sending points is now dead simple in many langages (add all points coordinates in one string and send it to redis server). Simple keys to exchange data (i.e "/pl/0" is the laser 0 point list).   
+- Laser sharing ! In a coding event like demo party the server version, it's a five minutes learning process. Testredis.js has the code to draw some 
 
 #
 # External devices 
@@ -67,6 +90,7 @@ use --help for all arguments
 - LaunchPad mini
 - Bhoreal
 - Joypads : Joypads are detected and read by pygame. You need to adapt the button mapping to your specific gamepad in the code. Search "joypad" in setexample.py
+
 
 
 
@@ -85,7 +109,7 @@ A "Set" is a collection of Curves, like a MIDI bank (="Set") has different progr
 
 In each Set, Curve 0 is reserved for interactive settings modifications : trapezoidal corrections = "Warp edit mode" and  
  "Windows edit mode" to map custom shapes with mouse.
- 
+
 So your Curve numbers will be 1+. 
 
 
@@ -164,13 +188,22 @@ Again "Shapes" are only mousely editable list of points : you can display them o
 
 If you have serial or rtmidi python module, remove them first. 
 
+
+apt install git python-pip 
+
 pip uninstall serial 
 
 pip uninstall rtmidi
 
-apt install git python-pip libasound2-dev python-dev libpython-dev libjack-dev
+git clone https://github.com/ptone/pyosc --depth 1 /tmp/pyosc && cd /tmp/pyosc && sudo ./setup.py install 
+
+pip install libasound2-dev python-dev libpython-dev libjack-dev
 
 pip install pysimpledmx
+
+pip install numpy
+
+pip install scipy
 
 pip install Cython
 
@@ -183,6 +216,10 @@ Be aware : LJay is tested with pygame 1.9. A long goal is to remove pygame depen
 
 pip install pygame, pyserial, pyosc
 
+
+For multilasers a multiprocessed version use redis 
+
+pip install redis
 
 # Last 2, only if you want to use Astro example.
 

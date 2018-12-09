@@ -69,6 +69,11 @@ import set1
 import setllstr
 import setamiral
 import setexample
+import set5
+import set6
+import set7
+import set8
+
 
 import orbits
 import align
@@ -87,7 +92,7 @@ settables =  {					# Set 0
         3: set0.Dot,
         4: set0.Sine,
         5: set0.Astro,
-        6: set0.Text,
+        6: set0.LaserID,
         7: set0.Pose
     }, {						# Set 1
         0: set1.Shapes,
@@ -113,8 +118,19 @@ settables =  {					# Set 0
         2: setexample.xPLS,
         3: setexample.CC,
         4: setexample.Text
+    }, {                        # setexample Set 5
+        0: set5.Mapping,
+        1: set5.Sine
+    }, {                        # setexample Set 6
+        0: set6.Mapping,
+        1: set6.Sine
+    }, {                        # setexample Set 7
+        0: set7.Mapping,
+        1: set7.Sine
+    }, {                        # setexample Set 8
+        0: set8.Mapping,
+        1: set8.Sine,
     }
-
 gstt.MaxSets = len(settables)
 
 # built in black dot when curve = -1. Will be called when set change.
@@ -473,7 +489,7 @@ while True:
     	update_screen = True
 
     clock.tick(60)
-    time.sleep(0.0001)
+    time.sleep(0.001)
 
 pygame.quit()
 

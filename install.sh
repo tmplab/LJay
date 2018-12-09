@@ -1,8 +1,32 @@
-# NOT UP TO DATE. See Readme installation chapter.
-# Install debian deps
-sudo apt install libpython-dev libjack-dev
-# Install python specific deps
-sudo pip install mido rtmidi scipy pygame pysimpledmx pyserial
-sudo pip install --pre python-rtmidi
+#!/bin/bash
+
+sudo apt install python-pip 
+
+sudo apt install git
+
+pip uninstall serial 
+
+pip uninstall rtmidi
+
+pip install libasound2-dev python-dev libpython-dev libjack-dev
+
+pip install pysimpledmx
+
+pip install numpy
+
+pip install scipy
+
+pip install mido
+
+pip install python-rtmidi 
+
 git clone https://github.com/ptone/pyosc --depth 1 /tmp/pyosc && cd /tmp/pyosc && sudo ./setup.py install 
- 
+
+pip install pygame, pyserial
+
+sudo apt install redis-server
+
+pip install redis
+
+
+

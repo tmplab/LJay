@@ -9,7 +9,7 @@ import midi
 #import launchpad
 
 import sys
-import bhorosc
+import bhoroscp
 
 
 is_py2 = sys.version[0] == '2'

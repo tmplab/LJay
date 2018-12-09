@@ -16,6 +16,7 @@ Curve 1 : Sin Simple Lissajoux goes to Point List 0
 Curve 2 : xPLS how to have different Point List generators to feed different lasers.
 Curve 3 : CC how to use live inputs coming from midi.
 Curve 4 : Text. Example for rPolyline function
+Curve 5 : Black. Nothing on all laser.
 
 '''
 
@@ -23,7 +24,7 @@ Curve 4 : Text. Example for rPolyline function
 import math
 import gstt
 from globalVars import *
-import bhorosc
+import bhoroscp
 import colorify
 import numpy as np
 import pdb
@@ -184,6 +185,22 @@ def Text(fwork):
 
     gstt.PL[PL] = fwork.LinesPL(PL)
     
+
+#Curve 5
+def black():
+
+    print "black out"
+    for laserid in range(0,4):
+        PL = laserid
+        dots = []
+        x = xy_center[0] 
+        y = xy_center[1]
+        dots.append((x,y))
+        dots.append((x+5,y+5))
+        print "black"
+        fwork.PolyLineOneColor(dots, c=colorify.rgb2hex([0,0,0]), PL = 0, closed = False)
+
+    gstt.PL[PL] = fwork.LinesPL(PL)
 
 
 #
@@ -530,11 +547,11 @@ def Mapping(fwork):
             deltax = gstt.mouse[0][0]-mouse_prev[0][0]
             deltay = gstt.mouse[0][1]-mouse_prev[0][1]
             
-            gstt.warpdest[gstt.Laser][gstt.CurrentCorner,0]+= (deltax *20)
-            gstt.warpdest[gstt.Laser][gstt.CurrentCorner,0]+= (deltax *2)
+            gstt.warpdest[gstt.Laser][gstt.CurrentCorner,0]-= (deltax *5)
+            gstt.warpdest[gstt.Laser][gstt.CurrentCorner,1]+= (deltay *5)
 
-            print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, "deltax ", deltax, "deltay", deltay
-            print gstt.warpdest[gstt.Laser]
+            #print "Laser ", gstt.Laser, " Corner ", gstt.CurrentCorner, "deltax ", deltax, "deltay", deltay
+            #print gstt.warpdest[gstt.Laser]
        
             homography.newEDH(gstt.Laser)
             settings.Write()

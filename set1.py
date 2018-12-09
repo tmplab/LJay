@@ -18,7 +18,7 @@ Curve 2 : align all poses
 import math
 import gstt
 from globalVars import *
-import bhorosc
+import bhoroscp
 import colorify
 import orbits
 import settings
