@@ -49,14 +49,18 @@ class Frame(object):
 	
 
 	def PolyLineOneColor(self, xy_list, c, PL , closed ):
-
+		#print "--"
+		#print "c",c
+		#print "xy_list",xy_list
+		#print "--"
 		xy0 = None		
 		for xy in xy_list:
 			if xy0 is None:
 				xy0 = xy
-				#print xy0
+				#print "xy0:",xy0
 				self.LineTo(xy0,0, PL)
 			else:
+				#print "xy:",xy
 				self.LineTo(xy,c, PL)
 		if closed:
 			self.LineTo(xy0,c, PL)
@@ -105,7 +109,8 @@ class Frame(object):
 			'''
 	
 	# Send 2D point list around 0,0 with 3D rotation resizing and reposition around xpos ypos
-	def rPolyLineOneColor(self, xy_list, c, PL , closed, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
+	#def rPolyLineOneColor(self, xy_list, c, PL , closed, xpos = 0, ypos =0, resize =1, rotx =0, roty =0 , rotz=0):
+	def rPolyLineOneColor(self, xy_list, c, PL , closed, xpos = 0, ypos =0, resize =0.7, rotx =0, roty =0 , rotz=0):
 		xy0 = None		
 		for xy in xy_list:
 			if xy0 is None:

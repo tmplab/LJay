@@ -48,6 +48,9 @@ def NozMode(fwork):
     nbplow=10
     nbphigh=100
 
+#    print "here we are in setllstrp.py"
+#    print "gstt.maxCurvesByLaser", gstt.maxCurvesByLaser
+
 #    print gstt.osc[4]
 
     # There is a sound curve to draw on X axis
@@ -61,6 +64,7 @@ def NozMode(fwork):
           dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbplow)
         xT = gstt.osc[gstt.X[curveNumber]]
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
+        #print "xT:%d,x:%d"%(xT,x)
     
       else:
         # Else (i.e. gstt.X == 0) use time for X axis and expand points list
@@ -70,6 +74,7 @@ def NozMode(fwork):
           dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbphigh)
         xT = (((time.time()*gstt.XTimeAxe) % 65536) - 32768)
         x = 3.5 * (extracc2scrX(xT) - screenSizeX/2)
+        #print "xT:%d,x:%d"%(xT,x)
 
       # There is a sound curve to draw on Y axis
       if gstt.Y[curveNumber]%127 != 0:
@@ -79,6 +84,7 @@ def NozMode(fwork):
           dotsoscT[currentdotsosc[curveNumber]][curveNumber] = collections.deque(maxlen=nbplow)
         yT = gstt.osc[gstt.Y[curveNumber]]
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
+        #print "yT:%d,x:%d"%(yT,y)
       else:
         # Use time for X axis    
         #print "gstt.Y == 0"
@@ -88,13 +94,22 @@ def NozMode(fwork):
         yT = (((time.time()*gstt.YTimeAxe) % 65536) - 32768)
         y = 3.5 * (extracc2scrY(yT) - screenSizeY/2)
         #print "y:%r,yT:%r" % (y,yT)
+        #print "yT:%d,x:%d"%(yT,y)
 
       if gstt.X[curveNumber]%127 == 0 and gstt.Y[curveNumber]%127 == 0:
         x = 0
         y = 0
 
+      #proj(int(x),int(y),Z,curveNumber)#Z sans perspective
+      #gstt.cc[29]=0
+      #gstt.cc[30]=0
+      #gstt.cc[31]=0
+      #gstt.cc[21]=60
+      #gstt.cc[22]=60
       newx,newy =  proj(int(x),int(y),0,curveNumber)
 
+#      newx=newx-400
+#      newy=newy+100 #rPolyLineOneColor
 
       if gstt.X[curveNumber]%127 != 0 and gstt.Y[curveNumber]%127 == 0:
         if 1 < len(dotsoscT[currentdotsosc[curveNumber]][curveNumber]) and newy > dotsoscT[currentdotsosc[curveNumber]][curveNumber][-1][1]:
@@ -115,7 +130,10 @@ def NozMode(fwork):
 
         fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  0, closed = False )
         fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  0, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  1, closed = False )
 
+	#print "dotsosc:%s,curveNumber:%d,color:%s" % (dotsoscT,curveNumber,colorify.rgb2hex(gstt.curveColor[curveNumber]))
 
       if gstt.X[curveNumber]%127 == 0 and gstt.Y[curveNumber]%127 != 0:
         if 1 < len(dotsoscT[currentdotsosc[curveNumber]][curveNumber]) and newx < dotsoscT[currentdotsosc[curveNumber]][curveNumber][-1][0]:
@@ -130,6 +148,11 @@ def NozMode(fwork):
 
         fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  0, closed = False )
         fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  0, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[0][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  1, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[1][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  1, closed = False )
+
+	#print "dotsosc:%s,curveNumber:%d,color:%s" % (dotsoscT,curveNumber,colorify.rgb2hex(gstt.curveColor[curveNumber]))
+
 
       #if (gstt.X == 0 and gstt.Y == 0) or (gstt.X != 0 and gstt.Y != 0):
       if (gstt.X[curveNumber]%127 != 0 and gstt.Y[curveNumber]%127 != 0):
@@ -142,9 +165,11 @@ def NozMode(fwork):
 	#print "gstt.Y[0]=%d" % gstt.Y[0]
 
         fwork.PolyLineOneColor( dotsoscT[currentdotsosc[curveNumber]][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  0, closed = False )
+        fwork.PolyLineOneColor( dotsoscT[currentdotsosc[curveNumber]][curveNumber], c=colorify.rgb2hex(gstt.curveColor[curveNumber]), PL =  1, closed = False )
 
       #gstt.PL[PL] = fwork.LinesPL(PL)
       gstt.PL[0] = fwork.LinesPL(0)
+      gstt.PL[1] = fwork.LinesPL(1)
 
       #fwork.PolyLineOneColor( dotsoscT[0], c=colorify.rgb2hex(gstt.color)  )
       #fwork.PolyLineOneColor( dotsoscT[1], c=colorify.rgb2hex(gstt.color)  )
@@ -255,7 +280,7 @@ def NozMode2(fwork):
             else:
             #dots.append(proj(0,0,0))
 
-                fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL =  0, closed = False )
+                fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL =  1, closed = False )
 
             #dots=[]
         #if not idx%nb_point:
@@ -277,6 +302,7 @@ def Sine(fwork):
 
 
     fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL =  0, closed = False )
+    fwork.PolyLineOneColor( dots, c=colorify.rgb2hex(gstt.color), PL =  1, closed = False )
 
     
     if f_sine > 24:
@@ -284,6 +310,7 @@ def Sine(fwork):
     f_sine += 0.01
 
     gstt.PL[0] = fwork.LinesPL(0)
+    gstt.PL[1] = fwork.LinesPL(1)
 
 
 # Curve 3
@@ -397,7 +424,7 @@ def extracc2range(s,min,max):
 
 def proj(x,y,z,curveNumber):
 
-    gstt.angleX += cc2range(gstt.cc[29],0,0.1)
+    gstt.angleX += cc2range(gstt.cc[29],0,0.1)#vitesse de rotation
     gstt.angleY += cc2range(gstt.cc[30],0,0.1)
     gstt.angleZ += cc2range(gstt.cc[31],0,0.1)
     
