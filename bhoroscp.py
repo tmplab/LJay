@@ -115,6 +115,11 @@ osclientresol = OSCClient()
 
 oscmsg = OSCMessage()
 
+def knob2cc(s):
+    a1, a2 = 0,32768
+    b1, b2 = 0, 127
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
 
 # sendosc(oscaddress, [arg1, arg2,...])
 def sendosc(oscaddress,oscargs):
@@ -595,12 +600,18 @@ def nozX(path, tags, args, source):
 	
 # Get wich Nozoid sound curve to draw on Y axis 
 def nozY(path, tags, args, source):
-	user = ''.join(path.split("/"))
-	print "Here nozY in bhorosc"
+#def nozY(Osc, CrvNmbr):
+	#user = ''.join(path.split("/"))
+	print "Here nozY in bhoroscp"
 	#print user,path,args
 	print path,args
+
 	oscillator = int(args[0])
 	curveNumber = int(args[1])
+
+	#oscillator = Osc
+	#curveNumber = CrvNmbr
+
 	print "Oscillator=%d,CurveNumber=%d"%(oscillator,curveNumber)
 	print "Setting gstt.Y[%d] to %d" %(curveNumber,oscillator)
 	gstt.Y[curveNumber] = oscillator
@@ -642,8 +653,8 @@ def nozY(path, tags, args, source):
 	#gstt.OscXY[2] = gstt.Y
 
 def nozcolor(path, tags, args, source):
-	#print "here we are in nozcolor!"
-	#print "args",args
+	print "here we are in nozcolor in bhoroscp!"
+	print "args",args
 	if len(args) <= 1:
 	  if len(args) == 0:
 		curveNumber = 0
@@ -670,7 +681,7 @@ def handler(path, tags, args, source):
 	pathlength = len(oscpath)
 	#print ""
 	#print "default handler"
-	print path, oscpath, args
+	#print path, oscpath, args
 
 
 	# /control/matrix/Y/X 0 or 1
@@ -977,21 +988,36 @@ def handler(path, tags, args, source):
 		#gstt.OscXY[0] = gstt.lfo
 		gstt.lfo[number] = value
 	
+	#print "980", oscpath[1], oscpath[2]
 	# /nozoid/osc/number value	
 	if oscpath[1] == "nozoid" and oscpath[2] == "osc":
 		number = int(oscpath[3])#the oscillator/modulator number asked
 		value = int(args[0])#the value of the oscillation/modulation
+                #print "default handler for nozoid osc"
+		#print "980!!", oscpath[1], oscpath[2]
 		#print "osc",number,value
 		#gstt.OscXY[0] = gstt.osc
 		#this is where we save the value of the current oscillation value of the osc/lfo/cv etc (aka number)
 		gstt.osc[number] = value
+
+
+        if oscpath[1] == "nozoid" and oscpath[2] == "Y":
+                number = int(oscpath[3])#the oscillator/modulator number asked
+                value = int(args[0])#
+                gstt.osc[number] = value
+                nozY(number,value)
+
+
 	
 	# /nozoid/knob/number value	
 	if oscpath[1] == "nozoid" and oscpath[2] == "knob":
 		number = int(oscpath[3])
 		value = int(args[0])
-		print "knob",number,value
+		#print "knob",number,value
 		gstt.knob[number] = value
+		if number == 3: #portamento potar
+			gstt.cc[29]=knob2cc(value)
+			#print "knob4[%d/%d]"%(value,gstt.cc[29])
 	
 	
 			
@@ -1279,9 +1305,11 @@ oscserver.addMsgHandler( "/gyrosc/gyro", gyro )
 oscserver.addMsgHandler( "/point", point )
 oscserver.addMsgHandler( "/accxyz", accxyztouchosc )
 accxyztouchosc
+
 oscserver.addMsgHandler( "/nozoid/X", nozX )
 oscserver.addMsgHandler( "/nozoid/Y", nozY )
 oscserver.addMsgHandler( "/nozoid/color", nozcolor )
+
 oscserver.addMsgHandler( "/stop/rotation", stoprot )
 oscserver.addMsgHandler( "/nozoid/offset", nozoffset )
 

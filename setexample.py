@@ -491,22 +491,24 @@ def MappingConf(section):
     gstt.Windows = [] 
     sections = settings.MappingSections()
 
-    print ""
-    #print "Sections : ", sections
-    print "Reading Section : ", sections[gstt.CurrentSection]
+    #print ""
+    if gstt.debug > 0:
+    	print "Sections:", sections
+    	print "Reading Section:", sections[gstt.CurrentSection]
 
     gstt.Laser = settings.MappingRead([sections[gstt.CurrentSection],'laser'])
-    print "Laser : ", gstt.Laser
+    print "Laser:", gstt.Laser
     gstt.simuPL = gstt.Laser
 
     for Window in xrange(settings.Mapping(sections[gstt.CurrentSection])-1):
-        if gstt.debug > 0:
-            print "Reading option :  ", str(Window)
+        if gstt.debug > 1:
+            print "Reading option:",str(Window)
         shape = [sections[gstt.CurrentSection], str(Window)]
         WindowPoints = settings.MappingRead(shape)
         gstt.Windows.append(WindowPoints)
 
-    print "Section points : " ,gstt.Windows
+    if gstt.debug > 1:
+    	print "Section points:",gstt.Windows
 
 
 # ENTER : Edit warp mode

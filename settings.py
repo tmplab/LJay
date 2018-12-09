@@ -48,7 +48,8 @@ def Read():
 	gstt.Curve = config.getint('General', 'curve')
 	gstt.LaserNumber = config.getint('General', 'lasernumber')
 	gstt.LjayServerIP = config.get('General', 'LjayServerIP')
-	print "redis server :", gstt.LjayServerIP
+	if gstt.debug > 0:
+		print "redis server :", gstt.LjayServerIP
 
 	for i in range(4):
 		laser = 'laser' + str(i)

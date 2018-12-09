@@ -540,9 +540,11 @@ anim = ['anim1',50,400,100,0,0,0,1]
 # Get frame number for pose path describe in gstt.PoseDir 
 def lengthPOSE(pose_dir):
 
-    gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir + '/') if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
-    print "Pose : ", pose_dir, gstt.numfiles, "images"
-    print "Check directory ",'poses/' + pose_dir + '/'
+    if gstt.debug > 0:
+      print "Check directory ",'poses/' + pose_dir,
+    gstt.numfiles = sum(1 for f in os.listdir('poses/' + pose_dir) if os.path.isfile(os.path.join('poses/' + pose_dir + '/', f)) and f[0] != '.')
+    if gstt.debug > 0:
+      print gstt.numfiles, "images"
 
 #pose_dir = 'detroit1'
 pose_dir = 'snap'

@@ -5,9 +5,10 @@ import argparse
 
 def handle():
 
-	print ""
-	print "Arguments parsing if needed..."
-	#have to be done before importing bhorosc.py to get correct port assignment
+	if gstt.debug > 2:
+		print ""
+		print "Arguments parsing if needed..."
+		#have to be done before importing bhorosc.py to get correct port assignment
 	argsparser = argparse.ArgumentParser(description="LJay")
 	argsparser.add_argument("-r","--redisIP",help="Redis computer IP address (gstt.LjayServerIP by default)",type=str)
 	argsparser.add_argument("-i","--iport",help="OSC port number to listen to (8001 by default)",type=int)
@@ -43,8 +44,9 @@ def handle():
 	else:
 		oport = gstt.oport
 
-	print "gstt.oport:",gstt.oport
-	print "gstt.iport:",gstt.iport
+	if gstt.debug > 0:
+		print "gstt.oport:",gstt.oport
+		print "gstt.iport:",gstt.iport
 
 
 	# X Y inversion arguments

@@ -78,6 +78,7 @@ def senddmx(channel, value):
 #oscIPin = "192.168.42.194"
 #oscIPin = "127.0.0.1"
 oscIPin = socket.gethostbyname(socket.gethostname())
+#oscIPin = "192.168.1.246"
 #oscPORTin = 8003
 oscPORTin = iport
 oscpathin = ""
@@ -85,6 +86,9 @@ oscpathin = ""
 #oscIPout = ""
 #oscIPout = "10.255.255.194"
 oscIPout = socket.gethostbyname(socket.gethostname())
+#oscIPout = socket.gethostbyname("nz1w")
+#oscIPout = socket.gethostbyname("nz1")
+#oscIPout = "192.168.1.246"
 #bhorosc.py
 #oscPORTout = 8001
 oscPORTout = oport
@@ -108,6 +112,8 @@ print oscserver.address()
 def handle_timeout(self):
     self.timed_out = True
 
+def threeDigit( number ):
+   return '%03d' % number
 
 def twoDigit( number ):
    return '%02d' % number
@@ -149,6 +155,12 @@ def sendosc(oscaddress,oscargs):
 
     oscmsg = OSCMessage()
 
+    #print "here in sendosc in nozosc"
+    #print oscaddress
+    #print oscargs
+    #raw_input("Press Enter to continue3...")
+
+
     if oscpath[2] == "name":
 	print "we are asked to send a name"
 	oscmsg.setAddress(oscaddress)
@@ -160,15 +172,16 @@ def sendosc(oscaddress,oscargs):
 	oscmsg.append(oscargs)
 
     if oscpath[2] == "knob":
-	print "we are asked to send knob %d's value" % int(oscargs[0:2])
-	oscmsg.setAddress(''.join((oscaddress,"/",str(int(oscargs[0:2])))))
-	oscmsg.append(int(oscargs[2:100]))
+	#print "we are asked to send knob %d's value" % int(oscargs[0:3])
+	oscmsg.setAddress(''.join((oscaddress,"/",str(int(oscargs[0:3])))))
+	oscmsg.append(int(oscargs[3:100]))
 	
     if oscpath[2] == "osc":
 	#print "we are asked to send continusouly an osc value"
 	#print oscargs
-	oscmsg.setAddress(''.join((oscaddress,"/",str(int(oscargs[0:2])))))
-	oscmsg.append(int(oscargs[2:100]))
+	oscmsg.setAddress(''.join((oscaddress,"/",str(int(oscargs[0:3])))))
+	#print "oscmsg:", oscmsg
+	oscmsg.append(int(oscargs[3:100]))
 
     if oscpath[2] == "lfo":
 	#print "we are asked to send continusouly a lfo value"
@@ -192,6 +205,8 @@ def sendosc(oscaddress,oscargs):
 
     if oscpath[2] == "Y":
 	print "we are asked to send continusouly a Y value"
+	print "oscaddress:",oscaddress
+	print "oscargs",oscargs
 	oscmsg.setAddress(oscaddress)
 	oscmsg.append(oscargs)
 
@@ -201,12 +216,13 @@ def sendosc(oscaddress,oscargs):
 	oscmsg.append(oscargs)
 
     if oscpath[2] == "color":
-	#print "we are asked to change lazer color"
+	print "we are asked to change lazer color"
 	oscmsg.setAddress(oscaddress)
 	if len(oscargs) > 0:
 		oscmsg.append(oscargs)
 
     try:
+        #print oscmsg
 	osclient.sendto(oscmsg, (oscIPout, oscPORTout))
 	oscmsg.clearData()
     except:
@@ -308,7 +324,7 @@ def nozstop(path, tags, args, source):
 # /name 
 def nozname(path, tags, args, source):
 
-    print ("asking for my nozoid name...")
+    print ("Asking for the nozoid name...")
     Mser.write([0xF0])
 
     
@@ -343,15 +359,19 @@ def nozdown(path, tags, args, source):
 	#print ("UP ", args[0], "asked")
 	#print "Path:",path,",Tags:",tags,",Args:",args,",Source:",source
 	if args:
+        	print "Asked to slow down by %d..." % (int(args[0]))
 		Mser.write([0xF1,int(args[0])]) # 0xF1 slowing down flow with argument
 	else:
+        	print "Asked to slow down by 1..."
 		Mser.write([0xF1]) # 0xF1 slowing down flow
 
 # /up
 def nozup(path, tags, args, source):
 	if args:
+        	print "Asked to speed up by %d..." % (int(args[0]))
 		Mser.write([0xF2,int(args[0])]) # 0xF2 speeding up with argument
 	else:
+        	print "Asked to speed up by 1..."
 		Mser.write([0xF2]) # 0xF2 speeding up flow
 
 # /knob
@@ -382,32 +402,45 @@ def nozX(path, tags, args, source):
 		CurveNumber = 0
 
 	if 0 < len(args):
-	  print "Setting active X[%d] trace to %d" %(CurveNumber,args[0])
+          NozOsc=((nozport*127)+int(args[0]))
+	  print int(args[0]),NozOsc
+
+	  #print "Setting active X[%d] trace to %d" %(CurveNumber,args[0])
+	  print "Setting active X[%d] trace to %d" %(CurveNumber,NozOsc)
 	  #print type(args[0])
 	  #check if no other curve is tracing that osc
 	  if gstt.oscInUse[gstt.X[CurveNumber]] == 1:
 	    #deactivate currently active osc used that is, the last one used
 	    print "deactivating osc %d" %gstt.X[CurveNumber]
-	    if gstt.X[CurveNumber] <= 16:
-		Mser.write([0x9F + gstt.X[CurveNumber]])
+	    if gstt.X[CurveNumber]%127 <= 16:
+		print (0x9F + (gstt.Y[CurveNumber]-(nozport*127)))
+		Mser.write([0x9F + (gstt.X[CurveNumber]-(nozport*127))])
 	    else:
-		Mser.write([0xE2 + gstt.X[CurveNumber]])
+		print (0xE2 + (gstt.Y[CurveNumber]-(nozport*127)))
+		Mser.write([0xE2 + (gstt.X[CurveNumber]-(nozport*127))])
 	  if 0 < gstt.oscInUse[gstt.X[CurveNumber]]:
 	    gstt.oscInUse[gstt.X[CurveNumber]]-=1
 	    print "decreasing osc %d to %d" %(gstt.X[CurveNumber],gstt.oscInUse[gstt.X[CurveNumber]])
 
 	  if args[0] <= 16:
-	    if gstt.oscInUse[args[0]] == 0:
+	    #if gstt.oscInUse[args[0]] == 0:
+	    if gstt.oscInUse[NozOsc] == 0:
 	      Mser.write([0x9F + int(args[0])])
-	    print("/nozoid/X/%d") % (0x00 + int(args[0]))
-	    sendosc("/nozoid/X",[(0x00 + int(args[0])),CurveNumber])
+	    #print("/nozoid/X/%d") % (0x00 + int(args[0]))
+	    print("/nozoid/X/%d") % (0x00 + NozOsc)
+	    #sendosc("/nozoid/X",[(0x00 + int(args[0])),CurveNumber])
+	    sendosc("/nozoid/X",[(0x00 + NozOsc),CurveNumber])
 	  else:
-	    if gstt.oscInUse[args[0]] == 0:
+	    #if gstt.oscInUse[args[0]] == 0:
+	    if gstt.oscInUse[NozOsc] == 0:
 	      Mser.write([0xE2 + int(args[0])])
-	    print("/nozoid/X/%d") % (0x43 + int(args[0]))
-	    sendosc("/nozoid/X",[(0x43 + int(args[0])),CurveNumber])
+	    #print("/nozoid/X/%d") % (0x43 + int(args[0]))
+	    print("/nozoid/X/%d") % (0x43 + NozOsc)
+	    #sendosc("/nozoid/X",[(0x43 + int(args[0])),CurveNumber])
+	    sendosc("/nozoid/X",[(0x43 + NozOsc),CurveNumber])
 
-	  gstt.X[CurveNumber]=int(args[0])
+	  #gstt.X[CurveNumber]=int(args[0])
+	  gstt.X[CurveNumber]=NozOsc
 	  gstt.oscInUse[gstt.X[CurveNumber]]+=1
 	  print "increasing osc %d to %d" %(gstt.X[CurveNumber],gstt.oscInUse[gstt.X[CurveNumber]])
 
@@ -415,6 +448,9 @@ def nozX(path, tags, args, source):
 # change sound curve to draw on Y axis and tell nozoids to send this sound curve
 
 def nozY(path, tags, args, source):
+
+	#raw_input("Press Enter to continue1...")
+
 	#print args
 	if 0 == len(args):
 		for CurveNumber in range(0, gstt.maxCurvesByLaser):
@@ -427,40 +463,49 @@ def nozY(path, tags, args, source):
 		CurveNumber = 0
 
 	if 0 < len(args):
+          NozOsc=((nozport*127)+int(args[0]))
+	  print int(args[0]),NozOsc
+
 	  #print "Args len %d" % len(args)
-	  print "Setting active Y[%d] trace to %d" %(CurveNumber,args[0])
+	  print "Setting active Y[%d] trace to %d" %(CurveNumber,NozOsc)
 	  #print type(args[0])
 	  #deactivate currently active osc sent by nozoid saved into gstt.Y at previous call
 	  #even if it's the same which will be asked again…
 	  #see comment in nozX for the following line…
 	  if gstt.oscInUse[gstt.Y[CurveNumber]] == 1:
 	    print "deactivating osc %d" %gstt.Y[CurveNumber]
-	    if gstt.Y[CurveNumber] <= 16:
-		Mser.write([0x9F + gstt.Y[CurveNumber]])
+	    if gstt.Y[CurveNumber]%127 <= 16: 
+		print (0x9F + (gstt.Y[CurveNumber]-(nozport*127)))
+		Mser.write([0x9F + (gstt.Y[CurveNumber]-(nozport*127))])
 	    else:
-		Mser.write([0xE2 + gstt.Y[CurveNumber]])
+		print (0xE2 + (gstt.Y[CurveNumber]-(nozport*127)))
+		Mser.write([0xE2 + (gstt.Y[CurveNumber]-(nozport*127))])
 	  if 0 < gstt.oscInUse[gstt.Y[CurveNumber]]:
 	    gstt.oscInUse[gstt.Y[CurveNumber]]-=1
 	    print "decreasing osc %d to %d" %(gstt.Y[CurveNumber],gstt.oscInUse[gstt.Y[CurveNumber]])
 
 	  if args[0] <= 16:
-	    if gstt.oscInUse[args[0]] == 0:
+	    if gstt.oscInUse[NozOsc] == 0:
+	      print([0x9F + int(args[0])])
 	      Mser.write([0x9F + int(args[0])])
-	    print("/nozoid/Y/%d") % (0x00 + int(args[0]))
-	    sendosc("/nozoid/Y",[(0x00 + int(args[0])),CurveNumber])
+	    print("/nozoid/Y/%d %d") % (0x00 + NozOsc, CurveNumber)
+	    sendosc("/nozoid/Y",[(0x00 + NozOsc),CurveNumber])
 	  else:
-	    if gstt.oscInUse[args[0]] == 0:
+	    if gstt.oscInUse[NozOsc] == 0:
+	      print([0xE2 + int(args[0])])
 	      Mser.write([0xE2 + int(args[0])])
-	      print("/nozoid/Y/%d") % (0x43 + int(args[0]))
-	    sendosc("/nozoid/Y",[(0x43 + int(args[0])),CurveNumber])
+	      print("/nozoid/Y/%d") % (0x43 + NozOsc)
+	    sendosc("/nozoid/Y",[(0x43 + NozOsc),CurveNumber])
 
-	  gstt.Y[CurveNumber]=int(args[0])
+	  gstt.Y[CurveNumber]=NozOsc
 	  gstt.oscInUse[gstt.Y[CurveNumber]]+=1
 	  print "increasing osc %d to %d" %(gstt.Y[CurveNumber],gstt.oscInUse[gstt.Y[CurveNumber]])
 
+	#raw_input("Press Enter to continue2...")
+
 def nozcolor(path, tags, args, source):
-	#print "Quelqu'un (je ne sais pas qui) m'a demandé de la couleur…"
-        #print "args",args
+	print "Quelqu'un (je ne sais pas qui) m'a demandé de la couleur…"
+        print "args",args
         if len(args) <= 1:
           if len(args) == 0:
             curveNumber = 0
@@ -507,16 +552,21 @@ oscserver.addMsgHandler( "/nozoid/stop", nozstop )
 oscserver.addMsgHandler( "default", nozhandler )
 oscserver.addMsgHandler( "/nozoid/name", nozname )
 oscserver.addMsgHandler( "/nozoid/lfo", nozlfo )
+
 oscserver.addMsgHandler( "/nozoid/osc", nozosc )
+
 oscserver.addMsgHandler( "/nozoid/vco", nozvco )
 oscserver.addMsgHandler( "/nozoid/mix", nozmix )
 oscserver.addMsgHandler( "/nozoid/up", nozup )
 oscserver.addMsgHandler( "/nozoid/down", nozdown )
 oscserver.addMsgHandler( "/nozoid/knob", nozknob )
 oscserver.addMsgHandler( "/nozoid/status", nozstatus )
+
 oscserver.addMsgHandler( "/nozoid/X", nozX )
 oscserver.addMsgHandler( "/nozoid/Y", nozY )
+
 oscserver.addMsgHandler( "/nozoid/color", nozcolor )
+
 oscserver.addMsgHandler( "/nozoid/flashdmx", flashdmx )
 oscserver.addMsgHandler( "/nozoid/offset", nozoffset )
 
@@ -678,7 +728,7 @@ if Mser != False:
 
          if ord(NozMsg[1]) < 160:
             (val,) = struct.unpack_from('>H', NozMsg, 2)
-            sendosc("/nozoid/knob",''.join((twoDigit(ord(NozMsg[1])),str(val))))
+            sendosc("/nozoid/knob",''.join((threeDigit(ord(NozMsg[1])+(nozport*127)),str(val))))
         
          if ord(NozMsg[1]) >= 0xA0 and ord(NozMsg[1]) < 0xF0:
 
@@ -693,7 +743,7 @@ if Mser != False:
 
 	    #print "delta lfo %x : %d" % (OrdNozMsg, tLfoDelta[OrdNozMsg])
 
-            sendosc("/nozoid/osc",''.join((twoDigit(ord(NozMsg[1])-0x9F),str(val))))
+            sendosc("/nozoid/osc",''.join((threeDigit(ord(NozMsg[1])-0x9F+(nozport*127)),str(val))))
 
          if ord(NozMsg[1]) == 0xF0:   
 	    print ''.join((NozMsg[2],NozMsg[3]))
@@ -702,12 +752,12 @@ if Mser != False:
          if ord(NozMsg[1]) >= 0xF3 and ord(NozMsg[1]) <= 0xF5:
             (val,) = struct.unpack_from('>H', NozMsg, 2)
 
-            sendosc("/nozoid/osc",''.join((twoDigit(ord(NozMsg[1])-0x9F),str(val-32767))))
+            sendosc("/nozoid/osc",''.join((threeDigit(ord(NozMsg[1])-0x9F+(nozport*127)),str(val-32767))))
 
          if ord(NozMsg[1]) >= 0xF6 and ord(NozMsg[1]) <= 0xF8:
 	    #NozMsgL=NozMsg+Mser.read(2)
             (val,) = struct.unpack_from('>h', NozMsg, 2)
-            sendosc("/nozoid/osc",''.join((twoDigit(ord(NozMsg[1])-0x9F),str(val))))
+            sendosc("/nozoid/osc",''.join((threeDigit(ord(NozMsg[1])-0x9F+(nozport*127)),str(val))))
             #sendosc("/nozoid/mix",''.join((twoDigit(ord(NozMsg[1])-0xF5),str(val))))
 
 

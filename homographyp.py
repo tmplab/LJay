@@ -224,7 +224,7 @@ def newEDH(mylaser):
 	#gstt.EDH[mylaser] = np.dot(H,Hwarp)
 	r.set('/EDH/'+str(mylaser), np.array2string(gstt.EDH[mylaser], separator=','))
 	
-	if gstt.debug >0:
+	if gstt.debug >1:
 		print ""
 		print "laser ", mylaser
 		print "reference points", pointsref
