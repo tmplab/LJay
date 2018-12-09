@@ -29,6 +29,17 @@ import thread
 import redis
 
 
+print ""
+print "LJay v0.8.0 Client"
+print "Multilaser, multi process and redis style."
+print ""
+print "Needs redis and serverp.py launched to talk to etherdreams"
+print ""
+print "webui/index.html is the WebUI page"
+print "Needs webui/uiserverp.py to talk to WebUI"
+print ""
+print "Autoconfiguring..."
+print ""
 
 
 #import renderer
@@ -47,17 +58,6 @@ import colorify
 import pdb
 
 
-print "LJay v0.8.0 Client"
-print "Multilaser, multi process and redis style."
-
-if gstt.debug > 0:
-  print ""
-  print "Needs redis and serverp.py launched to talk to etherdreams"
-  print ""
-  print "webui/index.html is the WebUI page"
-  print "Needs webui/uiserverp.py to talk to WebUI"
-  print ""
-  print "Autoconfiguring..."
 
 settings.Read()
 
@@ -139,17 +139,17 @@ settables =  {					# Set 0
         4: setexample.Text,
         5: setexample.black
     }, {                        # setexample Set 5
-        0: set5.Sine,
-        1: set5.square
+        0: set5.square,
+        1: set5.Sine
     }, {                        # setexample Set 6
-        0: set6.Mapping,
-        1: set6.square
+        0: set6.square,
+        1: set6.Sine
     }, {                        # setexample Set 7
-        0: set7.Mapping,
+        0: set7.square,
         1: set7.Sine
     }, {                        # setexample Set 8
-        0: set8.Mapping,
-        1: set8.Sine,
+        0: set8.square,
+        1: set8.Sine
     }
 
 gstt.MaxSets = len(settables)
