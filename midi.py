@@ -1,5 +1,19 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
+
+"""
+LJay/LJ
+v0.7.0
+
+Midi Handler 
+
+
+by Sam Neurohack 
+from /team/laser
+
+"""
+
+
 import time
 
 import rtmidi

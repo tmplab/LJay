@@ -1,3 +1,14 @@
+# coding=UTF-8
+"""
+LJay/LJ
+v0.7.0
+Bhoreal Led display Handler 
+
+by Sam Neurohack 
+from /team/laser
+
+"""
+
 
 import time
 from rtmidi.midiconstants import (CHANNEL_PRESSURE, CONTROLLER_CHANGE, NOTE_ON, NOTE_OFF,

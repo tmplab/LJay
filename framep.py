@@ -11,7 +11,6 @@ pclf, Sam Neurohack
 
 import pygame
 import gstt
-import numpy as np
 import math
 import redis
 
@@ -73,7 +72,7 @@ class Frame(object):
 			y = xy[1] * resize
 			z = 0
 
-			rad = rotx * np.pi / 180
+			rad = rotx * math.pi / 180
 			cosaX = math.cos(rad)
 			sinaX = math.sin(rad)
 
@@ -81,7 +80,7 @@ class Frame(object):
 			y = y2 * cosaX - z * sinaX
 			z = y2 * sinaX + z * cosaX
 
-			rad = roty * np.pi / 180
+			rad = roty * math.pi / 180
 			cosaY = math.cos(rad)
 			sinaY = math.sin(rad)
 
@@ -89,7 +88,7 @@ class Frame(object):
 			z = z2 * cosaY - x * sinaY
 			x = z2 * sinaY + x * cosaY
 
-			rad = rotz * np.pi / 180
+			rad = rotz * math.pi / 180
 			cosZ = math.cos(rad)
 			sinZ = math.sin(rad)
 

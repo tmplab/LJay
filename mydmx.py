@@ -1,5 +1,19 @@
 #!/usr/bin/python2.7
-# coding=UTF-8
+# -*- coding: utf-8 -*-
+"""
+LJay/LJ 
+
+v0.7.0
+
+DMX Handler 
+
+import mydmx
+mydmx.send(channel, value)
+
+by Sam Neurohack and llstr 
+from /team/laser
+
+"""
 import pysimpledmx
 import sys
 from serial.tools import list_ports
@@ -22,7 +36,9 @@ try:
     # Find serial port
     if  platform == 'darwin':
         gstt.serdmx = next(list_ports.grep("DMX USB PRO"))
+        print "darwin OS"
     if  platform == 'linux2':
+        print "Linux OS"
         gstt.serdmx = next(list_ports.grep("/dev/ttyUSB0"))
     print ("Serial Picked for DMX : ",gstt.serdmx[0])
 
@@ -52,7 +68,8 @@ def send(channel, value):
         mydmx.render()
         print "Sending DMX Channel : ", str(channel), " value : ", str(value)
 
-send(8,180)#change tilt to 180° (see http://static.boomtonedj.com/pdf/manual/43/43105_manuelfroggyledrgbw.pdf)
+if gstt.serdmx != "":
+    send(8,180)#change tilt to 180° (see http://static.boomtonedj.com/pdf/manual/43/43105_manuelfroggyledrgbw.pdf)
 
 
 #send(3,[0,255] vary red from 0 to 255
