@@ -91,6 +91,10 @@ curveNumber = 0
 Curve = curveNumber
 XTimeAxe=30000
 YTimeAxe=30000
+XTimeAxe=70000
+YTimeAxe=70000
+XTimeAxe=10000
+YTimeAxe=10000
 
 #curveX = [255,255,255] * maxCurvesByLaser
 #curveY = [255,255,255] * maxCurvesByLaser

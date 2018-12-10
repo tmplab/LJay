@@ -172,7 +172,7 @@ def sendosc(oscaddress,oscargs):
 	oscmsg.append(oscargs)
 
     if oscpath[2] == "knob":
-	#print "we are asked to send knob %d's value" % int(oscargs[0:3])
+	print "we are asked to send knob %d's value" % int(oscargs[0:3])
 	oscmsg.setAddress(''.join((oscaddress,"/",str(int(oscargs[0:3])))))
 	oscmsg.append(int(oscargs[3:100]))
 	

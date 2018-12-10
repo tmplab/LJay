@@ -115,8 +115,13 @@ osclientresol = OSCClient()
 
 oscmsg = OSCMessage()
 
+def knob2XYTime(s):
+    a1, a2 = 0,65535
+    b1, b2 = 1000, 70000
+    return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
+
 def knob2cc(s):
-    a1, a2 = 0,32768
+    a1, a2 = 0,65535
     b1, b2 = 0, 127
     return  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))
 
@@ -1013,11 +1018,15 @@ def handler(path, tags, args, source):
 	if oscpath[1] == "nozoid" and oscpath[2] == "knob":
 		number = int(oscpath[3])
 		value = int(args[0])
-		#print "knob",number,value
+		print "knob",number,value
 		gstt.knob[number] = value
 		if number == 3: #portamento potar
-			gstt.cc[29]=knob2cc(value)
-			#print "knob4[%d/%d]"%(value,gstt.cc[29])
+			#gstt.cc[29]=knob2cc(value)
+			
+			gstt.XTimeAxe=(knob2XYTime(value)//100)*100
+			gstt.YTimeAxe=(knob2XYTime(value)//100)*100
+			print "portamento[%d/%d]"%(value,gstt.XTimeAxe)
+			print "adjusting X/YTimeAxe"
 	
 	
 			

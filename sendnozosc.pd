@@ -1,4 +1,4 @@
-#N canvas 187 60 1090 531 10;
+#N canvas 6 178 1090 531 10;
 #X obj 32 348 sendOSC;
 #X floatatom 32 367 5 0 0 0 - - -;
 #X floatatom 70 367 5 0 0 0 - - -;
@@ -138,7 +138,7 @@
 #X text 781 45 X Curve;
 #X text 790 231 Y Curve;
 #X obj 904 205 s sendmmo3;
-#X msg 650 -18 connect 127.0.0.1 8005;
+#X msg 650 -17 connect 127.0.0.1 8005;
 #X text 28 106 VCO1;
 #X text 55 108 VCO2;
 #X text 86 108 LFO1;
@@ -279,7 +279,7 @@
 #X msg 13 225 0;
 #X obj 8 246 pack;
 #X floatatom 508 239 5 0 3 0 - - -;
-#X obj 162 250 s sendosc2;
+#X obj 167 245 s sendosc2;
 #X text -22 187 StopY;
 #X msg 40 245 send /nozoid/Y \$1 \$2;
 #X text 790 149 1OUT;
@@ -430,6 +430,13 @@
 #X msg 379 -9 disconnect;
 #X obj 515 -52 dumpOSC 8002;
 #X obj 515 -35 print rcvOSC;
+#X msg 516 265 send /nozoid/knob 3;
+#X obj 559 306 s sendmmo3;
+#X obj 560 286 s sendosc2;
+#X obj 555 196 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 556 232 metro 2000;
+#X text 548 165 X/Y scale portamento;
 #X connect 0 0 1 0;
 #X connect 0 1 2 0;
 #X connect 4 0 59 0;
@@ -698,3 +705,7 @@
 #X connect 339 0 338 0;
 #X connect 340 0 337 0;
 #X connect 341 0 342 0;
+#X connect 343 0 345 0;
+#X connect 343 0 344 0;
+#X connect 346 0 347 0;
+#X connect 347 0 343 0;
