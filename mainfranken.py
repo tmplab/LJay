@@ -29,17 +29,6 @@ import thread
 import redis
 
 
-print ""
-print "LJay v0.8.0 Client"
-print "Multilaser, multi process and redis style."
-print ""
-print "Needs redis and serverp.py launched to talk to etherdreams"
-print ""
-print "webui/index.html is the WebUI page"
-print "Needs webui/uiserverp.py to talk to WebUI"
-print ""
-print "Autoconfiguring..."
-print ""
 
 
 #import renderer
@@ -58,6 +47,17 @@ import colorify
 import pdb
 import redis
 
+print "LJay v0.8.0 Client"
+print "Multilaser, multi process and redis style."
+
+if gstt.debug > 0:
+  print ""
+  print "Needs redis and serverp.py launched to talk to etherdreams"
+  print ""
+  print "webui/index.html is the WebUI page"
+  print "Needs webui/uiserverp.py to talk to WebUI"
+  print ""
+  print "Autoconfiguring..."
 
 settings.Read()
 

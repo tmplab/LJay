@@ -6,8 +6,8 @@ Etat global (anciennement singleton de la classe GameState + autres VARIABLES n√
 from globalVars import *
 
 #ConfigName = "setexample.conf"
-#ConfigName = "setllstr.conf"
-ConfigName = "setfranken.conf"
+ConfigName = "setllstr.conf"
+#ConfigName = "setfranken.conf"
 
 anims= [[],[],[],[]]
 
