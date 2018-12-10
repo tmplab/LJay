@@ -69,7 +69,7 @@ def Read():
 		gstt.warpdest[i]= np.array(ast.literal_eval(config.get(laser, 'warpdest')))
 
 
-
+print "* Using", gstt.ConfigName, "setup file.*"
 config = ConfigParser.ConfigParser()
 config.read(gstt.ConfigName)
 

@@ -41,8 +41,6 @@ from globalVars import *
 import gstt
 import cli
 import pdb
-import redis
-
 
 settings.Read()
 
@@ -59,7 +57,7 @@ else:
 r = redis.StrictRedis(host=gstt.LjayServerIP, port=6379, db=0)
 
 import midi
-import framep
+import framey
 import bhoroscp
 
 import homographyp

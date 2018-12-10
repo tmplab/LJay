@@ -1,3 +1,15 @@
+# coding=UTF-8
+"""
+LJay
+v0.6.0
+
+Lasers Alignment Handler
+
+by Sam Neurohack 
+from /team/laser
+
+"""
+
 import gstt
 import frame
 import pygame

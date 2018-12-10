@@ -45,7 +45,7 @@ import gstt
 import cli
 import colorify
 import pdb
-import redis
+
 
 print "LJay v0.8.0 Client"
 print "Multilaser, multi process and redis style."

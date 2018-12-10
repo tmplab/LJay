@@ -1,3 +1,18 @@
+
+# coding=UTF-8
+"""
+LJay/LJ
+
+v0.8
+
+Command line arguments parser
+
+by Sam Neurohack 
+from /team/laser
+
+"""
+
+
 import gstt
 import argparse
 
